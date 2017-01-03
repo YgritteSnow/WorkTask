@@ -77,3 +77,8 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+/Debug
+*.suo
+*.sdf
+/*/Debug
