@@ -47,5 +47,8 @@
     <ClInclude Include="JMath.h">
       <Filter>Header Files\math</Filter>
     </ClInclude>
+    <ClInclude Include="BitMapDisplay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

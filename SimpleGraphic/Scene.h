@@ -2,7 +2,6 @@
 #define __SCENE_H__
 
 #include <vector>
-#include "JMath.h"
 
 class Camera{
 private:
