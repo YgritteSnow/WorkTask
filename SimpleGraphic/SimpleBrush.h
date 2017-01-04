@@ -35,48 +35,50 @@ class SimpleBrush{
 public:
 	// 画单像素点
 	static void DrawDot_normedPos(
-		float x0, float y0, 
-		Color4 color, ImgBuffer<Color4>* buffer);
+		float x0, float y0,  Color4 color, 
+		ImgBuffer<Color4>* buffer);
 	static void DrawDot_normedPos(
-		ScreenPos v, 
-		Color4 color, ImgBuffer<Color4>* buffer);
+		ScreenPos v, Color4 color,
+		ImgBuffer<Color4>* buffer);
 	static void DrawDot_coordPos(
-		ScreenCoord x, ScreenCoord y, 
-		Color4 color, ImgBuffer<Color4>* buffer);
+		ScreenCoord x, ScreenCoord y,  Color4 color, 
+		ImgBuffer<Color4>* buffer);
 
 	// 画直线
 	static void DrawLine_floatPos(
-		float x0, float y0, 
-		float x1, float y1, 
-		Color4 color, ImgBuffer<Color4>* buffer);
+		float x0, float y0, Color4 color0,
+		float x1, float y1, Color4 color1,
+		ImgBuffer<Color4>* buffer);
 	static void DrawLine_floatPos(
-		ScreenPos v1, 
-		ScreenPos v2, 
-		Color4 color, ImgBuffer<Color4>* buffer);
+		ScreenPos v1, Color4 color0,
+		ScreenPos v2, Color4 color1, 
+		ImgBuffer<Color4>* buffer);
 	static void _DrawLine_floatPos_bresenham(
-		float x0, float y0, 
-		float x1, float y1, 
-		Color4 color, ImgBuffer<Color4>* buffer);
+		float x0, float y0, Color4 color0,
+		float x1, float y1, Color4 color1,
+		ImgBuffer<Color4>* buffer);
 	static void _DrawLine_coordPos_h(
-		ScreenCoord x0, ScreenCoord x1,
+		ScreenCoord x0, Color4 color0,
+		ScreenCoord x1, Color4 color1,
 		ScreenCoord y,
-		Color4 color, ImgBuffer<Color4>* buffer);
+		ImgBuffer<Color4>* buffer);
 	static void _DrawLine_coordPos_h(
-		float x0, float x1,
+		float x0, Color4 color0,
+		float x1, Color4 color1,
 		ScreenCoord y,
-		Color4 color, ImgBuffer<Color4>* buffer);
+		ImgBuffer<Color4>* buffer);
 
 	// 填充三角形
 	static void DrawTriangle(
-		ScreenPos v1, 
-		ScreenPos v2, 
-		ScreenPos v3, 
-		Color4 color, ImgBuffer<Color4>* buffer);
+		ScreenPos v1, Color4 color1,
+		ScreenPos v2, Color4 color2,
+		ScreenPos v3, Color4 color3,
+		ImgBuffer<Color4>* buffer);
 	static void DrawTriangle(
-		float x0, float y0,
-		float x1, float y1,
-		float x2, float y2,
-		Color4 color, ImgBuffer<Color4>* buffer);
+		float x0, float y0, Color4 color0,
+		float x1, float y1, Color4 color1,
+		float x2, float y2, Color4 color2,
+		ImgBuffer<Color4>* buffer);
 };
 
 #endif

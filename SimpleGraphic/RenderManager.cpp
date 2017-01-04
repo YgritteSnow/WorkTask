@@ -79,10 +79,10 @@ void RenderManager::RenderDummy(){
 	//}
 
 	// 渲染屏幕上一条线（debug）
-	RenderLine_screen(ScreenPos(333.333f, 166.666f), ScreenPos(125, 125), m_imgBuffer_back);
+	//RenderLine_screen(ScreenPos(333.333f, 166.666f), ScreenPos(125, 125));
 
 	// 渲染一个三角形（debug）
-	//RenderTriangle_fill_screen(ScreenPos(333.333, 166.666), ScreenPos(125, 125), ScreenPos(300, 100), m_imgBuffer_back);
+	//RenderTriangle_fill_screen(ScreenPos(333.333, 166.666), ScreenPos(125, 125), ScreenPos(300, 100));
 }
 
 void RenderManager::Clear() {
@@ -96,18 +96,24 @@ void RenderManager::Present() {
 	BitMapDisplay::Display<Color4>(m_imgBuffer_front);
 }
 
-void RenderManager::RenderLine_screen(ScreenPos p1, ScreenPos p2, ImgBuffer<Color4>* buffer) {
-	SimpleBrush::DrawLine_floatPos(p1, p2, Color4(255,255,255,255), buffer);
+/* *********************************************
+* 光栅
+* *********************************************/
+void RenderManager::RenderDot_screen(ScreenPos p1) {
+	SimpleBrush::DrawDot_coordPos((ScreenCoord)(p1._x+0.5f), (ScreenCoord)(p1._y+0.5f), Color4(255,255,255,255), m_imgBuffer_back);
+}
+void RenderManager::RenderLine_screen(ScreenPos p1, ScreenPos p2) {
+	SimpleBrush::DrawLine_floatPos(p1, Color4(255, 0, 0, 255), p2, Color4(0,255,0,255), m_imgBuffer_back);
 }
 
-void RenderManager::RenderTriangle_wareframe_screen(ScreenPos p1, ScreenPos p2, ScreenPos p3, ImgBuffer<Color4>* buffer){
+void RenderManager::RenderTriangle_wareframe_screen(ScreenPos p1, ScreenPos p2, ScreenPos p3){
 	// 三角形边框
-	RenderLine_screen(p1, p2, m_imgBuffer_back);
-	RenderLine_screen(p2, p3, m_imgBuffer_back);
-	RenderLine_screen(p3, p1, m_imgBuffer_back);
+	RenderLine_screen(p1, p2);
+	RenderLine_screen(p2, p3);
+	RenderLine_screen(p3, p1);
 }
-void RenderManager::RenderTriangle_fill_screen(ScreenPos p1, ScreenPos p2, ScreenPos p3, ImgBuffer<Color4>* buffer) {
-	SimpleBrush::DrawTriangle(p1, p2, p3, Color4(255, 255, 255, 255), buffer);
+void RenderManager::RenderTriangle_fill_screen(ScreenPos p1, ScreenPos p2, ScreenPos p3) {
+	SimpleBrush::DrawTriangle(p1, Color4(255, 0, 255, 255), p2, Color4(0, 255, 255, 255), p3, Color4(255, 255, 0, 255), m_imgBuffer_back);
 }
 
 /* *********************************************

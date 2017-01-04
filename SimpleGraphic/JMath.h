@@ -37,6 +37,12 @@ namespace JMath {
 				this->_y - v._y,
 				this->_z - v._z);
 		}
+		Vec3 Mul(const Vec3& v)const {
+			return Vec3(
+				this->_x * v._x,
+				this->_y * v._y,
+				this->_z * v._z);
+		}
 		DataType DotProduct(const Vec3& v) const {
 			return (
 				this->_x * v._x +
@@ -53,8 +59,15 @@ namespace JMath {
 		// 加 / 减 / 点积 / 叉积
 		friend Vec3 Add(const Vec3& v1, const Vec3& v2) { return v1.Add(v2); }
 		friend Vec3 Minus(const Vec3& v1, const Vec3& v2) { return v1.Minus(v2); }
+		friend Vec3 Mul(const Vec3& v1, const Vec3& v2) { return v1.Mul(v2); }
 		friend DataType DotProduct(const Vec3& v1, const Vec3& v2) { return v1.DotProduct(v2); }
 		friend Vec3 CrossProduct(const Vec3& v1, const Vec3& v2) { return v1.CrossProduct(v2); }
+
+		friend Vec3 operator+(const Vec3& v1, const Vec3& v2) { return v1.Add(v2); }
+		friend Vec3 operator-(const Vec3& v1, const Vec3& v2) { return v1.Minus(v2); }
+		friend Vec3 operator*(const Vec3& v1, const Vec3& v2) { return v1.Mul(v2); }
+		Vec3 operator+=(const Vec3& v) { *this = *this + v; return *this; }
+		Vec3 operator-=(const Vec3& v) { *this = *this - v; return *this; }
 
 		// 标量运算
 		Vec3 Add(float f) const {
@@ -120,11 +133,28 @@ namespace JMath {
 		Vec4 Mul(const Vec4& other) const {
 			return Vec4(_x*other._x, _y*other._y, _z*other._z, _w*other._w);
 		}
-		Vec4 operator+(const Vec4& other) const {
-			return Vec4(_x + other._x, _y + other._y, _z + other._z, _w + other._w);
+		//Vec4 operator = ()
+		Vec4 operator+=(const Vec4& v) {
+			*this = *this + v;
+			return *this;
 		}
-		Vec4 operator*(float f) const {
-			return Vec4(_x*f, _y*f, _z*f, _w*f);
+		friend Vec4 operator+(const Vec4& lhm, const Vec4& rhm) {
+			return Vec4(lhm._x + rhm._x, lhm._y + rhm._y, lhm._z + rhm._z, lhm._w + rhm._w);
+		}
+		friend Vec4 operator+(const Vec4& lhm, float rhm) {
+			return Vec4(rhm + lhm._x, rhm + lhm._y, rhm + lhm._z, rhm + lhm._w);
+		}
+		friend Vec4 operator-(const Vec4& lhm, const Vec4& rhm) {
+			return Vec4(lhm._x - rhm._x, lhm._y - rhm._y, lhm._z - rhm._z, lhm._w - rhm._w);
+		}
+		friend Vec4 operator-(const Vec4& lhm, float rhm) {
+			return lhm + -rhm;
+		}
+		friend Vec4 operator*(const Vec4& lhm, float f) {
+			return Vec4(lhm._x*f, lhm._y*f, lhm._z*f, lhm._w*f);
+		}
+		friend Vec4 operator*(DataType f, const Vec4& lhm) {
+			return Vec4(lhm._x*f, lhm._y*f, lhm._z*f, lhm._w*f);
 		}
 	public:
 		Vec3<DataType> ToVec3(){ return Vec3<DataType>(_x / _w, _y / _w, _z / _w); }

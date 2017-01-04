@@ -40,7 +40,7 @@ public:
 			auto p2 = ScreenPos((dst_vertex + indice_idx_1)->pos._x, (dst_vertex + indice_idx_1)->pos._y);
 			auto p3 = ScreenPos((dst_vertex + indice_idx_2)->pos._x, (dst_vertex + indice_idx_2)->pos._y);
 
-			RenderTriangle_wareframe_screen(p1, p2, p3, m_imgBuffer_back);
+			RenderTriangle_wareframe_screen(p1, p2, p3);
 			//RenderTriangle_fill_screen(p1, p2, p3, m_imgBuffer_back);
 		}
 
@@ -87,18 +87,18 @@ private:
 			dst_vertex->normal.Zero();
 		}
 
-		for (size_t indice_idx = 0; indice_idx < indeice_count - 2; indice_idx += 3){
+		for (size_t indice_idx = 0; indice_idx < indice_count - 2; indice_idx += 3){
 			DWORD vertex_idx_0 = indice[indice_idx];
 			DWORD vertex_idx_1 = indice[indice_idx+1];
 			DWORD vertex_idx_2 = indice[indice_idx+2];
 
-			auto src_v01 = src_vertex[vertex_idx_1].pos - src_vertex[vertex_idx_0].pos;
-			auto src_v12 = src_vertex[vertex_idx_2].pos - src_vertex[vertex_idx_1].pos;
-			auto src_v20 = src_vertex[vertex_idx_0].pos - src_vertex[vertex_idx_2].pos;
+			WorldPos src_v01 = src_vertex[vertex_idx_1].pos - src_vertex[vertex_idx_0].pos;
+			WorldPos src_v12 = src_vertex[vertex_idx_2].pos - src_vertex[vertex_idx_1].pos;
+			WorldPos src_v20 = src_vertex[vertex_idx_0].pos - src_vertex[vertex_idx_2].pos;
 
-			dst_vertex[vertex_idx_0]->normal += src_v20.CrossProduct(src_v01);
-			dst_vertex[vertex_idx_1]->normal += src_v01.CrossProduct(src_v12);
-			dst_vertex[vertex_idx_2]->normal += src_v12.CrossProduct(src_v20);
+			dst_vertex[vertex_idx_0].normal += src_v20.CrossProduct(src_v01);
+			dst_vertex[vertex_idx_1].normal += src_v01.CrossProduct(src_v12);
+			dst_vertex[vertex_idx_2].normal += src_v12.CrossProduct(src_v20);
 		}
 
 		for (size_t vertex_idx = 0; vertex_idx != vertex_count; ++vertex_idx){
@@ -111,11 +111,21 @@ private:
 		
 	}
 
-	// 渲染线段
-	void RenderLine_screen(ScreenPos p1, ScreenPos p2, ImgBuffer<Color4>* buffer);
-	// 渲染三角形
-	void RenderTriangle_fill_screen(ScreenPos p1, ScreenPos p2, ScreenPos p3, ImgBuffer<Color4>* buffer);
-	void RenderTriangle_wareframe_screen(ScreenPos p1, ScreenPos p2, ScreenPos p3, ImgBuffer<Color4>* buffer);
+	/* *********************************************
+	* 光栅化
+	* *********************************************/
+	// 插值
+	template <typename VertexStruct>
+	void RenderLine(VertexStruct v1, VertexStruct v2) {
+		
+	}
+	template <typename VertexStruct>
+	void RenderTriangle(VertexStruct v1, VertexStruct v2, VertexStruct v3);
+	// 屏幕空间
+	void RenderDot_screen(ScreenPos p1);
+	void RenderLine_screen(ScreenPos p1, ScreenPos p2);
+	void RenderTriangle_fill_screen(ScreenPos p1, ScreenPos p2, ScreenPos p3);
+	void RenderTriangle_wareframe_screen(ScreenPos p1, ScreenPos p2, ScreenPos p3);
 	
 public:
 	// 单例

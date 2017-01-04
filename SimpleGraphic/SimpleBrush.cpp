@@ -20,15 +20,18 @@ void SimpleBrush::DrawDot_coordPos(ScreenCoord x, ScreenCoord y, Color4 color, I
 /* *********************************************
 * 画直线
 * *********************************************/
-void SimpleBrush::DrawLine_floatPos(float x0, float y0, float x1, float y1, Color4 color, ImgBuffer<Color4>* buffer) {
-	_DrawLine_floatPos_bresenham(x0, y0, x1, y1, color, buffer);
+void SimpleBrush::DrawLine_floatPos(float x0, float y0, Color4 color0, float x1, float y1, Color4 color1, ImgBuffer<Color4>* buffer) {
+	_DrawLine_floatPos_bresenham(x0, y0, color0, x1, y1, color1, buffer);
 }
 
-void SimpleBrush::DrawLine_floatPos(ScreenPos v1, ScreenPos v2, Color4 color, ImgBuffer<Color4>* buffer) {
-	DrawLine_floatPos(v1._x, v1._y, v2._x, v2._y, color, buffer);
+void SimpleBrush::DrawLine_floatPos(ScreenPos v1, Color4 color0, ScreenPos v2, Color4 color1, ImgBuffer<Color4>* buffer) {
+	DrawLine_floatPos(v1._x, v1._y, color0, v2._x, v2._y, color1, buffer);
 }
 
-void SimpleBrush::_DrawLine_floatPos_bresenham(float x0, float y0, float x1, float y1, Color4 color, ImgBuffer<Color4>* buffer) {
+void SimpleBrush::_DrawLine_floatPos_bresenham(
+	float x0, float y0,  Color4 color0,
+	float x1, float y1, Color4 color1, 
+	ImgBuffer<Color4>* buffer) {
 	// 步进长度
 	int x_step = (x1 > x0) ? 1 : -1;
 	int y_step = (y1 > y0) ? 1 : -1;
@@ -36,6 +39,9 @@ void SimpleBrush::_DrawLine_floatPos_bresenham(float x0, float y0, float x1, flo
 	ScreenCoord x_bgn, y_bgn;
 	ScreenCoord* p_x_bgn = &x_bgn;
 	ScreenCoord* p_y_bgn = &y_bgn;
+	// 颜色插值
+	Color4 color_bgn = color0;
+	Color4 color_step = (color1 - color0) * ((float)x_step / (x1 - x0)) ;
 	// 转换使 k<1
 	if (std::fabs(y0 - y1) > std::fabs(x0 - x1)){
 		std::swap(x_step, y_step);
@@ -52,38 +58,60 @@ void SimpleBrush::_DrawLine_floatPos_bresenham(float x0, float y0, float x1, flo
 	float e = (*p_y_bgn) - (k*((*p_x_bgn) - x0) + y0);
 	while ((*p_x_bgn) != x_end){
 		(*p_x_bgn) += x_step;
+		color_bgn += color_step;
 		e += k*x_step;
 		if (e * y_step > 0.5 * y_step){ // todo 可以优化
 			e -= y_step;
 			(*p_y_bgn) += y_step;
 		}
-		DrawDot_coordPos(x_bgn, y_bgn, color, buffer);
+		DrawDot_coordPos(x_bgn, y_bgn, color_bgn, buffer);
 	}
 }
 
-void SimpleBrush::_DrawLine_coordPos_h(ScreenCoord x0, ScreenCoord x1, ScreenCoord y, Color4 color, ImgBuffer<Color4>* buffer){
+void SimpleBrush::_DrawLine_coordPos_h(
+	ScreenCoord x0, Color4 color0,
+	ScreenCoord x1, Color4 color1,
+	ScreenCoord y,
+	ImgBuffer<Color4>* buffer){
 	if (x0 > x1){
 		std::swap(x0, x1);
 	}
 
+	Color4 color_bgn = color0;
+	Color4 color_step = (color1 - color0) * (1.f / (x1 - x0));
 	do{
-		DrawDot_coordPos(x0, y, color, buffer);
+		DrawDot_coordPos(x0, y, color_bgn, buffer);
+		color_bgn += color_step;
 	} while (++x0 <= x1);
 }
 
-void SimpleBrush::_DrawLine_coordPos_h(float x0, float x1, ScreenCoord y, Color4 color, ImgBuffer<Color4>* buffer){
-	_DrawLine_coordPos_h(static_cast<ScreenCoord>(x0 + 0.5), static_cast<ScreenCoord>(x1 + 0.5), y, color, buffer);
+void SimpleBrush::_DrawLine_coordPos_h(
+	float x0, Color4 color0,
+	float x1, Color4 color1,
+	ScreenCoord y,
+	ImgBuffer<Color4>* buffer) {
+	_DrawLine_coordPos_h(static_cast<ScreenCoord>(x0 + 0.5), color0, static_cast<ScreenCoord>(x1 + 0.5), color1, y, buffer);
 }
 
 /* *********************************************
 * 填充三角形
 * *********************************************/
-void SimpleBrush::DrawTriangle(ScreenPos v1, ScreenPos v2, ScreenPos v3, Color4 color, ImgBuffer<Color4>* buffer) {
-	DrawTriangle(v1._x, v1._y, v2._x, v2._y, v3._x, v3._y, color, buffer);
+void SimpleBrush::DrawTriangle(
+	ScreenPos v1, Color4 color1,
+	ScreenPos v2, Color4 color2,
+	ScreenPos v3, Color4 color3,
+	ImgBuffer<Color4>* buffer) {
+	DrawTriangle(v1._x, v1._y, color1,
+		v2._x, v2._y, color2,
+		v3._x, v3._y, color3, buffer);
 }
 
 // todo 不够精确，可以优化
-void SimpleBrush::DrawTriangle(float x0, float y0, float x1, float y1, float x2, float y2, Color4 color, ImgBuffer<Color4>* buffer){
+void SimpleBrush::DrawTriangle(
+	float x0, float y0, Color4 color0,
+	float x1, float y1, Color4 color1,
+	float x2, float y2, Color4 color2,
+	ImgBuffer<Color4>* buffer) {
 	// 转换使三个点为y值从小到大排列
 	if (y0 > y1){
 		std::swap(x0, x1);
@@ -106,22 +134,34 @@ void SimpleBrush::DrawTriangle(float x0, float y0, float x1, float y1, float x2,
 		return;
 	}
 	float x_mid = (y1 - y2) / (y0 - y2) * (x0 - x2) + x2;
+	Color4 color_mid = ((float)(y1 - y2) / (y0 - y2)) * (color1 - color0) + color0;
 
-	float x_bgn = x0;
+	float x_left = x0;
 	float k02 = (x2 - x0) / (y2 - y0);
-	float x_end = x0;
+	float x_right = x0;
 	float k01 = (x1 - x0) / (y1 - y0);
 	float k12 = (x1 - x2) / (y1 - y2);
+
+	Color4 color_left = color0;
+	Color4 color02 = (1.f / (y2 - y0))*(color2 - color0);
+	Color4 color_right = color0;
+	Color4 color01 = (1.f / (y1 - y0)) * (color1 - color0);
+	Color4 color12 = (1.f / (y2 - y1))*(color2 - color1);
+
 	while (y0_i <= y2_i){
 		if (y0_i == y1_i){
 			k01 = k12;
-			x_end = x1;
-			_DrawLine_coordPos_h(x_mid, x1, y1_i, color, buffer);
+			x_right = x1;
+			color01 = color12;
+			color_right = color1;
+			_DrawLine_coordPos_h(x_mid, color_mid, x1, color1, y1_i, buffer);
 		}
 		else{
-			x_bgn += k02;
-			x_end += k01;
-			_DrawLine_coordPos_h(x_bgn, x_end, y0_i, color, buffer);
+			x_left += k02;
+			x_right += k01;
+			color_left += color02;
+			color_right += color01;
+			_DrawLine_coordPos_h(x_left, color_left, x_right, color_right, y0_i, buffer);
 		}
 		++y0_i;
 	}
