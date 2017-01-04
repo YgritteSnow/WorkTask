@@ -29,11 +29,7 @@ namespace BitMapDisplay {
 		hBitMap.bmiHeader.biPlanes = 1;
 		hBitMap.bmiHeader.biBitCount = 8 * BitMapChannel;
 		hBitMap.bmiHeader.biCompression = BI_RGB;
-		auto Zoomed_Width = TO_MUL4(WINDOW_WIDTH);
-		auto Zoomed_Height = TO_MUL4(WINDOW_HEIGHT);
-		auto offset_width = Zoomed_Width - WINDOW_WIDTH;
-		auto offset_height = Zoomed_Height - WINDOW_HEIGHT;
-		hBitMap.bmiHeader.biSizeImage = Zoomed_Width * WINDOW_HEIGHT;
+		hBitMap.bmiHeader.biSizeImage = TO_MUL4(WINDOW_WIDTH) * WINDOW_HEIGHT;
 
 		HDC dc = CreateCompatibleDC(hdc);
 
@@ -47,12 +43,6 @@ namespace BitMapDisplay {
 
 		for (int y = 0; y != WINDOW_HEIGHT; ++y) {
 			char* pLine = static_cast<char*>(pImg) + TO_MUL4(WINDOW_WIDTH * BitMapChannel) * y;
-			//for (int x = 0; x != WINDOW_WIDTH; ++x) {
-			//	*(pLine + BitMapChannel * x) = 0xff;
-			//	*(pLine + BitMapChannel * x + 1) = 0x0;
-			//	*(pLine + BitMapChannel * x + 2) = 0;
-			//}
-			//char* pSrc = static_cast<char*>(buffer->pLineAt(y));
 			char* pSrc = (char*)(buffer->pLineAt(y));
 			memcpy(pLine, pSrc, WINDOW_WIDTH * BitMapChannel);
 		}

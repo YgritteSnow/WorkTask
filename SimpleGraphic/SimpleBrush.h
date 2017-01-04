@@ -14,9 +14,13 @@ public:
 		, m_data(new ColorType[width*height])
 	{};
 public:
-	void clear() { memset(m_data, 0x0, sizeof(ColorType) * m_width * m_height); };
+	void clear() { memset(m_data, 0x33, sizeof(ColorType) * m_width * m_height); };
 	ColorType* pPixelAt(ScreenCoord x, ScreenCoord y) const { return m_data + y * m_width + x; };
-	ColorType* pPixelAt_normedPos(float x, float y) const { return m_data + (int)(y*m_height+0.5) * m_width + (int)(x*m_width+0.5); };
+	ColorType* pPixelAt_normedPos(float x, float y) const { 
+		auto tmp = (int)(y*(m_height-1) + 0.5) * m_width + (int)(x*(m_width-1) + 0.5);
+		return m_data + tmp;
+		//return m_data + (int)(y*m_height+0.5) * m_width + (int)(x*m_width+0.5); 
+	};
 	ColorType* pLineAt(ScreenCoord y) const { return m_data + y * m_width; };
 	ColorType* pRowAt(ScreenCoord x) const { return m_data + x * m_height; };
 	ColorType* pHead() const { return m_data; };
@@ -30,14 +34,49 @@ private:
 class SimpleBrush{
 public:
 	// 画单像素点
-	static void DrawDot_screen(float x0, float y0, Color4 color, ImgBuffer<Color4>* buffer) {
-		*(buffer->pPixelAt_normedPos(x0, y0)) = color;
-	}
-	static void DrawDot_screen(ScreenPos v, Color4 color, ImgBuffer<Color4>* buffer);
+	static void DrawDot_normedPos(
+		float x0, float y0, 
+		Color4 color, ImgBuffer<Color4>* buffer);
+	static void DrawDot_normedPos(
+		ScreenPos v, 
+		Color4 color, ImgBuffer<Color4>* buffer);
+	static void DrawDot_coordPos(
+		ScreenCoord x, ScreenCoord y, 
+		Color4 color, ImgBuffer<Color4>* buffer);
+
 	// 画直线
-	static void DrawLine_screen(float x0, float y0, float x1, float y1, ImgBuffer<Color4>* buffer);
-	static void DrawLine_screen(ScreenPos v1, ScreenPos v2, ImgBuffer<Color4>* buffer);
-	static void _DrawLine_screen_bresenham(float x0, float y0, float x1, float y1, ImgBuffer<Color4>* buffer);
+	static void DrawLine_floatPos(
+		float x0, float y0, 
+		float x1, float y1, 
+		Color4 color, ImgBuffer<Color4>* buffer);
+	static void DrawLine_floatPos(
+		ScreenPos v1, 
+		ScreenPos v2, 
+		Color4 color, ImgBuffer<Color4>* buffer);
+	static void _DrawLine_floatPos_bresenham(
+		float x0, float y0, 
+		float x1, float y1, 
+		Color4 color, ImgBuffer<Color4>* buffer);
+	static void _DrawLine_coordPos_h(
+		ScreenCoord x0, ScreenCoord x1,
+		ScreenCoord y,
+		Color4 color, ImgBuffer<Color4>* buffer);
+	static void _DrawLine_coordPos_h(
+		float x0, float x1,
+		ScreenCoord y,
+		Color4 color, ImgBuffer<Color4>* buffer);
+
+	// 填充三角形
+	static void DrawTriangle(
+		ScreenPos v1, 
+		ScreenPos v2, 
+		ScreenPos v3, 
+		Color4 color, ImgBuffer<Color4>* buffer);
+	static void DrawTriangle(
+		float x0, float y0,
+		float x1, float y1,
+		float x2, float y2,
+		Color4 color, ImgBuffer<Color4>* buffer);
 };
 
 #endif

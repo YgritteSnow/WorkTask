@@ -20,7 +20,7 @@ bool RenderManager::Init(ScreenCoord width, ScreenCoord height){
 	return (RenderManager::m_instance != nullptr);
 }
 
-void RenderManager::Uninit(){
+void RenderManager::UnInit(){
 	if (RenderManager::m_instance != nullptr){
 		RenderManager::m_instance->ReleaseBuffer();
 		delete RenderManager::m_instance;
@@ -67,21 +67,22 @@ void RenderManager::ReleaseBuffer() {
 /* *********************************************
  * 渲染相关
  * *********************************************/
-void RenderManager::Render(){
-	// for debug
-	int i = 100;
-	while (i-- > 0) {
-		float x = ((float)rand() / RAND_MAX + 1) / 2;
-		float y = ((float)rand() / RAND_MAX + 1) / 2;
-		SimpleBrush::DrawDot_screen(
-			//( (float)rand() / RAND_MAX + 1 )/ 2, 
-			//((float)rand() / RAND_MAX + 1) / 2,
-			x,
-			y,
-			Color4(255, 0, 255, 0), 
-			m_imgBuffer_back);
-	}
-	//RenderLine(ScreenPos(0, 0), ScreenPos(100, 100), m_imgBuffer_back);
+void RenderManager::RenderDummy(){
+	// 渲染屏幕上一些随机的点（debug）
+	//int i = 500;
+	//while (--i > 0) {
+	//	SimpleBrush::DrawDot_coordPos(
+	//		i, 
+	//		i,
+	//		Color4(255, 255, 255, 255), 
+	//		m_imgBuffer_back);
+	//}
+
+	// 渲染屏幕上一条线（debug）
+	RenderLine_screen(ScreenPos(333.333f, 166.666f), ScreenPos(125, 125), m_imgBuffer_back);
+
+	// 渲染一个三角形（debug）
+	//RenderTriangle_fill_screen(ScreenPos(333.333, 166.666), ScreenPos(125, 125), ScreenPos(300, 100), m_imgBuffer_back);
 }
 
 void RenderManager::Clear() {
@@ -95,12 +96,18 @@ void RenderManager::Present() {
 	BitMapDisplay::Display<Color4>(m_imgBuffer_front);
 }
 
-void RenderManager::RenderLine(ScreenPos p1, ScreenPos p2, ImgBuffer<Color4>* buffer) {
-	SimpleBrush::DrawLine_screen(p1, p2, buffer);
+void RenderManager::RenderLine_screen(ScreenPos p1, ScreenPos p2, ImgBuffer<Color4>* buffer) {
+	SimpleBrush::DrawLine_floatPos(p1, p2, Color4(255,255,255,255), buffer);
 }
 
-void RenderManager::RenderTriangle(ScreenPos p1, ScreenPos p2, ScreenPos p3, ImgBuffer<Color4>* buffer) {
-
+void RenderManager::RenderTriangle_wareframe_screen(ScreenPos p1, ScreenPos p2, ScreenPos p3, ImgBuffer<Color4>* buffer){
+	// 三角形边框
+	RenderLine_screen(p1, p2, m_imgBuffer_back);
+	RenderLine_screen(p2, p3, m_imgBuffer_back);
+	RenderLine_screen(p3, p1, m_imgBuffer_back);
+}
+void RenderManager::RenderTriangle_fill_screen(ScreenPos p1, ScreenPos p2, ScreenPos p3, ImgBuffer<Color4>* buffer) {
+	SimpleBrush::DrawTriangle(p1, p2, p3, Color4(255, 255, 255, 255), buffer);
 }
 
 /* *********************************************

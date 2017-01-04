@@ -2,12 +2,13 @@
 #include <Windows.h>
 #include <tchar.h>
 #include "RenderManager.h"
+#include "Scene.h"
 
 const TCHAR* WINDOW_NAME = _T("jj");
 const TCHAR* WINDOW_CAPTION = _T("SimpleGraphics - by jj");
 UINT WINDOW_POS_X = 100;
 UINT WINDOW_POS_Y = 100;
-UINT WINDOW_WIDTH = 497;
+UINT WINDOW_WIDTH = 500;
 UINT WINDOW_HEIGHT = 500;
 
 HWND g_hwnd = NULL;
@@ -33,7 +34,8 @@ LRESULT CALLBACK WinProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp){
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	WNDCLASSEX myWnd = {
 		sizeof(WNDCLASSEX),
-		CS_HREDRAW | CS_VREDRAW,
+		CS_CLASSDC,
+		//CS_HREDRAW | CS_VREDRAW,
 		WinProc,
 		0, 0,
 		hInst,
@@ -52,7 +54,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		NULL,
 		WINDOW_NAME,
 		WINDOW_CAPTION,
-		WS_OVERLAPPEDWINDOW,
+		WS_VISIBLE | WS_POPUP,
 		WINDOW_POS_X, WINDOW_POS_Y,
 		WINDOW_WIDTH, WINDOW_HEIGHT,
 		NULL, NULL, hInst, NULL);
@@ -64,29 +66,48 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		return E_FAIL;
 	}
 
+	auto initResult = S_OK;
 	// 初始化管理的类
 	if (!RenderManager::Init(WINDOW_WIDTH, WINDOW_HEIGHT)){
-		return E_FAIL;
+		initResult = E_FAIL;
+	}
+	if (!SceneManager::Init()){
+		initResult = E_FAIL;
+	}
+	if (!CameraManager::Init()){
+		initResult = E_FAIL;
 	}
 
-	MSG msg;
-	ZeroMemory(&msg, sizeof(msg));
-	while (true){
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)){
-			if (msg.message == WM_QUIT){
-				break;
+	if (initResult == S_OK){
+		// 设置一些测试数据
+		Model<DummyVertex>* dummyModel = new Model<DummyVertex>;
+		dummyModel->DummyData();
+
+		Scene* dummyScene = new Scene;
+		dummyScene->AddModel(dummyModel);
+
+		SceneManager::GetInstance()->AddScene(dummyScene);
+
+		// 主循环
+		MSG msg;
+		ZeroMemory(&msg, sizeof(msg));
+		while (true){
+			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)){
+				if (msg.message == WM_QUIT){
+					break;
+				}
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
 			}
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-		else{
-			RenderManager::GetInstance()->Clear();
-			RenderManager::GetInstance()->Render();
-			RenderManager::GetInstance()->Present();
+			else{
+				SceneManager::GetInstance()->Render();
+			}
 		}
 	}
 
-	RenderManager::Uninit();
+	CameraManager::UnInit();
+	SceneManager::UnInit();
+	RenderManager::UnInit();
 	UnregisterClass(WINDOW_NAME, myWnd.hInstance);
 
 	return S_OK;
