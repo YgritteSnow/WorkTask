@@ -25,9 +25,6 @@ void Scene::Render(){
 }
 
 void Scene::Update(TimeType delta_time){
-	for (auto it = m_vec_model.begin(); it != m_vec_model.end(); ++it){
-		(*it)->RotateXYZ(0, 0, 0.01);
-	}
 }
 
 bool SceneManager::Init(){

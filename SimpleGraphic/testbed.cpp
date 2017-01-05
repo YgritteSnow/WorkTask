@@ -11,12 +11,13 @@ UINT WINDOW_POS_X = 100;
 UINT WINDOW_POS_Y = 100;
 UINT WINDOW_WIDTH = 500;
 UINT WINDOW_HEIGHT = 500;
-TimeType MAX_FRAME_RATE = 100;
+TimeType MAX_FRAME_RATE = 0.0001;
 HWND g_hwnd = NULL;
 
 LRESULT CALLBACK WinProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp){
 	switch (msg){
 	case WM_PAINT:
+		SceneManager::GetInstance()->Render();
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
@@ -88,7 +89,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	if (initResult == S_OK){
 		// 设置一些测试数据
 		Model<DummyVertex>* dummyModel = new Model<DummyVertex>;
-		dummyModel->DummyBall(1, 8, 10, NormColor4(1,1,1,1));
+		//dummyModel->DummyBall(1, 8, 10, NormColor4(1,1,1,1));
+		dummyModel->DummyQuad(5, 5);
 
 		Scene* dummyScene = new Scene;
 		dummyScene->AddModel(dummyModel);
@@ -111,6 +113,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 					CameraManager::GetInstance()->Update(TimeManager::GetInstance()->GetFrameInterval());
 					SceneManager::GetInstance()->Update(TimeManager::GetInstance()->GetFrameInterval());
 					SceneManager::GetInstance()->Render();
+
+					dummyModel->RotateXYZ(0, 0, 0.001);
 				}
 			}
 		}

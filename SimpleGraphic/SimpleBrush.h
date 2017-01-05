@@ -12,8 +12,14 @@ public:
 	ImgBuffer(ScreenCoord width, ScreenCoord height)
 		:width(width)
 		, height(height)
-		, m_data(new ColorType[width*height])
-	{};
+		, m_data(nullptr)
+	{
+		m_data = new ColorType[width*height];
+	};
+	~ImgBuffer() {
+		delete m_data;
+		m_data = nullptr;
+	}
 public:
 	void clear() { memset(m_data, 0x33, sizeof(ColorType) * width * height); };
 	ColorType* pPixelAt(ScreenCoord x, ScreenCoord y) const { return m_data + y * width + x; };

@@ -58,8 +58,8 @@ public:
 			const auto& v1 = *(dst_vertex + indice_idx_1);
 			const auto& v2 = *(dst_vertex + indice_idx_2);
 
-			RenderTriangle_wireframe(v0, v1, v2);
-			//RenderTriangle_fill(v0, v1, v2);
+			//RenderTriangle_wireframe(v0, v1, v2);
+			RenderTriangle_fill(v0, v1, v2);
 		}
 
 		delete[] dst_vertex;

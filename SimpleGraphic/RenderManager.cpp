@@ -1,5 +1,5 @@
 #include "RenderManager.h"
-#include "BitMapDisplay.h"
+#include "BitMap.h"
 #include <random>
 /* *********************************************
 * ¹¹Ôì/Îö¹¹
@@ -82,7 +82,11 @@ void RenderManager::Present() {
 	auto tmp = m_imgBuffer_front;
 	m_imgBuffer_front = m_imgBuffer_back;
 	m_imgBuffer_back = tmp;
-	BitMapDisplay::Display<ShortColor4>(m_imgBuffer_front);
+	//BitMap::Display(m_imgBuffer_front);
+
+	auto ttt = BitMap::Load<ShortColor4>("tex.bmp");
+	BitMap::Display(ttt);
+	delete ttt;
 }
 
 /* *********************************************

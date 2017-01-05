@@ -48,6 +48,27 @@ struct DummyVertex{
 template <typename VertexStruct>
 class Model{
 public:
+	void DummyData() {
+		m_worldMat.SetTranslate(0, 0, 5);
+
+		m_vec_vertex.push_back(VertexStruct(-1, -1, -1, 1, 0, 0, 1));
+		m_vec_vertex.push_back(VertexStruct(-1, 1, -1, 1, 1, 0, 1));
+		m_vec_vertex.push_back(VertexStruct(-1, 1, 1, 0, 0, 1, 1));
+		m_vec_vertex.push_back(VertexStruct(1, 1, 1, 0, 1, 1, 1));
+
+		m_vec_indice.push_back(0);
+		m_vec_indice.push_back(1);
+		m_vec_indice.push_back(2);
+		m_vec_indice.push_back(2);
+		m_vec_indice.push_back(1);
+		m_vec_indice.push_back(3);
+		m_vec_indice.push_back(3);
+		m_vec_indice.push_back(1);
+		m_vec_indice.push_back(0);
+		m_vec_indice.push_back(3);
+		m_vec_indice.push_back(0);
+		m_vec_indice.push_back(2);
+	}
 	void DummyBall(float radius, int h_count, int r_count, NormColor4 color){
 		// 横切为 h_count 层圆片，每个圆片分为 r_count 个扇形
 		// 至少应该用 2 层圆片，4 个扇形
@@ -133,26 +154,20 @@ public:
 		m_vec_indice.push_back(idx_start);
 		m_vec_indice.push_back(idx_last);
 	}
-	void DummyData(){
+	void DummyQuad(float width, float height) {
 		m_worldMat.SetTranslate(0, 0, 5);
 
-		m_vec_vertex.push_back(VertexStruct(-1, -1, -1, 1, 0, 0, 1));
-		m_vec_vertex.push_back(VertexStruct(-1, 1, -1, 1, 1, 0, 1));
-		m_vec_vertex.push_back(VertexStruct(-1, 1, 1, 0, 0, 1, 1));
-		m_vec_vertex.push_back(VertexStruct(1, 1, 1, 0, 1, 1, 1));
+		m_vec_vertex.push_back(VertexStruct(WorldPos(-1, -1, 0), NormColor4(1, 0,0, 1), WorldPos(0, 0, -1)));
+		m_vec_vertex.push_back(VertexStruct(WorldPos(-1, 1, 0), NormColor4(0, 1, 0, 1), WorldPos(0, 0, -1)));
+		m_vec_vertex.push_back(VertexStruct(WorldPos(1, 1, 0), NormColor4(0, 0, 1, 1), WorldPos(0, 0, -1)));
+		m_vec_vertex.push_back(VertexStruct(WorldPos(1, -1, 0), NormColor4(1, 1, 1, 1), WorldPos(0, 0, -1)));
 
 		m_vec_indice.push_back(0);
-		m_vec_indice.push_back(1);
-		m_vec_indice.push_back(2);
 		m_vec_indice.push_back(2);
 		m_vec_indice.push_back(1);
-		m_vec_indice.push_back(3);
+		m_vec_indice.push_back(2);
 		m_vec_indice.push_back(3);
 		m_vec_indice.push_back(1);
-		m_vec_indice.push_back(0);
-		m_vec_indice.push_back(3);
-		m_vec_indice.push_back(0);
-		m_vec_indice.push_back(2);
 	}
 	VertexStruct* GetVertexes(){ return m_vec_vertex.size() > 0 ? &(m_vec_vertex[0]) : nullptr; }
 	DWORD* GetIndices(){ return m_vec_indice.size() > 0 ? &(m_vec_indice[0]) : nullptr; }
