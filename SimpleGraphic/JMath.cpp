@@ -1,5 +1,6 @@
 #include "JMath.h"
 
+#include <cmath>
 #include <memory.h>
 
 namespace JMath{
@@ -8,6 +9,7 @@ namespace JMath{
 	* *********************************************/
 	const float EPSL = 0.0000001f; // todo 
 	bool f_equal(float l, float r) { return std::fabs(l - r) < EPSL; }
+	extern const float PI = 3.14159265359;
 
 	/* *********************************************
 	* Matrix
@@ -97,5 +99,51 @@ namespace JMath{
 	}
 	Mat44 Mat44::PostMulMat(const Mat44& other) const {
 		return other.PreMulMat(*this);
+	}
+	Mat44 Mat44::GenByRotateXYZ(float x, float y, float z){
+		return GenByRotateZ(z).PreMulMat(GenByRotateY(y)).PreMulMat(GenByRotateX(x));
+	}
+	Mat44 Mat44::GenByRotateZ(float y){
+		Mat44 tmp;
+		tmp.SetIdentity();
+		tmp._m[0][0] = std::cos(y);
+		tmp._m[0][1] = std::sin(y);
+		tmp._m[1][1] = std::cos(y);
+		tmp._m[1][0] = -std::sin(y);
+		return tmp;
+	}
+	Mat44 Mat44::GenByRotateY(float y){
+		Mat44 tmp;
+		tmp.SetIdentity();
+		tmp._m[1][1] = std::cos(y);
+		tmp._m[1][2] = std::sin(y);
+		tmp._m[2][2] = std::cos(y);
+		tmp._m[2][1] = -std::sin(y);
+		return tmp;
+	}
+	Mat44 Mat44::GenByRotateX(float y){
+		Mat44 tmp;
+		tmp.SetIdentity();
+		tmp._m[2][2] = std::cos(y);
+		tmp._m[2][0] = std::sin(y);
+		tmp._m[0][0] = std::cos(y);
+		tmp._m[0][2] = -std::sin(y);
+		return tmp;
+	}
+	Mat44 Mat44::GenByTranslate(float x, float y, float z){
+		Mat44 tmp;
+		tmp.SetIdentity();
+		tmp._m[3][0] = x;
+		tmp._m[3][1] = y;
+		tmp._m[3][2] = z;
+		return tmp;
+	}
+	Mat44 Mat44::RotateXYZ(float x, float y, float z) const {
+		Mat44 tmp = GenByRotateXYZ(x, y, z);
+		return this->PreMulMat(tmp);
+	}
+	Mat44 Mat44::Translate(float x, float y, float z) const {
+		Mat44 tmp = GenByTranslate(x, y, z);
+		return this->PreMulMat(tmp);
 	}
 }

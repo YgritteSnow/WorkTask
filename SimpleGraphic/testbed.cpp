@@ -3,6 +3,7 @@
 #include <tchar.h>
 #include "RenderManager.h"
 #include "Scene.h"
+#include "Light.h"
 
 const TCHAR* WINDOW_NAME = _T("jj");
 const TCHAR* WINDOW_CAPTION = _T("SimpleGraphics - by jj");
@@ -10,7 +11,7 @@ UINT WINDOW_POS_X = 100;
 UINT WINDOW_POS_Y = 100;
 UINT WINDOW_WIDTH = 500;
 UINT WINDOW_HEIGHT = 500;
-
+TimeType MAX_FRAME_RATE = 100;
 HWND g_hwnd = NULL;
 
 LRESULT CALLBACK WinProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp){
@@ -77,11 +78,17 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	if (!CameraManager::Init()){
 		initResult = E_FAIL;
 	}
+	if (!TimeManager::Init(MAX_FRAME_RATE)){
+		initResult = E_FAIL;
+	}
+	if (!LightManager::Init()){
+		initResult = E_FAIL;
+	}
 
 	if (initResult == S_OK){
 		// 设置一些测试数据
 		Model<DummyVertex>* dummyModel = new Model<DummyVertex>;
-		dummyModel->DummyData();
+		dummyModel->DummyBall(1, 8, 10, NormColor4(1,1,1,1));
 
 		Scene* dummyScene = new Scene;
 		dummyScene->AddModel(dummyModel);
@@ -100,7 +107,11 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 				DispatchMessage(&msg);
 			}
 			else{
-				SceneManager::GetInstance()->Render();
+				if (TimeManager::GetInstance()->Tick()){
+					CameraManager::GetInstance()->Update(TimeManager::GetInstance()->GetFrameInterval());
+					SceneManager::GetInstance()->Update(TimeManager::GetInstance()->GetFrameInterval());
+					SceneManager::GetInstance()->Render();
+				}
 			}
 		}
 	}
@@ -108,6 +119,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	CameraManager::UnInit();
 	SceneManager::UnInit();
 	RenderManager::UnInit();
+	TimeManager::UnInit();
+	LightManager::UnInit();
 	UnregisterClass(WINDOW_NAME, myWnd.hInstance);
 
 	return S_OK;

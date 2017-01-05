@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\math">
-      <UniqueIdentifier>{8961bebc-fd2c-40b2-b0ba-1af30f8f062d}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="testbed.cpp">
@@ -30,8 +27,23 @@
     <ClCompile Include="SimpleBrush.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Color.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JTime.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
     <ClCompile Include="JMath.cpp">
-      <Filter>Header Files\math</Filter>
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -44,10 +56,25 @@
     <ClInclude Include="SimpleBrush.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="JMath.h">
-      <Filter>Header Files\math</Filter>
-    </ClInclude>
     <ClInclude Include="BitMapDisplay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="JTime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="JMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

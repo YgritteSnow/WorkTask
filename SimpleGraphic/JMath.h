@@ -4,18 +4,26 @@
 #include <memory.h>
 #include <cmath>
 
+template <typename DataType>
+DataType saturate(DataType d){
+	return d < 0 ? 0 : d;
+}
+
 namespace JMath {
 	/* *********************************************
 	* common
 	* *********************************************/
 	extern const float EPSL;
 	bool f_equal(float l, float r);
+	extern const float PI;
 
 	/* *********************************************
 	* Vector3
 	* *********************************************/
 	template <typename DataType>
 	class Vec4;
+	template <typename DataType>
+	class Vec2;
 
 	template<typename DataType>
 	class Vec3 {
@@ -106,6 +114,7 @@ namespace JMath {
 		// 转换为齐次坐标
 		Vec4<DataType> ToVec4Pos(){ return Vec4<DataType>(_x, _y, _z, 1); }
 		Vec4<DataType> ToVec4Dir(){ return Vec4<DataType>(_x, _y, _z, 0); }
+		Vec2<DataType> ToVec2(){ return Vec2<DataType>(_x, _y); }
 	public:
 		float _x, _y, _z;
 	};
@@ -129,6 +138,8 @@ namespace JMath {
 	public:
 		Vec4() :_x(0), _y(0), _z(0), _w(0) {};
 		Vec4(DataType x, DataType y, DataType z, DataType w) : _x(x), _y(y), _z(z), _w(w) {};
+		template <typename OtherDataType>
+		explicit Vec4(const Vec4<OtherDataType>& v) :_x(v._x), _y(v._y), _z(v._z), _w(v._w){}
 	public:
 		Vec4 Mul(const Vec4& other) const {
 			return Vec4(_x*other._x, _y*other._y, _z*other._z, _w*other._w);
@@ -150,6 +161,9 @@ namespace JMath {
 		friend Vec4 operator-(const Vec4& lhm, float rhm) {
 			return lhm + -rhm;
 		}
+		friend Vec4 operator*(const Vec4& lhm, const Vec4& rhm) {
+			return Vec4(lhm._x*rhm._x, lhm._y*rhm._y, lhm._z*rhm._z, lhm._w*rhm._w);
+		}
 		friend Vec4 operator*(const Vec4& lhm, float f) {
 			return Vec4(lhm._x*f, lhm._y*f, lhm._z*f, lhm._w*f);
 		}
@@ -157,16 +171,24 @@ namespace JMath {
 			return Vec4(lhm._x*f, lhm._y*f, lhm._z*f, lhm._w*f);
 		}
 	public:
-		Vec3<DataType> ToVec3(){ return Vec3<DataType>(_x / _w, _y / _w, _z / _w); }
+		Vec3<DataType> ToVec3Homo(){ return Vec3<DataType>(_x / _w, _y / _w, _z / _w); }
+		Vec3<DataType> ToVec3(){ return Vec3<DataType>(_x, _y, _z); }
+		Vec4 ToSaturate() const {
+			return Vec4(
+				(_x > 1) ? 1 : ((_x < 0) ? 0 : _x),
+				(_y > 1) ? 1 : ((_y < 0) ? 0 : _y),
+				(_z > 1) ? 1 : ((_z < 0) ? 0 : _z),
+				(_w > 1) ? 1 : ((_w < 0) ? 0 : _w));
+		}
 	public:
 		DataType _x, _y, _z, _w;
 	};
 }
 
-typedef JMath::Vec4<unsigned char> Color4;
 typedef JMath::Vec2<float> ScreenPos;
 typedef JMath::Vec3<float> WorldPos;
 typedef JMath::Vec4<float> HomoPos;
+typedef JMath::Vec2<float> UVPos;
 typedef int ScreenCoord;
 
 namespace JMath{
@@ -195,6 +217,12 @@ namespace JMath{
 			_m[2][0] = v3._x; _m[2][1] = v3._y; _m[2][2] = v3._z; _m[2][3] = v3._w;
 			_m[3][0] = v4._x; _m[3][1] = v4._y; _m[3][2] = v4._z; _m[3][3] = v4._w;
 		}
+		static Mat44 GenByRotateXYZ(float x, float y, float z);
+		static Mat44 GenByRotateZ(float y);
+		static Mat44 GenByRotateY(float y);
+		static Mat44 GenByRotateX(float y);
+		static Mat44 GenByTranslate(float x, float y, float z);
+
 		void SetZero();
 		void SetIdentity();
 		void SetTranslate(float x, float y, float z);
@@ -209,6 +237,8 @@ namespace JMath{
 		HomoPos PreMulVec(HomoPos pos) const;
 		Mat44 PostMulMat(const Mat44& other) const;
 		Mat44 PreMulMat(const Mat44& other) const;
+		Mat44 RotateXYZ(float y, float p, float r) const;
+		Mat44 Translate(float x, float y, float z) const;
 	private:
 		float _m[4][4];
 	};

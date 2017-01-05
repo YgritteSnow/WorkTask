@@ -3,30 +3,6 @@
 #include "Scene.h"
 #include "RenderManager.h"
 
-/* *********************************************
-* Camera & CameraManager
-* *********************************************/
-CameraManager* CameraManager::m_instance = nullptr;
-
-void Camera::SetViewMat(WorldPos lookat, WorldPos cameraPos, WorldPos upDirect){
-	m_viewMat.SetViewMat(lookat, cameraPos, upDirect);
-}
-void Camera::SetProjMat(float fov, float aspect, float nearPlane, float farPlane){
-	m_projMat.SetProjMat(fov, aspect, nearPlane, farPlane);
-}
-bool CameraManager::Init(){
-	m_instance = new CameraManager;
-	if (!m_instance){
-		return false;
-	}
-	if (!m_instance->InitCamera()){
-		return false;
-	}
-	return true;
-}
-void CameraManager::UnInit(){
-	return;
-}
 
 /* *********************************************
 * Scene & SceneManager
@@ -44,7 +20,14 @@ void Scene::Render(){
 			(*it)->GetModelMat()
 			);
 	}
+	//RenderManager::GetInstance()->RenderDummy();
 	RenderManager::GetInstance()->Present();
+}
+
+void Scene::Update(TimeType delta_time){
+	for (auto it = m_vec_model.begin(); it != m_vec_model.end(); ++it){
+		(*it)->RotateXYZ(0, 0, 0.01);
+	}
 }
 
 bool SceneManager::Init(){
@@ -65,6 +48,13 @@ void SceneManager::UnInit(){
 void SceneManager::Render(){
 	for (auto it = m_vec_scenes.begin(); it != m_vec_scenes.end(); ++it){
 		(*it)->Render();
+		break;
+	}
+}
+
+void SceneManager::Update(TimeType delta_time){
+	for (auto it = m_vec_scenes.begin(); it != m_vec_scenes.end(); ++it){
+		(*it)->Update(delta_time);
 		break;
 	}
 }
