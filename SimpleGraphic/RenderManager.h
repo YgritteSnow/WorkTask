@@ -8,7 +8,6 @@
 #include "Light.h"
 #include "Texture.h"
 
-typedef float DepthBufferPixel;
 extern UINT WINDOW_WIDTH;
 extern UINT WINDOW_HEIGHT;
 
@@ -18,7 +17,7 @@ const MaskType NO_CULLED = 0xff;
 const MaskType BACK_CULLED = 0xff ^ 0x01;
 const MaskType SCREEN_CULLED = 0xff ^ 0x02;
 inline
-bool IS_CULLED(MaskType c){ return c ^ NO_CULLED; }
+MaskType IS_CULLED(MaskType c){ return c ^ NO_CULLED; }
 
 // 渲染状态的 mask
 typedef unsigned char StateMaskType;
@@ -55,9 +54,6 @@ public:
 	static RenderManager* GetInstance();
 
 public:
-	// 设置贴图 （todo 直接使用外部指针，可能变成野指针）
-	void SetTexture(std::string texname){ m_cur_texture = TextureManager::GetInstance()->LoadTexture_norm(texname); }
-	ImgBuffer<NormColor4>* GetTexture(){ return m_cur_texture; }
 	// 设置渲染状态
 	void SetRenderState(StateMaskType state, StateMaskType value){ 
 		m_renderState = m_renderState & (StateMaskAll ^ state);
@@ -240,10 +236,7 @@ private:
 	// 插值
 	template <typename VertexStruct>
 	void RenderLine(VertexStruct v1, VertexStruct v2) {
-		SimpleBrush::DrawLine_floatPos(
-			v1.pos.ToVec2(), v1.color,
-			v2.pos.ToVec2(), v2.color,
-			m_imgBuffer_back);
+		VertexBrush<VertexStruct>::DrawLine(v1, v2, m_imgBuffer_back, m_imgBuffer_depth);
 	}
 
 	template <typename VertexStruct>
@@ -254,11 +247,8 @@ private:
 	}
 	template <typename VertexStruct>
 	void RenderTriangle_fill(VertexStruct v1, VertexStruct v2, VertexStruct v3){
-		SimpleBrush::DrawTriangle(
-			v1.pos.ToVec2(), v1.color, 
-			v2.pos.ToVec2(), v2.color,
-			v3.pos.ToVec2(), v3.color,
-			m_imgBuffer_back);
+		VertexBrush<VertexStruct>::DrawTriangle(v1, v2, v3, m_imgBuffer_back, m_imgBuffer_depth);
+		//SimpleBrush::DrawTriangle(v1.pos, v1.color, v2.pos, v2.color, v3.pos, v3.color, m_imgBuffer_back);
 	}
 	
 private:

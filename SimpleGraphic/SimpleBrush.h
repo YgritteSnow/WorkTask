@@ -6,73 +6,230 @@
 #include "Color.h"
 #include "Texture.h"
 
-// 一些画图的笔刷
+// 直接传入数据进行画图
 class SimpleBrush{
-public:
-	// 对两条线上的某个插值点，根据深度计算其 uv
-	static float _getLerpRatio_noCorrect(WorldPos v0, WorldPos v1, float rat){
-		return rat;
-	}
-	static UVPos _getLerpRatio_withCorrect(WorldPos v0, WorldPos v1, float rat){
-		float v0_xz = v0._x / v0._z;
-		float v0_yz = v0._y / v0._z;
-		float v1_xz = v1._x / v1._z;
-		float v1_yz = v1._y / v1._z;
-
-		float x_ratuo = (((rat * (v0_xz - v1_xz)) + v1_xz) - v0._x) / (v1._x - v0._x);
-		float y_ratuo = (((rat * (v0_yz - v1_yz)) + v1_yz) - v0._y) / (v1._y - v0._y);
-		return UVPos(x_ratuo, y_ratuo);
-	}
-
 public:
 	// 画单像素点
 	static void DrawDot_normedPos(
 		float x0, float y0, NormColor4 color,
-		ImgBuffer<ShortColor4>* buffer);
+		ImgBuffer<ShortColor4>* back_buffer);
 	static void DrawDot_normedPos(
 		ScreenPos v, NormColor4 color,
-		ImgBuffer<ShortColor4>* buffer);
+		ImgBuffer<ShortColor4>* back_buffer);
 	static void DrawDot_coordPos(
 		ScreenCoord x, ScreenCoord y, NormColor4 color,
-		ImgBuffer<ShortColor4>* buffer);
+		ImgBuffer<ShortColor4>* back_buffer);
 
 public:
 	// 画直线
 	static void DrawLine_floatPos(
 		float x0, float y0, NormColor4 color0,
 		float x1, float y1, NormColor4 color1,
-		ImgBuffer<ShortColor4>* buffer);
+		ImgBuffer<ShortColor4>* back_buffer);
 	static void DrawLine_floatPos(
 		ScreenPos v1, NormColor4 color0,
 		ScreenPos v2, NormColor4 color1,
-		ImgBuffer<ShortColor4>* buffer);
-private:
+		ImgBuffer<ShortColor4>* back_buffer);
+public:
 	static void _DrawLine_floatPos_bresenham(
-		float x0, float y0, LongColor4 color0,
-		float x1, float y1, LongColor4 color1,
-		ImgBuffer<ShortColor4>* buffer);
+		float x0, float y0, NormColor4 color0,
+		float x1, float y1, NormColor4 color1,
+		ImgBuffer<ShortColor4>* back_buffer);
 	static void _DrawLine_coordPos_h(
-		ScreenCoord x0, LongColor4 color0,
-		ScreenCoord x1, LongColor4 color1,
+		ScreenCoord x0, NormColor4 color0,
+		ScreenCoord x1, NormColor4 color1,
 		ScreenCoord y,
-		ImgBuffer<ShortColor4>* buffer);
+		ImgBuffer<ShortColor4>* back_buffer);
 	static void _DrawLine_coordPos_h(
-		float x0, LongColor4 color0,
-		float x1, LongColor4 color1,
+		float x0, NormColor4 color0,
+		float x1, NormColor4 color1,
 		ScreenCoord y,
-		ImgBuffer<ShortColor4>* buffer);
+		ImgBuffer<ShortColor4>* back_buffer);
 public:
 	// 填充三角形
 	static void DrawTriangle(
 		ScreenPos v1, NormColor4 color1,
 		ScreenPos v2, NormColor4 color2,
 		ScreenPos v3, NormColor4 color3,
-		ImgBuffer<ShortColor4>* buffer);
+		ImgBuffer<ShortColor4>* back_buffer);
 	static void DrawTriangle(
 		float x0, float y0, NormColor4 color0,
 		float x1, float y1, NormColor4 color1,
 		float x2, float y2, NormColor4 color2,
-		ImgBuffer<ShortColor4>* buffer);
+		ImgBuffer<ShortColor4>* back_buffer);
 };
 
+// 使用顶点数据进行画图
+template <typename VertexStruct>
+class VertexBrush{
+public:
+	static void DrawDot(
+		VertexStruct v1,
+		ImgBuffer<ShortColor4>* back_buffer,
+		ImgBuffer<DepthBufferPixel>* depth_buffer
+		){
+		if (v1.pos._z < depth_buffer->GetPixel_normedPos(v1.uv._x, v1.uv._y)){
+			*depth_buffer->pPixelAt_normedPos(v1.uv._x, v1.uv._y) = v1.pos._z;
+		}
+		else{
+			return;
+		}
+
+		if (TextureManager::GetInstance()->GetTexture()){
+			SimpleBrush::DrawDot_coordPos(
+				static_cast<ScreenCoord>(v1.pos._x), 
+				static_cast<ScreenCoord>(v1.pos._y),
+				v1.color * TextureManager::GetInstance()->GetTexture()->GetPixel_normedPos(v1.uv._x, v1.uv._y),
+				back_buffer
+				);
+		}
+		else{
+			SimpleBrush::DrawDot_coordPos(
+				static_cast<ScreenCoord>(v1.pos._x), 
+				static_cast<ScreenCoord>(v1.pos._y), v1.color,
+				back_buffer
+				);
+		}
+	}
+
+	static void DrawLine(
+		VertexStruct v1, VertexStruct v2,
+		ImgBuffer<ShortColor4>* back_buffer,
+		ImgBuffer<DepthBufferPixel>* depth_buffer
+		){
+		SimpleBrush::DrawLine_floatPos(
+			v1.pos, v1.color,
+			v2.pos, v2.color,
+			back_buffer);
+	}
+
+	static void DrawLine_h(
+		VertexStruct v0, VertexStruct v1,
+		ScreenCoord y,
+		ImgBuffer<ShortColor4>* back_buffer,
+		ImgBuffer<DepthBufferPixel>* depth_buffer
+		){
+		if (v0.pos._x > v1.pos._x){
+			std::swap(v0, v1);
+		}
+
+		VertexStruct v = v0;
+		v.pos._y = static_cast<float>(y);
+
+		NormColor4 color_step = JMath::f_equal(v1.pos._x, v0.pos._x) ? NormColor4() : ((v1.color - v0.color) / (v1.pos._x - v0.pos._x));
+		float z_step = JMath::f_equal(v1.pos._x, v0.pos._x) ? 0 : ((v1.pos._z - v0.pos._z) / (v1.pos._x - v0.pos._x));
+		do{
+			_correctPerpectUV(v0.pos._z, v1.pos._z, v.pos._z, v0.uv, v1.uv, v.uv, _calRat(v0.pos._x, v1.pos._x, v.pos._x));
+			DrawDot(v, back_buffer, depth_buffer);
+			v.color += color_step;
+			v.pos._z += z_step;
+			v.pos._x += 1;
+		} while (v.pos._x <= v1.pos._x);
+	}
+
+	static void DrawTriangle(
+		VertexStruct v0, VertexStruct v1, VertexStruct v2,
+		ImgBuffer<ShortColor4>* back_buffer,
+		ImgBuffer<DepthBufferPixel>* depth_buffer
+		){
+		// 转换使三个点为y值从小到大排列
+		if (v0.pos._y > v1.pos._y){
+			std::swap(v0, v1);
+		}
+		if (v0.pos._y > v2.pos._y){
+			std::swap(v0, v2);
+		}
+		if (v1.pos._y > v2.pos._y){
+			std::swap(v1, v2);
+		}
+
+		// 整数格子
+		ScreenCoord y0_i = static_cast<ScreenCoord>(v0.pos._y);
+		ScreenCoord y1_i = static_cast<ScreenCoord>(v1.pos._y);
+		ScreenCoord y2_i = static_cast<ScreenCoord>(v2.pos._y);
+		float y0 = v0.pos._y;
+		float y1 = v1.pos._y;
+
+		// 找到分割的中间点
+		if (JMath::f_equal(v0.pos._y, v2.pos._y)){
+			return;
+		}
+
+		VertexStruct v_left;
+		VertexStruct v_right;
+
+		// 对位置插值
+		v_left.pos._x = v0.pos._x;
+		v_right.pos._x = v0.pos._x;
+		float k02 = (v2.pos._x - v0.pos._x) / (v2.pos._y - v0.pos._y);
+		float k01 = (v1.pos._x - v0.pos._x) / (v1.pos._y - v0.pos._y);
+		float k12 = (v1.pos._x - v2.pos._x) / (v1.pos._y - v2.pos._y);
+
+		// 对 1/z 的插值
+		v_left.pos._z = v0.pos._z;
+		v_right.pos._z = v0.pos._z;
+		float zk02 = (1.f / (v2.pos._y - v0.pos._y)) * (v2.pos._z - v0.pos._z);
+		float zk01 = (1.f / (v1.pos._y - v0.pos._y)) * (v1.pos._z - v0.pos._z);
+		float zk12 = (1.f / (v2.pos._y - v1.pos._y)) * (v2.pos._z - v1.pos._z);
+
+		// 对颜色插值
+		v_left.color = v0.color;
+		v_right.color = v0.color;
+		NormColor4 color02 = (1.f / (v2.pos._y - v0.pos._y)) * (v2.color - v0.color);
+		NormColor4 color01 = (1.f / (v1.pos._y - v0.pos._y)) * (v1.color - v0.color);
+		NormColor4 color12 = (1.f / (v2.pos._y - v1.pos._y)) * (v2.color - v1.color);
+
+		if (!JMath::f_equal(v0.pos._y, v1.pos._y)){
+			while (y0_i < y1_i){
+				_correctPerpectUV(v0.pos._z, v2.pos._z, v_left.pos._z, v0.uv, v2.uv, v_left.uv, _calRat(v0.pos._y, v2.pos._y, y0));
+				_correctPerpectUV(v0.pos._z, v1.pos._z, v_right.pos._z, v0.uv, v1.uv, v_right.uv, _calRat(v0.pos._y, v1.pos._y, y0));
+				DrawLine_h(v_left, v_right, y0_i, back_buffer, depth_buffer);
+				v_left.pos._x += k02;
+				v_right.pos._x += k01;
+				v_left.color += color02;
+				v_right.color += color01;
+				v_left.pos._z += zk02;
+				v_right.pos._z += zk01;
+				++y0_i;
+				++y0;
+			}
+
+		}
+
+		v_right.pos._x = v1.pos._x;
+		v_right.color = v1.color;
+		v_right.pos._z = v1.pos._z;
+
+		if (!JMath::f_equal(v1.pos._y, v2.pos._y)){
+			while (y1_i < y2_i){
+				_correctPerpectUV(v0.pos._z, v2.pos._z, v_left.pos._z, v0.uv, v2.uv, v_left.uv, _calRat(v0.pos._y, v2.pos._y, y1));
+				_correctPerpectUV(v1.pos._z, v2.pos._z, v_right.pos._z, v1.uv, v2.uv, v_right.uv, _calRat(v1.pos._y, v2.pos._y, y1));
+				DrawLine_h(v_left, v_right, y1_i, back_buffer, depth_buffer);
+				v_left.pos._x += k02;
+				v_right.pos._x += k12;
+				v_left.color += color02;
+				v_right.color += color12;
+				v_left.pos._z += zk02;
+				v_right.pos._z += zk12;
+				++y1_i;
+				++y1;
+			}
+		}
+	}
+
+	static void _correctPerpectUV(float z_start, float z_end, float z_cur, 
+		const UVPos& uv_start, const UVPos& uv_end, UVPos& uv_cur, float defaultRat){
+		if (JMath::f_equal(1 / z_start, 1 / z_end)){
+			uv_cur = uv_end + (uv_start - uv_end) * defaultRat;
+		}
+		else{
+			float rat = (1 / z_cur - 1 / z_end) / (1 / z_start - 1 / z_end);
+			uv_cur = uv_end + (uv_start - uv_end) * rat;
+		}
+	}
+
+	static float _calRat(float start, float end, float cur){
+		return JMath::f_equal(start, end) ? 0 : ((cur - end) / (start - end));
+	}
+};
 #endif

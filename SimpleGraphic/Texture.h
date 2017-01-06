@@ -7,6 +7,8 @@
 #include "JMath.h"
 #include "Color.h"
 
+typedef float DepthBufferPixel;
+
 // 图片缓存
 template< typename ColorType >
 class ImgBuffer {
@@ -49,6 +51,11 @@ public:
 	static TextureManager* GetInstance(){ return m_instance; }
 
 public:
+	// 当前贴图 （todo 直接使用外部指针，可能变成野指针）
+	void SetTexture(std::string texname){ m_cur_texture = TextureManager::GetInstance()->LoadTexture_norm(texname); }
+	ImgBuffer<NormColor4>* GetTexture(){ return m_cur_texture; }
+
+public:
 	ImgBuffer<ShortColor4>* LoadTexture_short(std::string texname);
 	ImgBuffer<ShortColor4>* GetTexture_short(std::string texname);
 	ImgBuffer<NormColor4>* LoadTexture_norm(std::string texname);
@@ -59,6 +66,8 @@ private:
 	static TextureManager* m_instance;
 	std::map<std::string, ImgBuffer<ShortColor4>*> m_map_tex_short;
 	std::map<std::string, ImgBuffer<NormColor4>*> m_map_tex_norm;
+	// 贴图缓存
+	ImgBuffer<NormColor4>* m_cur_texture;
 };
 
 #endif

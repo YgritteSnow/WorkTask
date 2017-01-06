@@ -67,15 +67,11 @@ void RenderManager::ReleaseBuffer() {
 /* *********************************************
  * äÖÈ¾Ïà¹Ø
  * *********************************************/
-void RenderManager::RenderDummy(){
-	SimpleBrush::DrawLine_floatPos(
-		ScreenPos(0, 0), NormColor4(1,0,0,1),
-		ScreenPos(300, 300), NormColor4(0, 1, 0, 1),
-		m_imgBuffer_back);
-}
+void RenderManager::RenderDummy(){}
 
 void RenderManager::Clear() {
 	m_imgBuffer_back->clear();
+	m_imgBuffer_depth->clear();
 }
 
 void RenderManager::Present() {
@@ -83,13 +79,6 @@ void RenderManager::Present() {
 	m_imgBuffer_front = m_imgBuffer_back;
 	m_imgBuffer_back = tmp;
 	BitMap::Display(m_imgBuffer_front);
-	
-	//static ImgBuffer<ShortColor4>* ttt(nullptr);
-	//if (!ttt){
-	//	ttt = BitMap::Load("tex2.bmp");
-	//}
-	//BitMap::Display(ttt);
-	//delete ttt;
 }
 
 /* *********************************************

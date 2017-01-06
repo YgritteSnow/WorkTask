@@ -55,6 +55,8 @@ public:
 	static bool Init();
 	static void UnInit();
 	static LightManager* GetInstance(){return m_instance;};
+
+	void AddLight(Light* l){ m_vec_light.push_back(l); }
 public:
 	NormColor4 Process(NormColor4 origin_color, WorldPos normal, WorldPos pos);
 private:

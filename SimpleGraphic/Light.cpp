@@ -24,10 +24,6 @@ bool LightManager::Init(){
 		return false;
 	}
 
-	// debug
-	m_instance->m_vec_light.push_back(new AmbientLight(NormColor4(0.1, 0.8, 0, 1)));
-	m_instance->m_vec_light.push_back(new DirectLight(NormColor4(0.8, 0.1, 0, 1), WorldPos(0, 1, 0)));
-
 	return true;
 }
 

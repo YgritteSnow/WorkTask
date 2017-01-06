@@ -22,6 +22,4 @@ public:
 	explicit ShortColor4(const NormColor4& c);
 };
 
-typedef NormColor4 LongColor4;
-
 #endif

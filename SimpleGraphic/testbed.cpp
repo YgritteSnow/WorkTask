@@ -93,13 +93,16 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	if (initResult == S_OK){
 		// 设置一些测试数据
 		Model<DummyVertex>* dummyModel = new Model<DummyVertex>;
-		//dummyModel->DummyBall(1, 28, 10, NormColor4(1,1,1,1));
-		dummyModel->DummyQuad(5, 5);
+		dummyModel->DummyBall(1, 28, 10, NormColor4(1,1,1,1));
+		//dummyModel->DummyQuad(5, 5);
 
 		Scene* dummyScene = new Scene;
 		dummyScene->AddModel(dummyModel);
 
 		SceneManager::GetInstance()->AddScene(dummyScene);
+
+		LightManager::GetInstance()->AddLight(new AmbientLight(NormColor4(0, 1, 0, 1)));
+		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 0, 3, 1), WorldPos(1, -1, 0)));
 
 		RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Fill);
 		//RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Wareframe);

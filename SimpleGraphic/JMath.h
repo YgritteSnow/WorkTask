@@ -51,6 +51,12 @@ namespace JMath {
 				this->_y * v._y,
 				this->_z * v._z);
 		}
+		Vec3 Div(const Vec3& v)const {
+			return Vec3(
+				this->_x / v._x,
+				this->_y / v._y,
+				this->_z / v._z);
+		}
 		DataType DotProduct(const Vec3& v) const {
 			return (
 				this->_x * v._x +
@@ -68,12 +74,14 @@ namespace JMath {
 		friend Vec3 Add(const Vec3& v1, const Vec3& v2) { return v1.Add(v2); }
 		friend Vec3 Minus(const Vec3& v1, const Vec3& v2) { return v1.Minus(v2); }
 		friend Vec3 Mul(const Vec3& v1, const Vec3& v2) { return v1.Mul(v2); }
+		friend Vec3 Div(const Vec3& v1, const Vec3& v2) { return v1.Div(v2); }
 		friend DataType DotProduct(const Vec3& v1, const Vec3& v2) { return v1.DotProduct(v2); }
 		friend Vec3 CrossProduct(const Vec3& v1, const Vec3& v2) { return v1.CrossProduct(v2); }
 
 		friend Vec3 operator+(const Vec3& v1, const Vec3& v2) { return v1.Add(v2); }
 		friend Vec3 operator-(const Vec3& v1, const Vec3& v2) { return v1.Minus(v2); }
 		friend Vec3 operator*(const Vec3& v1, const Vec3& v2) { return v1.Mul(v2); }
+		friend Vec3 operator/(const Vec3& v1, const Vec3& v2) { return v1.Div(v2); }
 		Vec3 operator+=(const Vec3& v) { *this = *this + v; return *this; }
 		Vec3 operator-=(const Vec3& v) { *this = *this - v; return *this; }
 
@@ -128,6 +136,19 @@ namespace JMath {
 		Vec2() :_x(0), _y(0) {};
 		Vec2(DataType x, DataType y) : _x(x), _y(y) {};
 	public:
+		Vec2 operator- (const Vec2& other) const{
+			return Vec2(_x - other._x, _y - other._y);
+		}
+		Vec2 operator*(const Vec2& other) const{
+			return Vec2(_x * other._x, _y * other._y);
+		}
+		Vec2 operator+(const Vec2& other) const{
+			return Vec2(_x + other._x, _y + other._y);
+		}
+		Vec2 operator*(float f) const{
+			return Vec2(_x * f, _y * f);
+		}
+	public:
 		DataType _x, _y;
 	};
 	/* *********************************************
@@ -145,9 +166,12 @@ namespace JMath {
 			return Vec4(_x*other._x, _y*other._y, _z*other._z, _w*other._w);
 		}
 		//Vec4 operator = ()
-		Vec4 operator+=(const Vec4& v) {
+		Vec4 operator+=(const Vec4& v){
 			*this = *this + v;
 			return *this;
+		}
+		Vec4 operator/ (float f) const {
+			return Vec4(this->_x / f, this->_y / f, this->_z / f, this->_w / f);
 		}
 		friend Vec4 operator+(const Vec4& lhm, const Vec4& rhm) {
 			return Vec4(lhm._x + rhm._x, lhm._y + rhm._y, lhm._z + rhm._z, lhm._w + rhm._w);
@@ -185,7 +209,7 @@ namespace JMath {
 	};
 }
 
-typedef JMath::Vec2<float> ScreenPos;
+typedef JMath::Vec3<float> ScreenPos;
 typedef JMath::Vec3<float> WorldPos;
 typedef JMath::Vec4<float> HomoPos;
 typedef JMath::Vec2<float> UVPos;

@@ -100,7 +100,7 @@ public:
 				point._y = lo_y;
 				point._z = std::sin(ang) * i_radius;
 				//m_vec_vertex.push_back(VertexStruct(point, NormColor4((std::cos(ang)+1)/2, (std::sin(ang)+1)/2, 1, 1), point));
-				m_vec_vertex.push_back(VertexStruct(point, color, point));
+				m_vec_vertex.push_back(VertexStruct(point, color, point, UVPos((std::cos(ang) + 1) / 2, lo_y/radius/2 + 0.5)));
 			}
 		}
 		// 最后一层只有一个点
@@ -158,10 +158,10 @@ public:
 	void DummyQuad(float width, float height) {
 		m_worldMat.SetTranslate(0, 0, 5);
 
-		m_vec_vertex.push_back(VertexStruct(WorldPos(-1, -1, 0), NormColor4(1, 0,0, 1), WorldPos(0, 0, -1)));
-		m_vec_vertex.push_back(VertexStruct(WorldPos(-1, 1, 0), NormColor4(0, 1, 0, 1), WorldPos(0, 0, -1)));
-		m_vec_vertex.push_back(VertexStruct(WorldPos(1, 1, 0), NormColor4(0, 0, 1, 1), WorldPos(0, 0, -1)));
-		m_vec_vertex.push_back(VertexStruct(WorldPos(1, -1, 0), NormColor4(1, 1, 1, 1), WorldPos(0, 0, -1)));
+		m_vec_vertex.push_back(VertexStruct(WorldPos(-1, -1, 0), NormColor4(1, 0,0, 1), WorldPos(0, 0, -1), UVPos(0, 0)));
+		m_vec_vertex.push_back(VertexStruct(WorldPos(-1, 1, 0), NormColor4(0, 1, 0, 1), WorldPos(0, 0, -1), UVPos(0, 1)));
+		m_vec_vertex.push_back(VertexStruct(WorldPos(1, 1, 0), NormColor4(0, 0, 1, 1), WorldPos(0, 0, -1), UVPos(1, 1)));
+		m_vec_vertex.push_back(VertexStruct(WorldPos(1, -1, 0), NormColor4(1, 1, 1, 1), WorldPos(0, 0, -1), UVPos(1, 0)));
 
 		m_vec_indice.push_back(0);
 		m_vec_indice.push_back(1);

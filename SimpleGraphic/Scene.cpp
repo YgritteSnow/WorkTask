@@ -12,7 +12,7 @@ SceneManager* SceneManager::m_instance = nullptr;
 void Scene::Render(){
 	RenderManager::GetInstance()->Clear();
 	for (auto it = m_vec_model.begin(); it != m_vec_model.end(); ++it){
-		RenderManager::GetInstance()->SetTexture("tex.bmp");
+		TextureManager::GetInstance()->SetTexture("tex.bmp");
 		RenderManager::GetInstance()->RenderVertexIndice(
 			(*it)->GetVertexes(),
 			(*it)->GetVertexCount(),
