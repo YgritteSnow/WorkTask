@@ -4,6 +4,7 @@
 #include "RenderManager.h"
 #include "Scene.h"
 #include "Light.h"
+#include "Texture.h"
 
 const TCHAR* WINDOW_NAME = _T("jj");
 const TCHAR* WINDOW_CAPTION = _T("SimpleGraphics - by jj");
@@ -85,17 +86,26 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	if (!LightManager::Init()){
 		initResult = E_FAIL;
 	}
+	if (!TextureManager::Init()){
+		initResult = E_FAIL;
+	}
 
 	if (initResult == S_OK){
 		// 设置一些测试数据
 		Model<DummyVertex>* dummyModel = new Model<DummyVertex>;
-		//dummyModel->DummyBall(1, 8, 10, NormColor4(1,1,1,1));
+		//dummyModel->DummyBall(1, 28, 10, NormColor4(1,1,1,1));
 		dummyModel->DummyQuad(5, 5);
 
 		Scene* dummyScene = new Scene;
 		dummyScene->AddModel(dummyModel);
 
 		SceneManager::GetInstance()->AddScene(dummyScene);
+
+		RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Fill);
+		//RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Wareframe);
+		//RenderManager::GetInstance()->SetRenderState(StateMask_Light, StateMaskValue_LightDisable);
+		RenderManager::GetInstance()->SetRenderState(StateMask_Light, StateMaskValue_LightEnable);
+		RenderManager::GetInstance()->SetRenderState(StateMask_CalNormal, StateMaskValue_NotCalNormal);
 
 		// 主循环
 		MSG msg;
@@ -114,7 +124,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 					SceneManager::GetInstance()->Update(TimeManager::GetInstance()->GetFrameInterval());
 					SceneManager::GetInstance()->Render();
 
-					dummyModel->RotateXYZ(0, 0, 0.001);
+					dummyModel->RotateXYZ(0, 0, 0.01);
 				}
 			}
 		}

@@ -58,9 +58,9 @@ void SimpleBrush::_DrawLine_floatPos_bresenham(
 	LongColor4 color_step = (color1 - color0) * ((float)x_step / (x1 - x0));
 
 	float k = (y0 - y1) / (x0 - x1);
-	*p_x_bgn = static_cast<ScreenCoord>(x0);// -(float)x_step / 2);
-	ScreenCoord x_end = static_cast<ScreenCoord>(x1);// +(float)x_step / 2);
-	*p_y_bgn = static_cast<ScreenCoord>(k*((*p_x_bgn) - x0) + y0);// +0.5);
+	*p_x_bgn = static_cast<ScreenCoord>(x0);
+	ScreenCoord x_end = static_cast<ScreenCoord>(x1);
+	*p_y_bgn = static_cast<ScreenCoord>(k*((*p_x_bgn) - x0) + y0);
 
 	float e = (*p_y_bgn) - (k*((*p_x_bgn) - x0) + y0);
 	while ((*p_x_bgn) != x_end){
@@ -82,10 +82,11 @@ void SimpleBrush::_DrawLine_coordPos_h(
 	ImgBuffer<ShortColor4>* buffer){
 	if (x0 > x1){
 		std::swap(x0, x1);
+		std::swap(color0, color1);
 	}
 
 	LongColor4 color_bgn = color0;
-	LongColor4 color_step = (color1 - color0) * (1.f / (x1 - x0));
+	LongColor4 color_step = (x1 == x0) ? LongColor4() : ((color1 - color0) * (1.f / (x1 - x0)));
 	do{
 		DrawDot_coordPos(x0, y, color_bgn, buffer);
 		color_bgn += color_step;
@@ -123,54 +124,70 @@ void SimpleBrush::DrawTriangle(
 	if (y0 > y1){
 		std::swap(x0, x1);
 		std::swap(y0, y1);
+		std::swap(color0, color1);
 	}
 	if (y0 > y2){
 		std::swap(x0, x2);
 		std::swap(y0, y2);
+		std::swap(color0, color2);
 	}
 	if (y1 > y2){
 		std::swap(x1, x2);
 		std::swap(y1, y2);
+		std::swap(color1, color2);
 	}
 	// 整数格子
 	ScreenCoord y0_i = static_cast<ScreenCoord>(y0);
 	ScreenCoord y1_i = static_cast<ScreenCoord>(y1);
 	ScreenCoord y2_i = static_cast<ScreenCoord>(y2);
 	// 找到分割的中间点
-	if (y0_i == y2_i){
+	if (JMath::f_equal(y0, y2)){
 		return;
 	}
 
+	// 对位置插值
 	float x_left = x0;
-	float k02 = (x2 - x0) / (y2 - y0);
 	float x_right = x0;
+	float k02 = (x2 - x0) / (y2 - y0);
 	float k01 = (x1 - x0) / (y1 - y0);
 	float k12 = (x1 - x2) / (y1 - y2);
 
+	// 对颜色插值
 	LongColor4 color0_long = static_cast<LongColor4>(color0);
 	LongColor4 color1_long = static_cast<LongColor4>(color1);
 	LongColor4 color2_long = static_cast<LongColor4>(color2);
 	LongColor4 color_left = color0_long;
-	LongColor4 color02 = (1.f / (y2 - y0))*(color2_long - color0_long);
 	LongColor4 color_right = color0_long;
+	LongColor4 color02 = (1.f / (y2 - y0))*(color2_long - color0_long);
 	LongColor4 color01 = (1.f / (y1 - y0)) * (color1_long - color0_long);
 	LongColor4 color12 = (1.f / (y2 - y1))*(color2_long - color1_long);
 
-	while (y0_i <= y2_i){
-		x_left += k02;
-		color_left += color02;
-		if (y0_i == y1_i){
-			k01 = k12;
-			x_right = x1;
-			color01 = color12;
-			color_right = color1_long;
-			_DrawLine_coordPos_h(x_left, color_left, x1, color_right, y1_i, buffer);
-		}
-		else{
+	// 对 uv 插值
+
+
+	if (!JMath::f_equal(y0, y1)){
+		while (y0_i < y1_i){
+			_DrawLine_coordPos_h(x_left, color_left, x_right, color_right, y0_i, buffer);
+			x_left += k02;
+			color_left += color02;
 			x_right += k01;
 			color_right += color01;
-			_DrawLine_coordPos_h(x_left, color_left, x_right, color_right, y0_i, buffer);
+			++y0_i;
 		}
-		++y0_i;
+
+	}
+
+	x_right = x1;
+	color_right = color1_long;
+
+	if (!JMath::f_equal(y1, y2)){
+		while (y1_i < y2_i){
+			_DrawLine_coordPos_h(x_left, color_left, x_right, color_right, y1_i, buffer);
+			x_left += k02;
+			color_left += color02;
+			x_right += k12;
+			color_right += color12;
+			++y1_i;
+		}
 	}
 }

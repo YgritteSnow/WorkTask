@@ -2,23 +2,51 @@
 #define __RENDERMANAGER_H__
 
 #include <Windows.h>
+
 #include "JMath.h"
 #include "SimpleBrush.h"
 #include "Light.h"
+#include "Texture.h"
 
 typedef float DepthBufferPixel;
 extern UINT WINDOW_WIDTH;
 extern UINT WINDOW_HEIGHT;
 
+// 三角形裁剪的 mask
 typedef unsigned char MaskType;
 const MaskType NO_CULLED = 0xff;
 const MaskType BACK_CULLED = 0xff ^ 0x01;
 const MaskType SCREEN_CULLED = 0xff ^ 0x02;
 inline
-MaskType IS_CULLED(MaskType c){ return c ^ NO_CULLED; }
+bool IS_CULLED(MaskType c){ return c ^ NO_CULLED; }
 
+// 渲染状态的 mask
+typedef unsigned char StateMaskType;
+
+#define StateMaskAll				(0 - 1)
+#define StateMaskNull				(0)
+
+#define StateMask_Light				(0x1 << 0)
+#define StateMaskValue_LightEnable	(0x0 << 0)
+#define StateMaskValue_LightDisable (0x1 << 0)
+
+#define StateMask_DrawMode			(0x1 << 1)
+#define StateMaskValue_Wareframe	(0x0 << 1)
+#define StateMaskValue_Fill			(0x1 << 1)
+
+#define StateMask_CalNormal			(0x1 << 2)
+#define StateMaskValue_CalNormal	(0x0 << 2)
+#define StateMaskValue_NotCalNormal	(0x1 << 2)
+
+#define StateMask_PerspecCorrect	(0x1 << 3)
+#define StateMaskValue_noCorrect	(0x0 << 3)
+#define StateMaskValue_withCorrect	(0x1 << 3)
+
+// 
 class RenderManager{
 public:
+	RenderManager() :m_renderState(StateMaskNull){}
+
 	// 初始化/析构
 	static bool Init(ScreenCoord width, ScreenCoord height);
 	static void UnInit();
@@ -26,14 +54,26 @@ public:
 	// 获得实例
 	static RenderManager* GetInstance();
 
+public:
+	// 设置贴图 （todo 直接使用外部指针，可能变成野指针）
+	void SetTexture(std::string texname){ m_cur_texture = TextureManager::GetInstance()->LoadTexture_norm(texname); }
+	ImgBuffer<NormColor4>* GetTexture(){ return m_cur_texture; }
+	// 设置渲染状态
+	void SetRenderState(StateMaskType state, StateMaskType value){ 
+		m_renderState = m_renderState & (StateMaskAll ^ state);
+		m_renderState = m_renderState | value;
+	}
+	bool CheckState(StateMaskType state, StateMaskType value){ 
+		return ((m_renderState & state) == (StateMaskAll & value)); 
+	}
+
+private:
+	StateMaskType m_renderState;
 private:
 	// 建立缓存
 	bool SetupBuffer(ScreenCoord width, ScreenCoord height);
 	// 释放缓存
 	void ReleaseBuffer();
-	// 设置贴图 （todo 直接使用外部指针，可能变成野指针）
-	void SetTexture(ImgBuffer<NormColor4>* tex);
-	ImgBuffer<NormColor4>* GetTexture(){ return m_cur_texture; }
 
 public:
 	// 清除缓存
@@ -58,8 +98,12 @@ public:
 			const auto& v1 = *(dst_vertex + indice_idx_1);
 			const auto& v2 = *(dst_vertex + indice_idx_2);
 
-			//RenderTriangle_wireframe(v0, v1, v2);
-			RenderTriangle_fill(v0, v1, v2);
+			if (CheckState(StateMask_DrawMode, StateMaskValue_Wareframe)){
+				RenderTriangle_wireframe(v0, v1, v2);
+			}
+			else if (CheckState(StateMask_DrawMode, StateMaskValue_Fill)){
+				RenderTriangle_fill(v0, v1, v2);
+			}
 		}
 
 		delete[] dst_vertex;
@@ -82,11 +126,15 @@ private:
 		WorldPos* p_worldPos = new WorldPos[vertex_count];
 
 		ProcessVertex_pos(src_vertex, *p_dst_vertex, p_worldPos, vertex_count, modelMat);
-		// todo 这里其实假定了顶点struct已经有了normal这个属性了，毕竟都把计算结果直接写在人家的normal属性里了。。。
-		// 以后优化的时候可以根据输入条件申请更合适的内存结构来储存数据
-		//ProcessVertex_calNormal(src_vertex, *p_dst_vertex, vertex_count, indice, indice_count, modelMat);
+
+		if (CheckState(StateMask_CalNormal, StateMaskValue_CalNormal)){
+			ProcessVertex_calNormal(src_vertex, *p_dst_vertex, vertex_count, indice, indice_count, modelMat);
+		}
+
 		ProcessVertex_transNormal(src_vertex, *p_dst_vertex, vertex_count, indice, indice_count, modelMat);
-		ProcessVertex_light(src_vertex, *p_dst_vertex, p_worldPos, vertex_count, modelMat);
+		if (CheckState(StateMask_Light, StateMaskValue_LightEnable)){
+			ProcessVertex_light(src_vertex, *p_dst_vertex, p_worldPos, vertex_count, modelMat);
+		}
 	}
 	// 转换顶点位置到世界空间
 	template <typename VertexStruct>

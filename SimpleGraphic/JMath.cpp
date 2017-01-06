@@ -7,7 +7,7 @@ namespace JMath{
 	/* *********************************************
 	* common
 	* *********************************************/
-	const float EPSL = 0.0000001f; // todo 
+	const float EPSL = 0.0001f; // todo 
 	bool f_equal(float l, float r) { return std::fabs(l - r) < EPSL; }
 	extern const float PI = 3.14159265359;
 

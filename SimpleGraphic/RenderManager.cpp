@@ -82,11 +82,14 @@ void RenderManager::Present() {
 	auto tmp = m_imgBuffer_front;
 	m_imgBuffer_front = m_imgBuffer_back;
 	m_imgBuffer_back = tmp;
-	//BitMap::Display(m_imgBuffer_front);
-
-	auto ttt = BitMap::Load<ShortColor4>("tex.bmp");
-	BitMap::Display(ttt);
-	delete ttt;
+	BitMap::Display(m_imgBuffer_front);
+	
+	//static ImgBuffer<ShortColor4>* ttt(nullptr);
+	//if (!ttt){
+	//	ttt = BitMap::Load("tex2.bmp");
+	//}
+	//BitMap::Display(ttt);
+	//delete ttt;
 }
 
 /* *********************************************

@@ -116,7 +116,7 @@ namespace JMath {
 		Vec4<DataType> ToVec4Dir(){ return Vec4<DataType>(_x, _y, _z, 0); }
 		Vec2<DataType> ToVec2(){ return Vec2<DataType>(_x, _y); }
 	public:
-		float _x, _y, _z;
+		DataType _x, _y, _z;
 	};
 
 	/* *********************************************

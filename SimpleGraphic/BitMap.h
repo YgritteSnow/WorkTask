@@ -1,16 +1,27 @@
-#ifndef __BITMAPDISPLAY_H__
-#define __BITMAPDISPLAY_H__
+#ifndef __BITMAP_H__
+#define __BITMAP_H__
 
 #include <windows.h>
 #include <cstdio>
 #include <wingdi.h>
+
 #include "Color.h"
+
+inline 
+void DEBUG_ASSERT(bool x){
+	if (!x){
+		OutputDebugStringA("ERROR");
+	}
+}
 
 extern TCHAR* WINDOW_NAME;
 extern HWND g_hwnd;
 
 inline
 UINT TO_MUL4(UINT a) { return (a & 0x3) ? ( (a & 0xfffffc) + 0x4) : a; }
+
+template <typename ColorType>
+class ImgBuffer;
 
 namespace BitMap {
 	template <typename ColorType>
@@ -39,9 +50,13 @@ namespace BitMap {
 			return;
 		}
 
+		char* src_start = (char*)buffer->pLineAt(0);
+		char* dst_start = (char*)pImg;
 		for (int y = 0; y != buffer->height; ++y) {
 			char* pLine = pImg + TO_MUL4(buffer->width * BitMapChannel) * y;
 			char* pSrc = (char*)(buffer->pLineAt(y));
+			int i = 0;
+			int j = 0;
 			memcpy(pLine, pSrc, buffer->width * BitMapChannel);
 		}
 
@@ -56,48 +71,6 @@ namespace BitMap {
 		DeleteObject(bmp);
 	}
 
-	template <typename ColorType>
-	ImgBuffer<ColorType>* Load(const char* filename) {
-		FILE* pf = nullptr;
-		fopen_s(&pf, filename, "r");
-		if (!pf) {
-			return nullptr;
-		}
-
-		WORD headSize;
-		fread(&headSize, 1, sizeof(WORD), pf);
-		if (headSize != 0x4d42) {
-			return nullptr;
-		}
-
-		//读取bmp文件的文件头和信息头  
-		tagBITMAPFILEHEADER temp;
-		BITMAPINFOHEADER strInfo;
-		fread(&temp, 1, sizeof(tagBITMAPFILEHEADER) - sizeof(WORD), pf);
-		fread(&strInfo, 1, sizeof(tagBITMAPINFOHEADER), pf);
-
-		// 读取数据
-		LONG width = strInfo.biWidth;
-		LONG height = strInfo.biHeight;
-		//图像每一行的字节数必须是4的整数倍  
-		int byteCount = (strInfo.biBitCount / 8);
-		//width = (width * byteCount  + 3) / 4 * 4 / byteCount;
-		BYTE *imagedata = new BYTE[width * height * byteCount];
-		fread(imagedata, height, byteCount*width, pf);
-
-		ImgBuffer<ColorType>* res = new ImgBuffer<ColorType>(strInfo.biWidth, strInfo.biHeight);
-		for (int y = 0; y < strInfo.biHeight; ++y) {
-			BYTE* linedata = imagedata + (strInfo.biWidth * y * byteCount);
-				for (int x = 0; x < strInfo.biWidth; ++x) {
-					res->pPixelAt(x, y)->_x = *(linedata + x*byteCount);
-					res->pPixelAt(x, y)->_y = *(linedata + x*byteCount +1);
-					res->pPixelAt(x, y)->_z = *(linedata + x*byteCount +2);
-					res->pPixelAt(x, y)->_w = 1;
-				}
-		}
-		fclose(pf);
-
-		return res;
-	}
+	ImgBuffer<ShortColor4>* Load(const char* filename);
 }
 #endif

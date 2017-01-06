@@ -4,40 +4,26 @@
 #include <memory.h>
 #include "JMath.h"
 #include "Color.h"
-
-// 图片缓存
-template< typename ColorType >
-class ImgBuffer {
-public:
-	ImgBuffer(ScreenCoord width, ScreenCoord height)
-		:width(width)
-		, height(height)
-		, m_data(nullptr)
-	{
-		m_data = new ColorType[width*height];
-	};
-	~ImgBuffer() {
-		delete m_data;
-		m_data = nullptr;
-	}
-public:
-	void clear() { memset(m_data, 0x33, sizeof(ColorType) * width * height); };
-	ColorType* pPixelAt(ScreenCoord x, ScreenCoord y) const { return m_data + y * width + x; };
-	ColorType* pPixelAt_normedPos(float x, float y) const { return m_data + (int)(y*(height - 1) + 0.5) * width + (int)(x*(width - 1) + 0.5); };
-	ColorType* pLineAt(ScreenCoord y) const { return m_data + y * width; };
-	ColorType* pRowAt(ScreenCoord x) const { return m_data + x * height; };
-	ColorType* pHead() const { return m_data; };
-	unsigned PixelSize() { return sizeof(ColorType); }
-	ScreenCoord GetWidth(){ return width; }
-	ScreenCoord GetHeight(){ return height; }
-
-public:
-	ScreenCoord width, height;
-	ColorType* m_data;
-};
+#include "Texture.h"
 
 // 一些画图的笔刷
 class SimpleBrush{
+public:
+	// 对两条线上的某个插值点，根据深度计算其 uv
+	static float _getLerpRatio_noCorrect(WorldPos v0, WorldPos v1, float rat){
+		return rat;
+	}
+	static UVPos _getLerpRatio_withCorrect(WorldPos v0, WorldPos v1, float rat){
+		float v0_xz = v0._x / v0._z;
+		float v0_yz = v0._y / v0._z;
+		float v1_xz = v1._x / v1._z;
+		float v1_yz = v1._y / v1._z;
+
+		float x_ratuo = (((rat * (v0_xz - v1_xz)) + v1_xz) - v0._x) / (v1._x - v0._x);
+		float y_ratuo = (((rat * (v0_yz - v1_yz)) + v1_yz) - v0._y) / (v1._y - v0._y);
+		return UVPos(x_ratuo, y_ratuo);
+	}
+
 public:
 	// 画单像素点
 	static void DrawDot_normedPos(
@@ -50,8 +36,8 @@ public:
 		ScreenCoord x, ScreenCoord y, NormColor4 color,
 		ImgBuffer<ShortColor4>* buffer);
 
-	// 画直线
 public:
+	// 画直线
 	static void DrawLine_floatPos(
 		float x0, float y0, NormColor4 color0,
 		float x1, float y1, NormColor4 color1,
@@ -75,9 +61,8 @@ private:
 		float x1, LongColor4 color1,
 		ScreenCoord y,
 		ImgBuffer<ShortColor4>* buffer);
-
-	// 填充三角形
 public:
+	// 填充三角形
 	static void DrawTriangle(
 		ScreenPos v1, NormColor4 color1,
 		ScreenPos v2, NormColor4 color2,

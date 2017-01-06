@@ -99,6 +99,7 @@ public:
 				point._x = std::cos(ang) * i_radius;
 				point._y = lo_y;
 				point._z = std::sin(ang) * i_radius;
+				//m_vec_vertex.push_back(VertexStruct(point, NormColor4((std::cos(ang)+1)/2, (std::sin(ang)+1)/2, 1, 1), point));
 				m_vec_vertex.push_back(VertexStruct(point, color, point));
 			}
 		}
@@ -163,11 +164,11 @@ public:
 		m_vec_vertex.push_back(VertexStruct(WorldPos(1, -1, 0), NormColor4(1, 1, 1, 1), WorldPos(0, 0, -1)));
 
 		m_vec_indice.push_back(0);
-		m_vec_indice.push_back(2);
 		m_vec_indice.push_back(1);
+		m_vec_indice.push_back(2);
+		m_vec_indice.push_back(0);
 		m_vec_indice.push_back(2);
 		m_vec_indice.push_back(3);
-		m_vec_indice.push_back(1);
 	}
 	VertexStruct* GetVertexes(){ return m_vec_vertex.size() > 0 ? &(m_vec_vertex[0]) : nullptr; }
 	DWORD* GetIndices(){ return m_vec_indice.size() > 0 ? &(m_vec_indice[0]) : nullptr; }
