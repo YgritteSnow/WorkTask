@@ -146,4 +146,8 @@ namespace JMath{
 		Mat44 tmp = GenByTranslate(x, y, z);
 		return this->PreMulMat(tmp);
 	}
+
+	WorldPos Mat44::GetTranslate() const {
+		return WorldPos(_m[3][0], _m[3][1], _m[3][2]); 
+	}
 }

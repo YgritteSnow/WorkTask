@@ -165,9 +165,12 @@ namespace JMath {
 		Vec4 Mul(const Vec4& other) const {
 			return Vec4(_x*other._x, _y*other._y, _z*other._z, _w*other._w);
 		}
-		//Vec4 operator = ()
 		Vec4 operator+=(const Vec4& v){
 			*this = *this + v;
+			return *this;
+		}
+		Vec4 operator*=(const Vec4& v) {
+			*this = *this * v;
 			return *this;
 		}
 		Vec4 operator/ (float f) const {
@@ -256,6 +259,7 @@ namespace JMath{
 		void SetRow(int row, float m0, float m1, float m2, float m3);
 		HomoPos GetRow(int row) const;
 		HomoPos GetCol(int col) const;
+		WorldPos Mat44::GetTranslate() const;
 
 		HomoPos PostMulVec(HomoPos pos) const;
 		HomoPos PreMulVec(HomoPos pos) const;

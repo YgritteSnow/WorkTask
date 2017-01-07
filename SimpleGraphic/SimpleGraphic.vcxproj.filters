@@ -45,10 +45,13 @@
     <ClCompile Include="JMath.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="BitMap.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="BitMap.cpp">
+    <ClCompile Include="Material.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -84,6 +87,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

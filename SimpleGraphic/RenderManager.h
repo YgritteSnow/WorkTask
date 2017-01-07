@@ -41,6 +41,10 @@ typedef unsigned char StateMaskType;
 #define StateMaskValue_noCorrect	(0x0 << 3)
 #define StateMaskValue_withCorrect	(0x1 << 3)
 
+#define StateMask_BackCull			(0x1 << 4)
+#define StateMaskValue_BackCull		(0x0 << 4)
+#define StateMaskValue_BackCullR	(0x1 << 4)
+
 // 
 class RenderManager{
 public:
@@ -212,7 +216,10 @@ private:
 	}
 
 	MaskType ProcessTriangle_backCull(WorldPos v0, WorldPos v1, WorldPos v2){
-		if ((v1 - v0).CrossProduct(v2 - v1).DotProduct(WorldPos(0, 0, -1)) > 0){
+		auto backpara = (v1 - v0).CrossProduct(v2 - v1).DotProduct(WorldPos(0, 0, -1));
+		if ( (CheckState(StateMask_BackCull, StateMaskValue_BackCull) && backpara < 0)
+			|| (CheckState(StateMask_BackCull, StateMaskValue_BackCullR) && backpara > 0)
+			){
 			return BACK_CULLED;
 		}
 		else{

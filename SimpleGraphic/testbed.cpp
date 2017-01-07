@@ -89,6 +89,9 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	if (!TextureManager::Init()){
 		initResult = E_FAIL;
 	}
+	if (!MaterialManager::Init()) {
+		initResult = E_FAIL;
+	}
 
 	if (initResult == S_OK){
 		// 设置一些测试数据
@@ -101,14 +104,23 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 
 		SceneManager::GetInstance()->AddScene(dummyScene);
 
-		LightManager::GetInstance()->AddLight(new AmbientLight(NormColor4(0, 1, 0, 1)));
-		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 0, 3, 1), WorldPos(1, -1, 0)));
+		MaterialManager::GetInstance()->SetMaterial(Material(
+			NormColor4(1, 0, 0, 1),
+			NormColor4(0, 0, 1, 1),
+			NormColor4(3, 3, 3, 5)
+		));
+
+		TextureManager::GetInstance()->SetTexture("tex.bmp");
+
+		LightManager::GetInstance()->AddLight(new AmbientLight(NormColor4(1, 1, 1, 1)));
+		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 1, 1, 1), WorldPos(1, -1, 1)));
 
 		RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Fill);
 		//RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Wareframe);
 		//RenderManager::GetInstance()->SetRenderState(StateMask_Light, StateMaskValue_LightDisable);
 		RenderManager::GetInstance()->SetRenderState(StateMask_Light, StateMaskValue_LightEnable);
 		RenderManager::GetInstance()->SetRenderState(StateMask_CalNormal, StateMaskValue_NotCalNormal);
+		RenderManager::GetInstance()->SetRenderState(StateMask_BackCull, StateMaskValue_BackCull);
 
 		// 主循环
 		MSG msg;
@@ -138,6 +150,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	RenderManager::UnInit();
 	TimeManager::UnInit();
 	LightManager::UnInit();
+	TextureManager::UnInit();
+	MaterialManager::UnInit();
 	UnregisterClass(WINDOW_NAME, myWnd.hInstance);
 
 	return S_OK;

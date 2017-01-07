@@ -7,6 +7,7 @@
 
 #include "JMath.h"
 #include "Color.h"
+#include "Material.h"
 
 /* *********************************************
 * Model

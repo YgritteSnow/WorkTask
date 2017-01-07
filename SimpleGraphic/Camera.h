@@ -25,6 +25,8 @@ public:
 	JMath::Mat44 GetViewProjMat() const { return m_viewMat.PreMulMat(m_projMat); };
 	WorldPos GetViewPortPos(WorldPos pos) const { return WorldPos((pos._x + 0.5f) * WINDOW_WIDTH, (pos._y + 0.5f) * WINDOW_HEIGHT, pos._z); }
 
+	WorldPos GetCameraPos() const { return m_viewMat.GetTranslate(); }
+
 public:
 	void Update(TimeType delta_time);
 
