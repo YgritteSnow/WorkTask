@@ -165,6 +165,20 @@ namespace JMath {
 		Vec4 Mul(const Vec4& other) const {
 			return Vec4(_x*other._x, _y*other._y, _z*other._z, _w*other._w);
 		}
+		Vec4 Pow(float f) const {
+			return Vec4(pow(_x, f),
+				pow(_y, f),
+				pow(_z, f),
+				pow(_w, f)
+			);
+		}
+		Vec4 ReversePow(float f) const {
+			return Vec4(pow(f, _x),
+				pow(f, _y),
+				pow(f, _z),
+				pow(f, _w)
+			);
+		}
 		Vec4 operator+=(const Vec4& v){
 			*this = *this + v;
 			return *this;

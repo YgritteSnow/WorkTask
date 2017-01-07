@@ -21,11 +21,26 @@ void Scene::Render(){
 			(*it)->GetModelMat()
 			);
 	}
-	//RenderManager::GetInstance()->RenderDummy();
 	RenderManager::GetInstance()->Present();
 }
 
 void Scene::Update(TimeType delta_time){
+}
+
+bool Scene::HandleMouseEvent(const MouseEventObject& mouseEvent) {
+	return false;
+}
+bool Scene::HanldeKeyEvent(const KeyEventObject& keyEvent) {
+	return false;
+}
+bool Scene::HandleMouseMoveEvent(const MouseEventObject& mouseEvent) {
+	// (debug)
+	//float para = 0.01;
+	//if (mouseEvent.is_down) {
+	//	(*m_vec_model.begin())->RotateXYZ(mouseEvent.x_move * para,
+	//		mouseEvent.y_move * para, mouseEvent.x_move * 0);
+	//}
+	return false;
 }
 
 bool SceneManager::Init(){

@@ -8,9 +8,7 @@
 * *********************************************/
 NormColor4 AmbientLight::ProcessColor(WorldPos normal, WorldPos pos){
 	// ambient
-	MaterialManager* aaa = MaterialManager::GetInstance();
-	NormColor4 bbb = aaa->GetAmbient();
-	return (bbb * this->m_light_color);
+	return (MaterialManager::GetInstance()->GetAmbient() * this->m_light_color);
 }
 
 NormColor4 DirectLight::ProcessColor(WorldPos normal, WorldPos pos){
@@ -26,10 +24,10 @@ NormColor4 DirectLight::ProcessColor(WorldPos normal, WorldPos pos){
 	midDir.Normalise();
 	auto lv = midDir.DotProduct(normal);
 	lv = saturate(lv);
-	lv = std::pow(lv, MaterialManager::GetInstance()->GetSpecular()._w);
+	lv = pow(lv, MaterialManager::GetInstance()->GetSpecular()._w);
 	NormColor4 specular = MaterialManager::GetInstance()->GetSpecular() * lv;
 
-	return ((diffuse + specular) * this->m_light_color);
+	return (diffuse + specular) * this->m_light_color;
 }
 
 /* *********************************************

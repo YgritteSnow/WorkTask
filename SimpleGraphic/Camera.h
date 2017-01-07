@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include "JMath.h"
 #include "JTime.h"
+#include "InputEvent.h"
 
 /* *********************************************
 * Camera & CameraManager
@@ -11,7 +12,7 @@
 extern UINT WINDOW_WIDTH;
 extern UINT WINDOW_HEIGHT;
 
-class Camera{
+class Camera : public InputEventHandler {
 public:
 	Camera() :m_viewMat(), m_projMat(){}
 	void DummyData(){
@@ -23,12 +24,15 @@ public:
 	JMath::Mat44 GetViewMat() const { return m_viewMat; };
 	JMath::Mat44 GetProjMat() const { return m_projMat; };
 	JMath::Mat44 GetViewProjMat() const { return m_viewMat.PreMulMat(m_projMat); };
-	WorldPos GetViewPortPos(WorldPos pos) const { return WorldPos((pos._x + 0.5f) * WINDOW_WIDTH, (pos._y + 0.5f) * WINDOW_HEIGHT, pos._z); }
+	WorldPos TransToScreenPos(WorldPos pos) const { return WorldPos((pos._x + 0.5f) * WINDOW_WIDTH, (pos._y + 0.5f) * WINDOW_HEIGHT, pos._z); }
 
 	WorldPos GetCameraPos() const { return m_viewMat.GetTranslate(); }
 
 public:
 	void Update(TimeType delta_time);
+	virtual bool HandleMouseEvent(const MouseEventObject& mouseEvent) override;
+	virtual bool HanldeKeyEvent(const KeyEventObject& keyEvent) override;
+	virtual bool HandleMouseMoveEvent(const MouseEventObject& mouseEvent) override;
 
 private:
 	// Ïà»ú¾ØÕó

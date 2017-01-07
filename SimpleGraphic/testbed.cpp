@@ -5,6 +5,7 @@
 #include "Scene.h"
 #include "Light.h"
 #include "Texture.h"
+#include "InputEvent.h"
 
 const TCHAR* WINDOW_NAME = _T("jj");
 const TCHAR* WINDOW_CAPTION = _T("SimpleGraphics - by jj");
@@ -28,11 +29,25 @@ LRESULT CALLBACK WinProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp){
 		case VK_ESCAPE:
 			PostQuitMessage(0);
 			break;
+		default:
+			InputEventHandlerManager::GetInstance()->HandleKeyEvent(wp, true);
 		}
+		break;
+	case WM_LBUTTONDOWN:
+		InputEventHandlerManager::GetInstance()->HandleMouseEvent(true);
+		break;
+	case WM_LBUTTONUP:
+		InputEventHandlerManager::GetInstance()->HandleMouseEvent(false);
+		break;
+	case WM_MOUSEMOVE:
+		InputEventHandlerManager::GetInstance()->HandleMouseMoveEvent(LOWORD(lp), HIWORD(lp));
 		break;
 	}
 	return DefWindowProc(hwnd, msg, wp, lp);
 }
+
+LRESULT InitManagers();
+void UnInitManagers();
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	WNDCLASSEX myWnd = {
@@ -68,32 +83,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	if (FAILED(ShowWindow(g_hwnd, SW_SHOWDEFAULT))){
 		return E_FAIL;
 	}
-
-	auto initResult = S_OK;
-	// 初始化管理的类
-	if (!RenderManager::Init(WINDOW_WIDTH, WINDOW_HEIGHT)){
-		initResult = E_FAIL;
-	}
-	if (!SceneManager::Init()){
-		initResult = E_FAIL;
-	}
-	if (!CameraManager::Init()){
-		initResult = E_FAIL;
-	}
-	if (!TimeManager::Init(MAX_FRAME_RATE)){
-		initResult = E_FAIL;
-	}
-	if (!LightManager::Init()){
-		initResult = E_FAIL;
-	}
-	if (!TextureManager::Init()){
-		initResult = E_FAIL;
-	}
-	if (!MaterialManager::Init()) {
-		initResult = E_FAIL;
-	}
-
-	if (initResult == S_OK){
+	
+	if (InitManagers() == S_OK){
 		// 设置一些测试数据
 		Model<DummyVertex>* dummyModel = new Model<DummyVertex>;
 		dummyModel->DummyBall(1, 28, 10, NormColor4(1,1,1,1));
@@ -105,14 +96,14 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		SceneManager::GetInstance()->AddScene(dummyScene);
 
 		MaterialManager::GetInstance()->SetMaterial(Material(
-			NormColor4(1, 0, 0, 1),
-			NormColor4(0, 0, 1, 1),
-			NormColor4(3, 3, 3, 5)
+			NormColor4(1, 1, 1, 1) * 0.2,
+			NormColor4(1, 0, 1, 1) * 0.3,
+			NormColor4(1, 1, 0, 5) * 2
 		));
 
-		TextureManager::GetInstance()->SetTexture("tex.bmp");
+		TextureManager::GetInstance()->SetTexture("tex_pic.bmp");
 
-		LightManager::GetInstance()->AddLight(new AmbientLight(NormColor4(1, 1, 1, 1)));
+		LightManager::GetInstance()->AddLight(new AmbientLight(NormColor4(1, 1, 1, 0)));
 		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 1, 1, 1), WorldPos(1, -1, 1)));
 
 		RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Fill);
@@ -139,12 +130,29 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 					SceneManager::GetInstance()->Update(TimeManager::GetInstance()->GetFrameInterval());
 					SceneManager::GetInstance()->Render();
 
-					dummyModel->RotateXYZ(0, 0, 0.01);
+					//CameraManager::GetInstance()->CurrentCamera()->SetViewMat(WorldPos(0, 0, 10), WorldPos(0, 0, 0), WorldPos(0, 1, 0));
 				}
 			}
 		}
 	}
 
+	UnregisterClass(WINDOW_NAME, myWnd.hInstance);
+
+	return S_OK;
+}
+
+LRESULT InitManagers() {
+	if (!InputEventHandlerManager::Init()) { return E_FAIL; }
+	if (!RenderManager::Init(WINDOW_WIDTH, WINDOW_HEIGHT)) {return E_FAIL;}
+	if (!SceneManager::Init()) {return E_FAIL;}
+	if (!CameraManager::Init()) {return E_FAIL;}
+	if (!TimeManager::Init(MAX_FRAME_RATE)) {return E_FAIL;}
+	if (!LightManager::Init()) {return E_FAIL;}
+	if (!TextureManager::Init()) {return E_FAIL;}
+	if (!MaterialManager::Init()) {return E_FAIL;}
+	return S_OK;
+}
+void UnInitManagers() {
 	CameraManager::UnInit();
 	SceneManager::UnInit();
 	RenderManager::UnInit();
@@ -152,7 +160,5 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	LightManager::UnInit();
 	TextureManager::UnInit();
 	MaterialManager::UnInit();
-	UnregisterClass(WINDOW_NAME, myWnd.hInstance);
-
-	return S_OK;
+	InputEventHandlerManager::UnInit();
 }

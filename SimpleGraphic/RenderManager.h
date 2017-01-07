@@ -144,7 +144,7 @@ private:
 			worldPos[idx] = tmp.ToVec3Homo();
 
 			tmp = CameraManager::GetInstance()->CurrentCamera()->GetViewProjMat().PreMulVec(tmp);
-			WorldPos screen_pos = CameraManager::GetInstance()->CurrentCamera()->GetViewPortPos(tmp.ToVec3Homo());
+			WorldPos screen_pos = CameraManager::GetInstance()->CurrentCamera()->TransToScreenPos(tmp.ToVec3Homo());
 			(dst_vertex + idx)->pos = screen_pos;
 		}
 	}
