@@ -11,7 +11,7 @@ const TCHAR* WINDOW_NAME = _T("jj");
 const TCHAR* WINDOW_CAPTION = _T("SimpleGraphics - by jj");
 UINT WINDOW_POS_X = 100;
 UINT WINDOW_POS_Y = 100;
-UINT WINDOW_WIDTH = 300;
+UINT WINDOW_WIDTH = 400;
 UINT WINDOW_HEIGHT = 300;
 TimeType MAX_FRAME_RATE = 0.0001;
 HWND g_hwnd = NULL;
@@ -114,12 +114,12 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 1, 1, 1), WorldPos(1, -1, 1)));
 		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 1, 1, 1)*3, WorldPos(-1, 1, 1)));
 
-		RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Fill);
-		RenderManager::GetInstance()->SetRenderState(StateMask_Light, StateMaskValue_LightEnable);
+		RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Wareframe);
+		RenderManager::GetInstance()->SetRenderState(StateMask_Light, StateMaskValue_LightDisable);
 		RenderManager::GetInstance()->SetRenderState(StateMask_CalNormal, StateMaskValue_NotCalNormal);
 		RenderManager::GetInstance()->SetRenderState(StateMask_BackCull, StateMaskValue_BackCull);
 		RenderManager::GetInstance()->SetRenderState(StateMask_DepthBuffer, StateMaskValue_UseDepth);
-		RenderManager::GetInstance()->SetRenderState(StateMask_Alpha, StateMaskValue_WithAlpha);
+		RenderManager::GetInstance()->SetRenderState(StateMask_Alpha, StateMaskValue_NoAlpha);
 
 		CameraManager::GetInstance()->CurrentCamera()->SetViewMat(WorldPos(0, 0, 5), WorldPos(0.2, 0, 0), WorldPos(0, 1, 0));
 

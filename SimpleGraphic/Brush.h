@@ -43,6 +43,7 @@ public:
 			v1.color *= TextureManager::GetInstance()->GetTexture()->GetPixel_normedPos_smart(v1.uv._x, v1.uv._y);
 		}
 
+		//back_buffer->SetPixelAt(coord_x, coord_y, v1.color);
 		back_buffer->SetPixelAt_byVertex(coord_x, coord_y, v1);
 	}
 
@@ -52,11 +53,6 @@ public:
 		TargetBuffer* back_buffer,
 		ImgBuffer<DepthBufferPixel>* depth_buffer
 	) {
-		//SimpleBrush::DrawLine_floatPos(
-		//	v1.pos, v1.color,
-		//	v2.pos, v2.color,
-		//	back_buffer);
-
 		if (JMath::f_equal(v1.pos._x, v0.pos._x) && JMath::f_equal(v1.pos._y, v0.pos._y)) {
 			return;
 		}

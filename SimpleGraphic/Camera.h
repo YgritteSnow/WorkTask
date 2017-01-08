@@ -17,7 +17,7 @@ public:
 	Camera() :m_viewMat(), m_projMat() { CalInvViewMat(); }
 	void DummyData(){
 		this->SetViewMat(WorldPos(0, 0, 10), WorldPos(0, 0, 0), WorldPos(0, 1, 0));
-		this->SetProjMat(0.4f, 1.f, 1.f, 1000.f);
+		this->SetProjMat(1.4f, (float)WINDOW_WIDTH / WINDOW_HEIGHT, 1.f, 1000.f);
 	}
 	void SetViewMat(WorldPos lookat, WorldPos cameraPos, WorldPos upDirect);
 	void SetProjMat(float fov, float aspect, float nearPlane, float farPlane);

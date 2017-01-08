@@ -54,6 +54,8 @@ namespace JMath{
 
 	void Mat44::SetProjMat(float fov, float aspect, float nearPlane, float farPlane){
 		this->SetIdentity();
+		_m[0][0] = 1 / fov;
+		_m[1][1] = aspect / fov;
 		_m[2][2] = 1 / nearPlane;
 		_m[2][3] = 1 / nearPlane;
 		_m[3][2] = -1;
