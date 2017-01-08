@@ -92,12 +92,12 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		//Model<DummyVertex>* dummyModel_far = new Model<DummyVertex>;
 		//dummyModel_far->DummyBall(1.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(1, 1, 6));
 
-		Model<DummyVertex>* dummyModel_near = new Model<DummyVertex>;
-		dummyModel_near->DummyBall(0.5, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(-0.3, -0.3, 2));
+		//Model<DummyVertex>* dummyModel_near = new Model<DummyVertex>;
+		//dummyModel_near->DummyBall(0.5, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(-0.3, -0.3, 2));
 
 		Scene* dummyScene = new Scene;
 		//dummyScene->AddModel(dummyModel_far);
-		dummyScene->AddModel(dummyModel_near);
+		//dummyScene->AddModel(dummyModel_near);
 		dummyScene->AddModel(dummyModel_mid);
 
 		SceneManager::GetInstance()->AddScene(dummyScene);
@@ -121,7 +121,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		RenderManager::GetInstance()->SetRenderState(StateMask_DepthBuffer, StateMaskValue_UseDepth);
 		RenderManager::GetInstance()->SetRenderState(StateMask_Alpha, StateMaskValue_WithAlpha);
 
-		CameraManager::GetInstance()->CurrentCamera()->SetViewMat(WorldPos(0, 0, 5), WorldPos(0, 0, 0), WorldPos(0, 1, 0));
+		CameraManager::GetInstance()->CurrentCamera()->SetViewMat(WorldPos(0, 0, 5), WorldPos(0.2, 0, 0), WorldPos(0, 1, 0));
 
 		// Ö÷Ñ­»·
 		MSG msg;

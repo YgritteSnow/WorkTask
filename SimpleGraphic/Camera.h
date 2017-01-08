@@ -14,19 +14,21 @@ extern UINT WINDOW_HEIGHT;
 
 class Camera : public InputEventHandler {
 public:
-	Camera() :m_viewMat(), m_projMat(){}
+	Camera() :m_viewMat(), m_projMat() { CalInvViewMat(); }
 	void DummyData(){
 		this->SetViewMat(WorldPos(0, 0, 10), WorldPos(0, 0, 0), WorldPos(0, 1, 0));
 		this->SetProjMat(0.4f, 1.f, 1.f, 1000.f);
 	}
 	void SetViewMat(WorldPos lookat, WorldPos cameraPos, WorldPos upDirect);
 	void SetProjMat(float fov, float aspect, float nearPlane, float farPlane);
-	JMath::Mat44 GetViewMat() const { return m_viewMat; };
+	JMath::Mat44 GetViewMat() const { return m_invViewMat; };
 	JMath::Mat44 GetProjMat() const { return m_projMat; };
-	JMath::Mat44 GetViewProjMat() const { return m_viewMat.PostMulMat(m_projMat); };
+	JMath::Mat44 GetViewProjMat() const { return m_invViewMat.PostMulMat(m_projMat); };
 	WorldPos TransToScreenPos(WorldPos pos) const { return WorldPos((pos._x + 0.5f) * WINDOW_WIDTH, (pos._y + 0.5f) * WINDOW_HEIGHT, pos._z); }
 
 	WorldPos GetCameraPos() const { return m_viewMat.GetTranslate(); }
+
+	void CalInvViewMat();
 
 public:
 	void Update(TimeType delta_time);
@@ -37,6 +39,7 @@ public:
 private:
 	// 相机矩阵
 	JMath::Mat44 m_viewMat;
+	JMath::Mat44 m_invViewMat;
 	// 投影矩阵
 	JMath::Mat44 m_projMat;
 	// 视口矩阵

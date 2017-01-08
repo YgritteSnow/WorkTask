@@ -285,6 +285,8 @@ namespace JMath{
 		Mat44 PreMulMat(const Mat44& other) const;
 		Mat44 RotateXYZ(float y, float p, float r) const;
 		Mat44 Translate(float x, float y, float z) const;
+		float Determinant() const;
+		Mat44 Inverse() const;
 	private:
 		float _m[4][4];
 	};

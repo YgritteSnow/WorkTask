@@ -3,6 +3,11 @@
 #include <cmath>
 #include <memory.h>
 
+
+const int MAX_N = 4;
+bool GetMatrixInverse(const float src[MAX_N][MAX_N], int n, float des[MAX_N][MAX_N]);
+float getDeterminant(const float arcs[MAX_N][MAX_N], int n);
+
 namespace JMath{
 	/* *********************************************
 	* common
@@ -149,5 +154,110 @@ namespace JMath{
 
 	WorldPos Mat44::GetTranslate() const {
 		return WorldPos(_m[3][0], _m[3][1], _m[3][2]); 
+	}
+
+	float Mat44::Determinant() const {
+		return getDeterminant(_m, 4);
+	}
+
+	Mat44 Mat44::Inverse() const {
+		Mat44 res;
+		GetMatrixInverse(_m, 4, res._m);
+		return res;
+	}
+}
+
+/* *********************************************
+* 矩阵计算的函数
+* *********************************************/
+void  getComplementMinor(const float arcs[MAX_N][MAX_N], int n, float ans[MAX_N][MAX_N]);
+
+//得到给定矩阵src的逆矩阵保存到des中。
+bool GetMatrixInverse(const float src[MAX_N][MAX_N], int n, float des[MAX_N][MAX_N])
+{
+	float flag = getDeterminant(src, n);
+	float t[MAX_N][MAX_N];
+	if (flag == 0)
+	{
+		return false;
+	}
+	else
+	{
+		getComplementMinor(src, n, t);
+		for (int i = 0; i < n; i++)
+		{
+			for (int j = 0; j < n; j++)
+			{
+				des[i][j] = t[i][j] / flag;
+			}
+
+		}
+	}
+
+
+	return true;
+
+}
+
+float getDeterminant(const float arcs[MAX_N][MAX_N], int n)
+{
+	if (n == 1)
+	{
+		return arcs[0][0];
+	}
+	float ans = 0;
+	float temp[MAX_N][MAX_N] = { 0.0 };
+	int i, j, k;
+	for (i = 0; i < n; i++)
+	{
+		for (j = 0; j < n - 1; j++)
+		{
+			for (k = 0; k < n - 1; k++)
+			{
+				temp[j][k] = arcs[j + 1][(k >= i) ? k + 1 : k];
+
+			}
+		}
+		float t = getDeterminant(temp, n - 1);
+		if (i % 2 == 0)
+		{
+			ans += arcs[0][i] * t;
+		}
+		else
+		{
+			ans -= arcs[0][i] * t;
+		}
+	}
+	return ans;
+}
+
+//计算每一行每一列的每个元素所对应的余子式，组成A*
+void  getComplementMinor(const float arcs[MAX_N][MAX_N], int n, float ans[MAX_N][MAX_N])
+{
+	if (n == 1)
+	{
+		ans[0][0] = 1;
+		return;
+	}
+	int i, j, k, t;
+	float temp[MAX_N][MAX_N];
+	for (i = 0; i < n; i++)
+	{
+		for (j = 0; j < n; j++)
+		{
+			for (k = 0; k < n - 1; k++)
+			{
+				for (t = 0; t < n - 1; t++)
+				{
+					temp[k][t] = arcs[k >= i ? k + 1 : k][t >= j ? t + 1 : t];
+				}
+			}
+
+			ans[j][i] = getDeterminant(temp, n - 1);
+			if ((i + j) % 2 == 1)
+			{
+				ans[j][i] = -ans[j][i];
+			}
+		}
 	}
 }
