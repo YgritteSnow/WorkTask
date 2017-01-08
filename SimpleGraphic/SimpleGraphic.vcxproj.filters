@@ -57,6 +57,12 @@
     <ClCompile Include="InputEvent.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="Brush.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TargetBuffer.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RenderManager.h">
@@ -96,6 +102,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="InputEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Brush.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TargetBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

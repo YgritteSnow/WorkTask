@@ -13,6 +13,7 @@ typedef float DepthBufferPixel;
 template< typename ColorType >
 class ImgBuffer {
 public:
+	typename ColorType PixelType;
 	ImgBuffer(ScreenCoord width, ScreenCoord height)
 		:width(width)
 		, height(height)
@@ -27,6 +28,8 @@ public:
 public:
 	ColorType GetPixel_normedPos(float x, float y){ return *(pPixelAt_normedPos(x, y)); }
 	ColorType GetPixel_coordPos(ScreenCoord x, ScreenCoord y) { return *(pPixelAt(x, y)); }
+	ColorType GetPixel_normedPos_smart(float x, float y) { return *(pPixelAt_normedPos(max(0,min(1,x)), max(0, min(1, y)))); }
+	ColorType GetPixel_coordPos_smart(ScreenCoord x, ScreenCoord y) { return *(pPixelAt(max(0, min(1, x)), max(0, min(1, y)))); }
 
 	void clear() { memset(m_data, 0, sizeof(ColorType)* width * height); };
 	void clear(ColorType c) { for (int i = 0; i < width * height; ++i) { m_data[i] = c; }; }
@@ -38,6 +41,21 @@ public:
 	unsigned PixelSize() { return sizeof(ColorType); }
 	ScreenCoord GetWidth(){ return width; }
 	ScreenCoord GetHeight(){ return height; }
+
+	void SetPixelAt(ScreenCoord x, ScreenCoord y, const ColorType& c) {
+		*(pPixelAt(x, y)) = c;
+	}
+	void SetPixelAt_normedPos(float x, float y, const ColorType& c) {
+		&(pPixelAt_normedPos(x, y)) = c;
+	}
+	template <typename VertexStruct>
+	void SetPixelAt_byVertex(ScreenCoord x, ScreenCoord y, const VertexStruct& v) {
+		*(pPixelAt(x, y)) = static_cast<ColorType>(v.color);
+	}
+	template <typename VertexStruct>
+	void SetPixelAt_byVertex_normedPos(float x, float y, const VertexStruct& v) {
+		&(pPixelAt_normedPos(x, y)) = static_cast<ColorType>(v.color);
+	}
 
 public:
 	ScreenCoord width, height;

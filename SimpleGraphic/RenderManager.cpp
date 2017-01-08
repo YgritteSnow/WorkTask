@@ -40,12 +40,14 @@ RenderManager* RenderManager::GetInstance(){
 * 建立和释放缓存
 * *********************************************/
 bool RenderManager::SetupBuffer(ScreenCoord width, ScreenCoord height) {
-	m_imgBuffer_back = new ImgBuffer<ShortColor4>(width, height);
+	m_imgBuffer_back = new ImgBuffer<NormColor4>(width, height);
 	if (!m_imgBuffer_back) { return false; }
-	m_imgBuffer_front = new ImgBuffer<ShortColor4>(width, height);
+	m_imgBuffer_front = new ImgBuffer<NormColor4>(width, height);
 	if (!m_imgBuffer_front) { return false; }
 	m_imgBuffer_depth = new ImgBuffer<DepthBufferPixel>(width, height);
 	if (!m_imgBuffer_depth) { return false; }
+	m_imgBuffer_alpha = new AlphaBuffer(width, height);
+	if (!m_imgBuffer_alpha) { return false; }
 	return true;
 }
 
@@ -62,6 +64,10 @@ void RenderManager::ReleaseBuffer() {
 		delete m_imgBuffer_depth;
 		m_imgBuffer_depth = nullptr;
 	}
+	if (m_imgBuffer_alpha) {
+		delete m_imgBuffer_alpha;
+		m_imgBuffer_alpha = nullptr;
+	}
 }
 
 /* *********************************************
@@ -72,15 +78,27 @@ void RenderManager::RenderDummy(){}
 void RenderManager::Clear() {
 	m_imgBuffer_back->clear();
 	m_imgBuffer_depth->clear(DepthBufferPixel(1.f));
+	m_imgBuffer_alpha->clear();
 }
 
 void RenderManager::Present() {
+	OnRenderFinish();
 	auto tmp = m_imgBuffer_front;
 	m_imgBuffer_front = m_imgBuffer_back;
 	m_imgBuffer_back = tmp;
 	BitMap::Display(m_imgBuffer_front);
 }
 
+void RenderManager::OnRenderFinish() {
+	m_imgBuffer_alpha->SortAndBlend();
+	for (int x = 0; x < m_imgBuffer_back->width; ++x) {
+		for (int y = 0; y < m_imgBuffer_back->height; ++y) {
+			auto pBackPixel = m_imgBuffer_back->pPixelAt(x, y);
+			auto pAlphaPixel = m_imgBuffer_alpha->pPixelAt(x, y);
+			*pBackPixel = BlendColor(*pBackPixel, pAlphaPixel->m_blended_color);
+		}
+	}
+}
 /* *********************************************
 * 
 * *********************************************/

@@ -11,8 +11,8 @@ const TCHAR* WINDOW_NAME = _T("jj");
 const TCHAR* WINDOW_CAPTION = _T("SimpleGraphics - by jj");
 UINT WINDOW_POS_X = 100;
 UINT WINDOW_POS_Y = 100;
-UINT WINDOW_WIDTH = 700;
-UINT WINDOW_HEIGHT = 700;
+UINT WINDOW_WIDTH = 300;
+UINT WINDOW_HEIGHT = 300;
 TimeType MAX_FRAME_RATE = 0.0001;
 HWND g_hwnd = NULL;
 
@@ -89,14 +89,14 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		Model<DummyVertex>* dummyModel_mid = new Model<DummyVertex>;
 		dummyModel_mid->DummyBall(1, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 0, 5));
 
-		Model<DummyVertex>* dummyModel_far = new Model<DummyVertex>;
-		dummyModel_far->DummyBall(1.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(1, 1, 6));
+		//Model<DummyVertex>* dummyModel_far = new Model<DummyVertex>;
+		//dummyModel_far->DummyBall(1.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(1, 1, 6));
 
 		Model<DummyVertex>* dummyModel_near = new Model<DummyVertex>;
 		dummyModel_near->DummyBall(0.5, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(-0.3, -0.3, 2));
 
 		Scene* dummyScene = new Scene;
-		dummyScene->AddModel(dummyModel_far);
+		//dummyScene->AddModel(dummyModel_far);
 		dummyScene->AddModel(dummyModel_near);
 		dummyScene->AddModel(dummyModel_mid);
 
@@ -119,6 +119,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		RenderManager::GetInstance()->SetRenderState(StateMask_CalNormal, StateMaskValue_NotCalNormal);
 		RenderManager::GetInstance()->SetRenderState(StateMask_BackCull, StateMaskValue_BackCull);
 		RenderManager::GetInstance()->SetRenderState(StateMask_DepthBuffer, StateMaskValue_UseDepth);
+		RenderManager::GetInstance()->SetRenderState(StateMask_Alpha, StateMaskValue_WithAlpha);
 
 		CameraManager::GetInstance()->CurrentCamera()->SetViewMat(WorldPos(0, 0, 5), WorldPos(0, 0, 0), WorldPos(0, 1, 0));
 

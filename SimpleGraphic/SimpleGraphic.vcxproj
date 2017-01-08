@@ -79,7 +79,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="TargetBuffer.cpp" />
     <ClCompile Include="BitMap.cpp" />
+    <ClCompile Include="Brush.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="InputEvent.cpp" />
@@ -95,7 +97,9 @@
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="TargetBuffer.h" />
     <ClInclude Include="BitMap.h" />
+    <ClInclude Include="Brush.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="JMath.h" />

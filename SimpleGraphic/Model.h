@@ -8,6 +8,7 @@
 #include "JMath.h"
 #include "Color.h"
 #include "Material.h"
+#include "TargetBuffer.h"
 
 /* *********************************************
 * Model
@@ -44,6 +45,10 @@ struct DummyVertex{
 	NormColor4 color;
 	WorldPos normal;
 	UVPos uv;
+
+	explicit operator NormColor4() const { return color; }
+	explicit operator ShortColor4() const { return static_cast<ShortColor4>(color); }
+	explicit operator AlphaBlendData() const { return AlphaBlendData(color, pos._z); }
 };
 
 template <typename VertexStruct>

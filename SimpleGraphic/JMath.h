@@ -221,6 +221,10 @@ namespace JMath {
 				(_z > 1) ? 1 : ((_z < 0) ? 0 : _z),
 				(_w > 1) ? 1 : ((_w < 0) ? 0 : _w));
 		}
+		Vec4 Zero() {
+			this->_x = this->_y = this->_z = this->_w = 0;
+			return *this;
+		}
 	public:
 		DataType _x, _y, _z, _w;
 	};

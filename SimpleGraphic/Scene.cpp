@@ -11,7 +11,6 @@
 SceneManager* SceneManager::m_instance = nullptr;
 
 void Scene::Render(){
-	RenderManager::GetInstance()->Clear();
 	for (auto it = m_vec_model.begin(); it != m_vec_model.end(); ++it){
 		RenderManager::GetInstance()->RenderVertexIndice(
 			(*it)->GetVertexes(),
@@ -21,7 +20,6 @@ void Scene::Render(){
 			(*it)->GetModelMat()
 			);
 	}
-	RenderManager::GetInstance()->Present();
 }
 
 void Scene::Update(TimeType delta_time){
@@ -58,11 +56,13 @@ void SceneManager::UnInit(){
 	}
 }
 
-void SceneManager::Render(){
+void SceneManager::Render() {
+	RenderManager::GetInstance()->Clear();
 	for (auto it = m_vec_scenes.begin(); it != m_vec_scenes.end(); ++it){
 		(*it)->Render();
 		break;
 	}
+	RenderManager::GetInstance()->Present();
 }
 
 void SceneManager::Update(TimeType delta_time){

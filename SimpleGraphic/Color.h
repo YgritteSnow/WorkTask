@@ -22,4 +22,9 @@ public:
 	explicit ShortColor4(const NormColor4& c);
 };
 
+inline
+NormColor4 BlendColor(const NormColor4& c_src, const NormColor4& c_dst) {
+	return c_src * (1 - c_dst._w) + c_dst * c_dst._w;
+}
+
 #endif

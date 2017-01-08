@@ -26,7 +26,8 @@ class ImgBuffer;
 namespace BitMap {
 	template <typename ColorType>
 	void Display(const ImgBuffer<ColorType>* buffer) {
-		UINT BitMapChannel = sizeof(ColorType);
+		//UINT BitMapChannel = sizeof(ColorType);
+		UINT BitMapChannel = 4;
 
 		HDC hdc = GetDC(g_hwnd);
 
@@ -50,23 +51,24 @@ namespace BitMap {
 			return;
 		}
 
-		for (int y = 0; y != buffer->height; ++y) {
+		for (int y = 0; y < buffer->height; ++y) {
 			char* pLine = pImg + TO_MUL4(buffer->width * BitMapChannel) * y;
 			for (int x = 0; x < buffer->width; x++)
 			{
-				auto dstPtr = buffer->pPixelAt(x, y);
-				//pLine[0 + x * BitMapChannel] = 255;
-				//pLine[1 + x * BitMapChannel] = 0;
-				//pLine[2 + x * BitMapChannel] = 255;
-				pLine[0 + x * BitMapChannel] = dstPtr->_z;
-				pLine[1 + x * BitMapChannel] = dstPtr->_y;
-				pLine[2 + x * BitMapChannel] = dstPtr->_x;
+				//auto iii = buffer->pPixelAt(x, y);
+				const auto& dstPtr = static_cast<ShortColor4>(*buffer->pPixelAt(x, y));
+				//const auto& dstPtr = *buffer->pPixelAt(x, y);
+				/*pLine[0 + x * BitMapChannel] = 255;
+				pLine[1 + x * BitMapChannel] = 255;
+				pLine[2 + x * BitMapChannel] = 255;*/
+				pLine[0 + x * BitMapChannel] = dstPtr._z;
+				pLine[1 + x * BitMapChannel] = dstPtr._y;
+				pLine[2 + x * BitMapChannel] = dstPtr._x;
 			}
 		}
 
 		auto oldTmp = SelectObject(dc, bmp);
-		SetDIBits(hdc, bmp, 0, buffer->height, buffer, &hBitMap, DIB_RGB_COLORS);
-		//SetDIBitsToDevice(hdc, 0, 0, buffer->width, buffer->height, 0, 0, 0, buffer->height, pImg, &hBitMap, SRCCOPY);
+		//SetDIBits(hdc, bmp, 0, buffer->height, buffer, &hBitMap, DIB_RGB_COLORS);
 		BitBlt(hdc, 0, 0, buffer->width, buffer->height, dc, 0, 0, SRCCOPY);
 		SelectObject(dc, oldTmp);
 

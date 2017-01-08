@@ -4,9 +4,10 @@
 #include <Windows.h>
 
 #include "JMath.h"
-#include "SimpleBrush.h"
+#include "Brush.h"
 #include "Light.h"
 #include "Texture.h"
+#include "TargetBuffer.h"
 
 extern UINT WINDOW_WIDTH;
 extern UINT WINDOW_HEIGHT;
@@ -48,6 +49,10 @@ typedef unsigned char StateMaskType;
 #define StateMask_DepthBuffer		(0x1 << 5)
 #define StateMaskValue_UseDepth		(0x0 << 5)
 #define StateMaskValue_NoDepth		(0x1 << 5)
+
+#define StateMask_Alpha				(0x1 << 6)
+#define StateMaskValue_NoAlpha		(0x0 << 6)
+#define StateMaskValue_WithAlpha	(0x1 << 6)
 
 // 
 class RenderManager{
@@ -116,6 +121,7 @@ public:
 
 	void RenderDummy();
 	// Ìá½»»º´æ
+	void OnRenderFinish();
 	void Present();
 
 private:
@@ -249,11 +255,16 @@ private:
 	// ²åÖµ
 	template <typename VertexStruct>
 	void RenderLine(VertexStruct v1, VertexStruct v2) {
-		if (CheckState(StateMask_DepthBuffer, StateMaskValue_UseDepth)) {
-			VertexBrush<VertexStruct>::DrawLine(v1, v2, m_imgBuffer_back, m_imgBuffer_depth);
+		if (CheckState(StateMask_Alpha, StateMaskValue_NoAlpha)) {
+			if (CheckState(StateMask_DepthBuffer, StateMaskValue_UseDepth)) {
+				VertexBrush<VertexStruct>::DrawLine(v1, v2, m_imgBuffer_back, m_imgBuffer_depth);
+			}
+			else if (CheckState(StateMask_DepthBuffer, StateMaskValue_NoDepth)) {
+				VertexBrush<VertexStruct>::DrawLine(v1, v2, m_imgBuffer_back, nullptr);
+			}
 		}
-		else if (CheckState(StateMask_DepthBuffer, StateMaskValue_NoDepth)) {
-			VertexBrush<VertexStruct>::DrawLine(v1, v2, m_imgBuffer_back, nullptr);
+		else if (CheckState(StateMask_Alpha, StateMaskValue_WithAlpha)) {
+			VertexBrush<VertexStruct>::DrawLine(v1, v2, m_imgBuffer_alpha, nullptr);
 		}
 	}
 
@@ -265,11 +276,16 @@ private:
 	}
 	template <typename VertexStruct>
 	void RenderTriangle_fill(VertexStruct v1, VertexStruct v2, VertexStruct v3) {
-		if (CheckState(StateMask_DepthBuffer, StateMaskValue_UseDepth)) {
-			VertexBrush<VertexStruct>::DrawTriangle(v1, v2, v3, m_imgBuffer_back, m_imgBuffer_depth);
+		if (CheckState(StateMask_Alpha, StateMaskValue_NoAlpha)) {
+			if (CheckState(StateMask_DepthBuffer, StateMaskValue_UseDepth)) {
+				VertexBrush<VertexStruct>::DrawTriangle(v1, v2, v3, m_imgBuffer_back, m_imgBuffer_depth);
+			}
+			else if (CheckState(StateMask_DepthBuffer, StateMaskValue_NoDepth)) {
+				VertexBrush<VertexStruct>::DrawTriangle(v1, v2, v3, m_imgBuffer_back, nullptr);
+			}
 		}
-		else if (CheckState(StateMask_DepthBuffer, StateMaskValue_NoDepth)) {
-			VertexBrush<VertexStruct>::DrawTriangle(v1, v2, v3, m_imgBuffer_back, nullptr);
+		else if (CheckState(StateMask_Alpha, StateMaskValue_WithAlpha)) {
+			VertexBrush<VertexStruct>::DrawTriangle(v1, v2, v3, m_imgBuffer_alpha, nullptr);
 		}
 	}
 	
@@ -277,10 +293,12 @@ private:
 	// µ¥Àý
 	static RenderManager* m_instance;
 	// ºóÌ¨»º´æ
-	ImgBuffer<ShortColor4>* m_imgBuffer_back;
-	ImgBuffer<ShortColor4>* m_imgBuffer_front;
+	ImgBuffer<NormColor4>* m_imgBuffer_back;
+	ImgBuffer<NormColor4>* m_imgBuffer_front;
 	// Éî¶È»º´æ
 	ImgBuffer<DepthBufferPixel>* m_imgBuffer_depth;
+	// Alpha»º´æ
+	AlphaBuffer* m_imgBuffer_alpha;
 	// ÌùÍ¼»º´æ
 	ImgBuffer<NormColor4>* m_cur_texture;
 };
