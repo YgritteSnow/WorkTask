@@ -68,28 +68,39 @@ public:
 		ImgBuffer<ShortColor4>* back_buffer,
 		ImgBuffer<DepthBufferPixel>* depth_buffer
 		){
-		if (v1.pos._z < depth_buffer->GetPixel_normedPos(v1.uv._x, v1.uv._y)){
-			*depth_buffer->pPixelAt_normedPos(v1.uv._x, v1.uv._y) = v1.pos._z;
+
+		ScreenCoord coord_x = static_cast<ScreenCoord>(v1.pos._x);
+		ScreenCoord coord_y = static_cast<ScreenCoord>(v1.pos._y);
+
+		// 排除近平面以前、远平面以后、相机背面
+		if (v1.pos._z < 0 || v1.pos._z > 1) {
+			return;
 		}
-		else{
+		// 排除屏幕以外
+		else if (coord_x < 0 || coord_x >= back_buffer->width || coord_y < 0 || coord_y >= back_buffer->height) {
+			return;
+		}
+		// 进行深度测试
+		else if (depth_buffer && v1.pos._z >= depth_buffer->GetPixel_coordPos(coord_x, coord_y)) {
 			return;
 		}
 
-		if (TextureManager::GetInstance()->GetTexture()){
-			SimpleBrush::DrawDot_coordPos(
-				static_cast<ScreenCoord>(v1.pos._x), 
-				static_cast<ScreenCoord>(v1.pos._y),
-				v1.color * TextureManager::GetInstance()->GetTexture()->GetPixel_normedPos(v1.uv._x, v1.uv._y),
-				back_buffer
-				);
+		// 更新深度缓存
+		if(v1.pos._z < depth_buffer->GetPixel_coordPos(coord_x, coord_y)){
+			*depth_buffer->pPixelAt(coord_x, coord_y) = v1.pos._z;
 		}
-		else{
-			SimpleBrush::DrawDot_coordPos(
-				static_cast<ScreenCoord>(v1.pos._x), 
-				static_cast<ScreenCoord>(v1.pos._y), v1.color,
-				back_buffer
-				);
+		// 根据贴图更新颜色
+		if (TextureManager::GetInstance()->GetTexture()) {
+			auto ccc = TextureManager::GetInstance()->GetTexture()->GetPixel_normedPos(v1.uv._x, v1.uv._y);
+			v1.color *= TextureManager::GetInstance()->GetTexture()->GetPixel_normedPos(v1.uv._x, v1.uv._y);
 		}
+		// alpha融合
+		v1.color = v1.color * v1.color._w + static_cast<NormColor4>(back_buffer->GetPixel_coordPos(coord_x, coord_y)) * (1 - v1.color._w);
+
+		SimpleBrush::DrawDot_coordPos(
+			coord_x, coord_y, v1.color,
+			back_buffer
+		);
 	}
 
 	static void DrawLine(

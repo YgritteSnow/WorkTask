@@ -26,8 +26,10 @@ public:
 	}
 public:
 	ColorType GetPixel_normedPos(float x, float y){ return *(pPixelAt_normedPos(x, y)); }
+	ColorType GetPixel_coordPos(ScreenCoord x, ScreenCoord y) { return *(pPixelAt(x, y)); }
 
-	void clear() { memset(m_data, 0x33, sizeof(ColorType)* width * height); };
+	void clear() { memset(m_data, 0, sizeof(ColorType)* width * height); };
+	void clear(ColorType c) { for (int i = 0; i < width * height; ++i) { m_data[i] = c; }; }
 	ColorType* pPixelAt(ScreenCoord x, ScreenCoord y) const { return m_data + y * width + x; };
 	ColorType* pPixelAt_normedPos(float x, float y) const { return m_data + (int)(y*(height - 1) + 0.5) * width + (int)(x*(width - 1) + 0.5); };
 	ColorType* pLineAt(ScreenCoord y) const { return m_data + y * width; };

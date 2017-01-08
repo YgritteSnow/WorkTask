@@ -38,20 +38,20 @@ namespace JMath{
 	void Mat44::SetViewMat(WorldPos lookat, WorldPos cameraPos, WorldPos upDirect){
 		// 以 lookat 的方向为准，upDirect 不一定是摄像机的正上方
 		lookat.Normalise();
-		auto left = lookat.CrossProduct(upDirect);
-		left.Normalise();
-		auto up = left.CrossProduct(lookat);
-		SetRow(0, left._x, left._y, left._z, 0);
-		SetRow(1, up._x, up._y, up._z, 0);
+		auto x_dir = upDirect.CrossProduct(lookat);
+		x_dir.Normalise();
+		auto y_dir = lookat.CrossProduct(x_dir);
+		SetRow(0, x_dir._x, x_dir._y, x_dir._z, 0);
+		SetRow(1, y_dir._x, y_dir._y, y_dir._z, 0);
 		SetRow(2, lookat._x, lookat._y, lookat._z, 0);
-		SetRow(3, 0, 0, 0, 1);
+		SetRow(3, cameraPos._x, cameraPos._y, cameraPos._z, 1);
 	}
 
 	void Mat44::SetProjMat(float fov, float aspect, float nearPlane, float farPlane){
 		this->SetIdentity();
-		_m[2][2] = 1;
-		_m[3][2] = 1 / nearPlane;
-		_m[2][3] = -1;
+		_m[2][2] = 1 / nearPlane;
+		_m[2][3] = 1 / nearPlane;
+		_m[3][2] = -1;
 		_m[3][3] = 0;
 	}
 

@@ -50,14 +50,18 @@ namespace BitMap {
 			return;
 		}
 
-		char* src_start = (char*)buffer->pLineAt(0);
-		char* dst_start = (char*)pImg;
 		for (int y = 0; y != buffer->height; ++y) {
 			char* pLine = pImg + TO_MUL4(buffer->width * BitMapChannel) * y;
-			char* pSrc = (char*)(buffer->pLineAt(y));
-			int i = 0;
-			int j = 0;
-			memcpy(pLine, pSrc, buffer->width * BitMapChannel);
+			for (int x = 0; x < buffer->width; x++)
+			{
+				auto dstPtr = buffer->pPixelAt(x, y);
+				//pLine[0 + x * BitMapChannel] = 255;
+				//pLine[1 + x * BitMapChannel] = 0;
+				//pLine[2 + x * BitMapChannel] = 255;
+				pLine[0 + x * BitMapChannel] = dstPtr->_z;
+				pLine[1 + x * BitMapChannel] = dstPtr->_y;
+				pLine[2 + x * BitMapChannel] = dstPtr->_x;
+			}
 		}
 
 		auto oldTmp = SelectObject(dc, bmp);
@@ -72,5 +76,8 @@ namespace BitMap {
 	}
 
 	ImgBuffer<ShortColor4>* Load(const char* filename);
+	ImgBuffer<ShortColor4>* LoadBMP(FILE* pf, const char* filename);
+	ImgBuffer<ShortColor4>* LoadPNG(FILE* pf, const char* filename);
+	ImgBuffer<ShortColor4>* LoadTGA(FILE* pf, const char* filename);
 }
 #endif

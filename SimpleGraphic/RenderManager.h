@@ -45,6 +45,10 @@ typedef unsigned char StateMaskType;
 #define StateMaskValue_BackCull		(0x0 << 4)
 #define StateMaskValue_BackCullR	(0x1 << 4)
 
+#define StateMask_DepthBuffer		(0x1 << 5)
+#define StateMaskValue_UseDepth		(0x0 << 5)
+#define StateMaskValue_NoDepth		(0x1 << 5)
+
 // 
 class RenderManager{
 public:
@@ -143,8 +147,10 @@ private:
 			HomoPos tmp = modelMat.PreMulVec((dst_vertex + idx)->pos.ToVec4Pos());
 			worldPos[idx] = tmp.ToVec3Homo();
 
-			tmp = CameraManager::GetInstance()->CurrentCamera()->GetViewProjMat().PreMulVec(tmp);
-			WorldPos screen_pos = CameraManager::GetInstance()->CurrentCamera()->TransToScreenPos(tmp.ToVec3Homo());
+			auto iii = CameraManager::GetInstance()->CurrentCamera()->GetViewMat();
+			auto ddd = CameraManager::GetInstance()->CurrentCamera()->GetProjMat();
+			auto tmp2 = CameraManager::GetInstance()->CurrentCamera()->GetViewProjMat().PreMulVec(tmp);
+			WorldPos screen_pos = CameraManager::GetInstance()->CurrentCamera()->TransToScreenPos(tmp2.ToVec3Homo());
 			(dst_vertex + idx)->pos = screen_pos;
 		}
 	}
@@ -243,7 +249,12 @@ private:
 	// ²åÖµ
 	template <typename VertexStruct>
 	void RenderLine(VertexStruct v1, VertexStruct v2) {
-		VertexBrush<VertexStruct>::DrawLine(v1, v2, m_imgBuffer_back, m_imgBuffer_depth);
+		if (CheckState(StateMask_DepthBuffer, StateMaskValue_UseDepth)) {
+			VertexBrush<VertexStruct>::DrawLine(v1, v2, m_imgBuffer_back, m_imgBuffer_depth);
+		}
+		else if (CheckState(StateMask_DepthBuffer, StateMaskValue_NoDepth)) {
+			VertexBrush<VertexStruct>::DrawLine(v1, v2, m_imgBuffer_back, nullptr);
+		}
 	}
 
 	template <typename VertexStruct>
@@ -253,9 +264,13 @@ private:
 		RenderLine(v3, v1);
 	}
 	template <typename VertexStruct>
-	void RenderTriangle_fill(VertexStruct v1, VertexStruct v2, VertexStruct v3){
-		VertexBrush<VertexStruct>::DrawTriangle(v1, v2, v3, m_imgBuffer_back, m_imgBuffer_depth);
-		//SimpleBrush::DrawTriangle(v1.pos, v1.color, v2.pos, v2.color, v3.pos, v3.color, m_imgBuffer_back);
+	void RenderTriangle_fill(VertexStruct v1, VertexStruct v2, VertexStruct v3) {
+		if (CheckState(StateMask_DepthBuffer, StateMaskValue_UseDepth)) {
+			VertexBrush<VertexStruct>::DrawTriangle(v1, v2, v3, m_imgBuffer_back, m_imgBuffer_depth);
+		}
+		else if (CheckState(StateMask_DepthBuffer, StateMaskValue_NoDepth)) {
+			VertexBrush<VertexStruct>::DrawTriangle(v1, v2, v3, m_imgBuffer_back, nullptr);
+		}
 	}
 	
 private:

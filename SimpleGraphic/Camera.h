@@ -23,7 +23,7 @@ public:
 	void SetProjMat(float fov, float aspect, float nearPlane, float farPlane);
 	JMath::Mat44 GetViewMat() const { return m_viewMat; };
 	JMath::Mat44 GetProjMat() const { return m_projMat; };
-	JMath::Mat44 GetViewProjMat() const { return m_viewMat.PreMulMat(m_projMat); };
+	JMath::Mat44 GetViewProjMat() const { return m_viewMat.PostMulMat(m_projMat); };
 	WorldPos TransToScreenPos(WorldPos pos) const { return WorldPos((pos._x + 0.5f) * WINDOW_WIDTH, (pos._y + 0.5f) * WINDOW_HEIGHT, pos._z); }
 
 	WorldPos GetCameraPos() const { return m_viewMat.GetTranslate(); }

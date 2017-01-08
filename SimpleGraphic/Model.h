@@ -70,7 +70,7 @@ public:
 		m_vec_indice.push_back(0);
 		m_vec_indice.push_back(2);
 	}
-	void DummyBall(float radius, int h_count, int r_count, NormColor4 color){
+	void DummyBall(float radius, int h_count, int r_count, NormColor4 color, WorldPos pos){
 		// 横切为 h_count 层圆片，每个圆片分为 r_count 个扇形
 		// 至少应该用 2 层圆片，4 个扇形
 		if (h_count < 2 || r_count < 4){
@@ -78,7 +78,7 @@ public:
 			return;
 		}
 
-		m_worldMat.SetTranslate(0, 0, 5);
+		m_worldMat.SetTranslate(pos._x, pos._y, pos._z);
 		m_vec_vertex.clear();
 		m_vec_indice.clear();
 
@@ -100,7 +100,6 @@ public:
 				point._x = std::cos(ang) * i_radius;
 				point._y = lo_y;
 				point._z = std::sin(ang) * i_radius;
-				//m_vec_vertex.push_back(VertexStruct(point, NormColor4((std::cos(ang)+1)/2, (std::sin(ang)+1)/2, 1, 1), point));
 				m_vec_vertex.push_back(VertexStruct(point, color, point, UVPos((std::cos(ang) + 1) / 2, lo_y/radius/2 + 0.5)));
 			}
 		}
@@ -149,12 +148,12 @@ public:
 		int idx_last = 1 + (h_count-1)*r_count;
 		for (int j = 0; j < r_count - 1; ++j){
 			m_vec_indice.push_back(idx_start + j);
-			m_vec_indice.push_back(idx_start + j + 1);
 			m_vec_indice.push_back(idx_last);
+			m_vec_indice.push_back(idx_start + j + 1);
 		}
 		m_vec_indice.push_back(idx_start + r_count - 1);
-		m_vec_indice.push_back(idx_start);
 		m_vec_indice.push_back(idx_last);
+		m_vec_indice.push_back(idx_start);
 	}
 	void DummyQuad(float width, float height) {
 		m_worldMat.SetTranslate(0, 0, 5);

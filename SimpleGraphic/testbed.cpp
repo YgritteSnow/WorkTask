@@ -11,8 +11,8 @@ const TCHAR* WINDOW_NAME = _T("jj");
 const TCHAR* WINDOW_CAPTION = _T("SimpleGraphics - by jj");
 UINT WINDOW_POS_X = 100;
 UINT WINDOW_POS_Y = 100;
-UINT WINDOW_WIDTH = 500;
-UINT WINDOW_HEIGHT = 500;
+UINT WINDOW_WIDTH = 700;
+UINT WINDOW_HEIGHT = 700;
 TimeType MAX_FRAME_RATE = 0.0001;
 HWND g_hwnd = NULL;
 
@@ -86,32 +86,41 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	
 	if (InitManagers() == S_OK){
 		// 设置一些测试数据
-		Model<DummyVertex>* dummyModel = new Model<DummyVertex>;
-		dummyModel->DummyBall(1, 28, 10, NormColor4(1,1,1,1));
-		//dummyModel->DummyQuad(5, 5);
+		Model<DummyVertex>* dummyModel_mid = new Model<DummyVertex>;
+		dummyModel_mid->DummyBall(1, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 0, 5));
+
+		Model<DummyVertex>* dummyModel_far = new Model<DummyVertex>;
+		dummyModel_far->DummyBall(1.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(1, 1, 6));
+
+		Model<DummyVertex>* dummyModel_near = new Model<DummyVertex>;
+		dummyModel_near->DummyBall(0.5, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(-0.3, -0.3, 2));
 
 		Scene* dummyScene = new Scene;
-		dummyScene->AddModel(dummyModel);
+		dummyScene->AddModel(dummyModel_far);
+		dummyScene->AddModel(dummyModel_near);
+		dummyScene->AddModel(dummyModel_mid);
 
 		SceneManager::GetInstance()->AddScene(dummyScene);
 
 		MaterialManager::GetInstance()->SetMaterial(Material(
-			NormColor4(1, 1, 1, 1) * 0.2,
-			NormColor4(1, 0, 1, 1) * 0.3,
-			NormColor4(1, 1, 0, 5) * 2
+			NormColor4(1, 1, 1, 1) * 0.4,
+			NormColor4(1, 0, 1, 1) * 0.7,
+			NormColor4(1, 1, 0, 2) * 2
 		));
 
-		TextureManager::GetInstance()->SetTexture("tex_pic.bmp");
+		TextureManager::GetInstance()->SetTexture("tex_alpha_color.tga");
 
-		LightManager::GetInstance()->AddLight(new AmbientLight(NormColor4(1, 1, 1, 0)));
+		LightManager::GetInstance()->AddLight(new AmbientLight(NormColor4(1, 1, 1, 1)));
 		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 1, 1, 1), WorldPos(1, -1, 1)));
+		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 1, 1, 1)*3, WorldPos(-1, 1, 1)));
 
 		RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Fill);
-		//RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Wareframe);
-		//RenderManager::GetInstance()->SetRenderState(StateMask_Light, StateMaskValue_LightDisable);
 		RenderManager::GetInstance()->SetRenderState(StateMask_Light, StateMaskValue_LightEnable);
 		RenderManager::GetInstance()->SetRenderState(StateMask_CalNormal, StateMaskValue_NotCalNormal);
 		RenderManager::GetInstance()->SetRenderState(StateMask_BackCull, StateMaskValue_BackCull);
+		RenderManager::GetInstance()->SetRenderState(StateMask_DepthBuffer, StateMaskValue_UseDepth);
+
+		CameraManager::GetInstance()->CurrentCamera()->SetViewMat(WorldPos(0, 0, 5), WorldPos(0, 0, 0), WorldPos(0, 1, 0));
 
 		// 主循环
 		MSG msg;
@@ -129,8 +138,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 					CameraManager::GetInstance()->Update(TimeManager::GetInstance()->GetFrameInterval());
 					SceneManager::GetInstance()->Update(TimeManager::GetInstance()->GetFrameInterval());
 					SceneManager::GetInstance()->Render();
-
-					//CameraManager::GetInstance()->CurrentCamera()->SetViewMat(WorldPos(0, 0, 10), WorldPos(0, 0, 0), WorldPos(0, 1, 0));
 				}
 			}
 		}

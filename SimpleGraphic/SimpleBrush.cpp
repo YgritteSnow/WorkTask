@@ -16,9 +16,7 @@ void SimpleBrush::DrawDot_normedPos(ScreenPos v, NormColor4 color, ImgBuffer<Sho
 }
 
 void SimpleBrush::DrawDot_coordPos(ScreenCoord x, ScreenCoord y, NormColor4 color, ImgBuffer<ShortColor4>* back_buffer){
-	if (x >= 0 && y >= 0 && x < back_buffer->width && y < back_buffer->height){
-		*static_cast<ShortColor4*>(back_buffer->pPixelAt(x, y)) = static_cast<ShortColor4>(color);
-	}
+	*static_cast<ShortColor4*>(back_buffer->pPixelAt(x, y)) = static_cast<ShortColor4>(color);
 }
 
 /* *********************************************
