@@ -8,7 +8,7 @@
 * *********************************************/
 NormColor4 AmbientLight::ProcessColor(WorldPos normal, WorldPos pos){
 	// ambient
-	return (MaterialManager::GetInstance()->GetAmbient() * this->m_light_color);
+	return MaterialManager::GetInstance()->GetEmissive() * this->m_light_color;
 }
 
 NormColor4 DirectLight::ProcessColor(WorldPos normal, WorldPos pos){
@@ -53,6 +53,7 @@ NormColor4 LightManager::Process(NormColor4 origin_color, WorldPos normal, World
 	for (auto it = m_vec_light.begin(); it != m_vec_light.end(); ++it){
 		res_color += (*it)->ProcessColor(normal, pos);
 	}
+	res_color += MaterialManager::GetInstance()->GetEmissive();
 	res_color._w = 1;
 	res_color *= origin_color;
 	return res_color;

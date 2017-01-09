@@ -43,8 +43,8 @@ typedef unsigned char StateMaskType;
 #define StateMaskValue_withCorrect	(0x1 << 3)
 
 #define StateMask_BackCull			(0x1 << 4)
-#define StateMaskValue_BackCull		(0x0 << 4)
-#define StateMaskValue_BackCullR	(0x1 << 4)
+#define StateMaskValue_BackCullR	(0x0 << 4)
+#define StateMaskValue_BackCull		(0x1 << 4)
 
 #define StateMask_DepthBuffer		(0x1 << 5)
 #define StateMaskValue_UseDepth		(0x0 << 5)
@@ -52,7 +52,7 @@ typedef unsigned char StateMaskType;
 
 #define StateMask_Alpha				(0x1 << 6)
 #define StateMaskValue_NoAlpha		(0x0 << 6)
-#define StateMaskValue_UseAlpha	(0x1 << 6)
+#define StateMaskValue_UseAlpha		(0x1 << 6)
 
 // 
 class RenderManager{

@@ -5,19 +5,22 @@
 
 struct Material {
 	Material()
-		: ambient(NormColor4(1,1,1,1))
-		, diffuse(NormColor4(1,1,1,1))
-		, specular(NormColor4(1,1,1,1))
+		: ambient()
+		, diffuse()
+		, specular()
+		, emissive()
 	{};
-	Material(NormColor4 a, NormColor4 d, NormColor4 s)
+	Material(const NormColor4& a, const NormColor4& d, const NormColor4& s, const NormColor4& e)
 		: ambient(a)
 		, diffuse(d)
 		, specular(s)
+		, emissive(e)
 	{}
 
 	NormColor4 ambient;
 	NormColor4 diffuse;
 	NormColor4 specular;
+	NormColor4 emissive;
 };
 
 class MaterialManager {
@@ -30,16 +33,13 @@ public:
 	}
 
 public:
-	void SetMaterial(const Material& m) {
-		m_cur_material = m; 
-	}
+	void SetMaterial(const Material& m) { m_cur_material = m; }
 	void ClearMaterial() { m_cur_material = Material(); }
 
-	NormColor4 GetAmbient() { 
-		return m_cur_material.ambient; 
-	}
+	NormColor4 GetAmbient() { return m_cur_material.ambient; }
 	NormColor4 GetDiffuse() { return m_cur_material.diffuse; }
 	NormColor4 GetSpecular() { return m_cur_material.specular; }
+	NormColor4 GetEmissive() { return m_cur_material.emissive; }
 
 private:
 	static MaterialManager* m_instance;

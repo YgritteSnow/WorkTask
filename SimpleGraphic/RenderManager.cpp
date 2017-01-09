@@ -91,7 +91,7 @@ void RenderManager::Present() {
 
 void RenderManager::OnRenderFinish() {
 	if (CheckState(StateMask_Alpha, StateMaskValue_UseAlpha)){
-		m_imgBuffer_alpha->SortAndBlend();
+		m_imgBuffer_alpha->Blend();
 		for (int x = 0; x < m_imgBuffer_back->width; ++x) {
 			for (int y = 0; y < m_imgBuffer_back->height; ++y) {
 				auto pBackPixel = m_imgBuffer_back->pPixelAt(x, y);

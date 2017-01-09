@@ -85,8 +85,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	}
 	
 	if (InitManagers() == S_OK){
-		// 设置一些测试数据
-
 		// 设置相机
 		CameraManager::GetInstance()->CurrentCamera()->SetProjMat(1.4f, (float)WINDOW_WIDTH / WINDOW_HEIGHT, 1.f, 1000.f);
 		CameraManager::GetInstance()->CurrentCamera()->SetViewMat(WorldPos(0, 0, 5), WorldPos(0, 0, 0), WorldPos(0, 1, 0));
@@ -100,22 +98,23 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		//dummyModel_far->DummyBall(1.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(1, 1, 6));
 
 		// 模型（距离2）
-		//Model<DummyVertex>* dummyModel_near = new Model<DummyVertex>;
-		//dummyModel_near->DummyBall(0.5, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(-0.3, -0.3, 2));
+		Model<DummyVertex>* dummyModel_near = new Model<DummyVertex>;
+		dummyModel_near->DummyBall(0.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(-0.3, -0.3, 4));
 
 		// 设置场景，添加模型
 		Scene* dummyScene = new Scene;
 		//dummyScene->AddModel(dummyModel_far);
-		//dummyScene->AddModel(dummyModel_near);
+		dummyScene->AddModel(dummyModel_near);
 		dummyScene->AddModel(dummyModel_mid);
 
 		SceneManager::GetInstance()->AddScene(dummyScene);
 
 		// 设置材质
 		MaterialManager::GetInstance()->SetMaterial(Material(
-			NormColor4(1, 1, 1, 1) * 0.4,
-			NormColor4(1, 0, 1, 1) * 0.7,
-			NormColor4(1, 1, 0, 2) * 2
+			NormColor4(1, 1, 1, 1) * 0.1,
+			NormColor4(1, 1, 1, 1) * 0.3,
+			NormColor4(0.7, 0.7, 0.7, 50),
+			NormColor4(1, 1, 1, 1) * 0.1
 		));
 
 		// 设置贴图
@@ -123,14 +122,15 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 
 		// 设置光照
 		LightManager::GetInstance()->AddLight(new AmbientLight(NormColor4(1, 1, 1, 1)));
-		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 1, 1, 1), WorldPos(1, -1, 1)));
-		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 1, 1, 1)*3, WorldPos(-1, 1, 1)));
+		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 1, 0, 1) * 2, WorldPos(1, 0, 0)));
+		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 0, 1, 1) * 2, WorldPos(-1, 0, 0)));
+		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 0, 0, 1) * 2, WorldPos(0, 1, 0)));
 
 		// 设置渲染状态
-		RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Wareframe);
-		RenderManager::GetInstance()->SetRenderState(StateMask_Light, StateMaskValue_LightDisable);
+		RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Fill);
+		RenderManager::GetInstance()->SetRenderState(StateMask_Light, StateMaskValue_LightEnable);
 		RenderManager::GetInstance()->SetRenderState(StateMask_CalNormal, StateMaskValue_NotCalNormal);
-		RenderManager::GetInstance()->SetRenderState(StateMask_BackCull, StateMaskValue_BackCull);
+		RenderManager::GetInstance()->SetRenderState(StateMask_BackCull, StateMaskValue_BackCullR);
 		RenderManager::GetInstance()->SetRenderState(StateMask_DepthBuffer, StateMaskValue_UseDepth);
 		RenderManager::GetInstance()->SetRenderState(StateMask_Alpha, StateMaskValue_UseAlpha);
 
