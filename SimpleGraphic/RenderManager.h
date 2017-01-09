@@ -52,7 +52,7 @@ typedef unsigned char StateMaskType;
 
 #define StateMask_Alpha				(0x1 << 6)
 #define StateMaskValue_NoAlpha		(0x0 << 6)
-#define StateMaskValue_WithAlpha	(0x1 << 6)
+#define StateMaskValue_UseAlpha	(0x1 << 6)
 
 // 
 class RenderManager{
@@ -263,7 +263,7 @@ private:
 				VertexBrush<VertexStruct>::DrawLine(v1, v2, m_imgBuffer_back, nullptr);
 			}
 		}
-		else if (CheckState(StateMask_Alpha, StateMaskValue_WithAlpha)) {
+		else if (CheckState(StateMask_Alpha, StateMaskValue_UseAlpha)) {
 			VertexBrush<VertexStruct>::DrawLine(v1, v2, m_imgBuffer_alpha, nullptr);
 		}
 	}
@@ -284,7 +284,7 @@ private:
 				VertexBrush<VertexStruct>::DrawTriangle(v1, v2, v3, m_imgBuffer_back, nullptr);
 			}
 		}
-		else if (CheckState(StateMask_Alpha, StateMaskValue_WithAlpha)) {
+		else if (CheckState(StateMask_Alpha, StateMaskValue_UseAlpha)) {
 			VertexBrush<VertexStruct>::DrawTriangle(v1, v2, v3, m_imgBuffer_alpha, nullptr);
 		}
 	}

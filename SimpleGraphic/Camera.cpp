@@ -24,7 +24,7 @@ bool Camera::HanldeKeyEvent(const KeyEventObject& keyEvent) {
 	return false;
 }
 bool Camera::HandleMouseMoveEvent(const MouseEventObject& mouseEvent) {
-	float para = -0.001;
+	float para = -0.01;
 	if (mouseEvent.is_down) {
 		m_viewMat = m_viewMat.RotateXYZ(mouseEvent.x_move * para,
 			mouseEvent.y_move * para, mouseEvent.x_move * 0);

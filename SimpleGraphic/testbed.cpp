@@ -86,15 +86,24 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	
 	if (InitManagers() == S_OK){
 		// 设置一些测试数据
+
+		// 设置相机
+		CameraManager::GetInstance()->CurrentCamera()->SetProjMat(1.4f, (float)WINDOW_WIDTH / WINDOW_HEIGHT, 1.f, 1000.f);
+		CameraManager::GetInstance()->CurrentCamera()->SetViewMat(WorldPos(0, 0, 5), WorldPos(0, 0, 0), WorldPos(0, 1, 0));
+
+		// 模型（距离5）
 		Model<DummyVertex>* dummyModel_mid = new Model<DummyVertex>;
 		dummyModel_mid->DummyBall(1, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 0, 5));
 
+		// 模型（距离6）
 		//Model<DummyVertex>* dummyModel_far = new Model<DummyVertex>;
 		//dummyModel_far->DummyBall(1.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(1, 1, 6));
 
+		// 模型（距离2）
 		//Model<DummyVertex>* dummyModel_near = new Model<DummyVertex>;
 		//dummyModel_near->DummyBall(0.5, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(-0.3, -0.3, 2));
 
+		// 设置场景，添加模型
 		Scene* dummyScene = new Scene;
 		//dummyScene->AddModel(dummyModel_far);
 		//dummyScene->AddModel(dummyModel_near);
@@ -102,26 +111,28 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 
 		SceneManager::GetInstance()->AddScene(dummyScene);
 
+		// 设置材质
 		MaterialManager::GetInstance()->SetMaterial(Material(
 			NormColor4(1, 1, 1, 1) * 0.4,
 			NormColor4(1, 0, 1, 1) * 0.7,
 			NormColor4(1, 1, 0, 2) * 2
 		));
 
+		// 设置贴图
 		TextureManager::GetInstance()->SetTexture("tex_alpha_color.tga");
 
+		// 设置光照
 		LightManager::GetInstance()->AddLight(new AmbientLight(NormColor4(1, 1, 1, 1)));
 		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 1, 1, 1), WorldPos(1, -1, 1)));
 		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 1, 1, 1)*3, WorldPos(-1, 1, 1)));
 
+		// 设置渲染状态
 		RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Wareframe);
 		RenderManager::GetInstance()->SetRenderState(StateMask_Light, StateMaskValue_LightDisable);
 		RenderManager::GetInstance()->SetRenderState(StateMask_CalNormal, StateMaskValue_NotCalNormal);
 		RenderManager::GetInstance()->SetRenderState(StateMask_BackCull, StateMaskValue_BackCull);
 		RenderManager::GetInstance()->SetRenderState(StateMask_DepthBuffer, StateMaskValue_UseDepth);
-		RenderManager::GetInstance()->SetRenderState(StateMask_Alpha, StateMaskValue_NoAlpha);
-
-		CameraManager::GetInstance()->CurrentCamera()->SetViewMat(WorldPos(0, 0, 5), WorldPos(0.2, 0, 0), WorldPos(0, 1, 0));
+		RenderManager::GetInstance()->SetRenderState(StateMask_Alpha, StateMaskValue_UseAlpha);
 
 		// 主循环
 		MSG msg;
