@@ -89,23 +89,23 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		CameraManager::GetInstance()->CurrentCamera()->SetProjMat(1.4f, (float)WINDOW_WIDTH / WINDOW_HEIGHT, 1.f, 1000.f);
 		CameraManager::GetInstance()->CurrentCamera()->SetViewMat(WorldPos(0, 0, 5), WorldPos(0, 0, 0), WorldPos(0, 1, 0));
 
-		// 模型（距离5）
-		Model<DummyVertex>* dummyModel_mid = new Model<DummyVertex>;
-		dummyModel_mid->DummyBall(1, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 0, 5));
+		// 模型（球（远））
+		Model<DummyVertex>* dummyModel_far = new Model<DummyVertex>;
+		dummyModel_far->DummyBall(1, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 0, 5));
 
-		// 模型（距离6）
-		//Model<DummyVertex>* dummyModel_far = new Model<DummyVertex>;
-		//dummyModel_far->DummyBall(1.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(1, 1, 6));
-
-		// 模型（距离2）
+		// 模型（球（近））
 		Model<DummyVertex>* dummyModel_near = new Model<DummyVertex>;
 		dummyModel_near->DummyBall(0.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(-0.3, -0.3, 4));
 
+		// 模型（水平地面）
+		Model<DummyVertex>* dummyModel_ground = new Model<DummyVertex>;
+		dummyModel_ground->DummyGround(4, 4, NormColor4(1, 1, 1, 1), WorldPos(0, -0.3, 3));
+
 		// 设置场景，添加模型
 		Scene* dummyScene = new Scene;
-		//dummyScene->AddModel(dummyModel_far);
+		dummyScene->AddModel(dummyModel_ground);
 		dummyScene->AddModel(dummyModel_near);
-		dummyScene->AddModel(dummyModel_mid);
+		dummyScene->AddModel(dummyModel_far);
 
 		SceneManager::GetInstance()->AddScene(dummyScene);
 

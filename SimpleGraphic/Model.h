@@ -175,6 +175,21 @@ public:
 		m_vec_indice.push_back(2);
 		m_vec_indice.push_back(3);
 	}
+	void DummyGround(float width, float height, NormColor4 c, WorldPos center){
+		m_worldMat.SetTranslate(center);
+
+		m_vec_vertex.push_back(VertexStruct(WorldPos(center._x - width, center._y, center._z - height), c, WorldPos(0, 1, 0), UVPos(0, 0)));
+		m_vec_vertex.push_back(VertexStruct(WorldPos(center._x + width, center._y, center._z - height), c, WorldPos(0, 1, 0), UVPos(1, 0)));
+		m_vec_vertex.push_back(VertexStruct(WorldPos(center._x + width, center._y, center._z + height), c, WorldPos(0, 1, 0), UVPos(1, 1)));
+		m_vec_vertex.push_back(VertexStruct(WorldPos(center._x - width, center._y, center._z + height), c, WorldPos(0, 1, 0), UVPos(0, 1)));
+
+		m_vec_indice.push_back(0);
+		m_vec_indice.push_back(1);
+		m_vec_indice.push_back(2);
+		m_vec_indice.push_back(0);
+		m_vec_indice.push_back(2);
+		m_vec_indice.push_back(3);
+	}
 	VertexStruct* GetVertexes(){ return m_vec_vertex.size() > 0 ? &(m_vec_vertex[0]) : nullptr; }
 	DWORD* GetIndices(){ return m_vec_indice.size() > 0 ? &(m_vec_indice[0]) : nullptr; }
 	std::size_t GetVertexCount(){ return m_vec_vertex.size(); }
