@@ -1,9 +1,5 @@
 #include "StructMeta.h"
 
-//template <> struct REFLECTION_TEMPLATE<TestVertex> { enum { TYPEID = 1 }; };
-//template <> struct REFLECTION_TEMPLATE<TestVertex_v2p> { enum { TYPEID = 2 }; };
-//template <> struct REFLECTION_TEMPLATE<TestPixel> { enum { TYPEID = 3 }; };
-
 /************************************************************************/
 /*                                                                      */
 /************************************************************************/
@@ -18,6 +14,7 @@ DECLARE_REFLECTION_CLASS(TestVertex)
 DECLARE_REFLECTION_CLASS(TestVertex_v2p)
 ->AddAttri(&TestVertex_v2p::pos, POSITION)
 ->AddAttri(&TestVertex_v2p::color, COLOR)
+->AddAttri(&TestVertex::normal, NORMAL)
 ->AddAttri(&TestVertex::uv, COLOR);
 
 DECLARE_REFLECTION_CLASS(TestPixel)

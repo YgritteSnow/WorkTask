@@ -43,6 +43,7 @@ struct TestVertex {
 struct TestVertex_v2p {
 	WorldPos pos;
 	NormColor4 color;
+	WorldPos normal;
 	UVPos uv;
 };
 

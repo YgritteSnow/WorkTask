@@ -4,13 +4,14 @@
 #include <Windows.h>
 
 #include "JMath.h"
-#include "Brush.h"
+#include "Rasterizer.h"
 #include "Light.h"
 #include "TexBuffer.h"
 #include "ABuffer.h"
 #include "VertexUtilities.h"
 #include "VertexBuffer.h"
 #include "ShaderManager.h"
+#include "LightingShader.h"
 
 extern UINT WINDOW_WIDTH;
 extern UINT WINDOW_HEIGHT;
@@ -59,10 +60,10 @@ public:
 		// 三角形操作
 		// 这一步根据顶点位置和绕序，进行剔除
 		MaskType* cull_mask = new MaskType[static_cast<int>(ib->size()/TRIANGLE_COUNT)];
-		ProcessTriangle(vb, ib, cull_mask);
+		ProcessTriangle(vb_temp, ib, cull_mask);
 
 		const auto& indice_count = ib->size();
-		const auto& vb_vid = vb->GetId();
+		const auto& vb_vid = vb_temp->GetId();
 		for (size_t idx = 0; idx < indice_count - 2; idx+=3){
 			if (IS_CULLED(cull_mask[idx / 3])){
 				continue;
@@ -71,9 +72,14 @@ public:
 			auto indice_idx_1 = (*ib)[idx + 1];
 			auto indice_idx_2 = (*ib)[idx + 2];
 
-			const auto& v0 = vb->GetVertex(indice_idx_0);
-			const auto& v1 = vb->GetVertex(indice_idx_1);
-			const auto& v2 = vb->GetVertex(indice_idx_2);
+			const auto& v0 = vb_temp->GetVertex(indice_idx_0);
+			const auto& v1 = vb_temp->GetVertex(indice_idx_1);
+			const auto& v2 = vb_temp->GetVertex(indice_idx_2);
+
+			const auto& a1 = vb_temp->GetVertex(0);
+			const auto& a2 = vb_temp->GetVertex(1);
+			const auto& a3 = vb_temp->GetVertex(2);
+			const auto& a4 = vb_temp->GetVertex(3);
 
 			if (CheckCurState(StateMask_DrawMode, StateMaskValue_Wareframe)){
 				RenderTriangle_wireframe(vb_vid, v0, v1, v2);

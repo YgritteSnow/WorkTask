@@ -1,11 +1,21 @@
 #pragma once
 #include "StructMeta.h"
 #include "Mesh.h"
+#include "VertexUtilities.h"
 
 class TestCubeMesh : public Mesh
 {
 private:
 	virtual void OnLoad() override {
+		Dummy();
+		ProcessVertex_calNormal(
+			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
+			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
+			m_vertexBuffer->m_length,
+			m_indexBuffer->m_vec_indice,
+			m_indexBuffer->m_length);
+	}
+	void Dummy() {
 		m_vertexBuffer = new VertexBuffer(GetID(TestVertex), 4);
 		m_indexBuffer = new IndexBuffer(12);
 
@@ -40,6 +50,15 @@ public:
 	{}
 private:
 	virtual void OnLoad() override {
+		Dummy();
+		ProcessVertex_calNormal(
+			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
+			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
+			m_vertexBuffer->m_length, 
+			m_indexBuffer->m_vec_indice, 
+			m_indexBuffer->m_length);
+	}
+	void Dummy() {
 		std::vector<TestVertex> t_vertex;
 		std::vector<DWORD> t_index;
 
@@ -144,6 +163,15 @@ class TestQuadMesh : public Mesh
 {
 private:
 	void OnLoad() override {
+		Dummy();
+		ProcessVertex_calNormal(
+			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
+			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
+			m_vertexBuffer->m_length,
+			m_indexBuffer->m_vec_indice,
+			m_indexBuffer->m_length);
+	}
+	void Dummy() {
 		std::vector<TestVertex> t_vertex;
 		std::vector<DWORD> t_index;
 
@@ -155,9 +183,9 @@ private:
 		t_index.push_back(0);
 		t_index.push_back(1);
 		t_index.push_back(2);
-		t_index.push_back(0);
-		t_index.push_back(2);
-		t_index.push_back(3);
+		//t_index.push_back(0);
+		//t_index.push_back(2);
+		//t_index.push_back(3);
 
 		// 这里转换一下上边的数据
 		m_vertexBuffer = new VertexBuffer(GetID(TestVertex), t_vertex.size());
@@ -181,6 +209,15 @@ public:
 	{}
 
 	void OnLoad() override {
+		Dummy();
+		ProcessVertex_calNormal(
+			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
+			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
+			m_vertexBuffer->m_length,
+			m_indexBuffer->m_vec_indice,
+			m_indexBuffer->m_length);
+	}
+	void Dummy() {
 		float width = m_width;
 		float height = m_height;
 		NormColor4 c = m_color;

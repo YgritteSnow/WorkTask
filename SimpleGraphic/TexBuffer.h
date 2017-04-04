@@ -49,13 +49,11 @@ public:
 	void SetPixelAt_normedPos(float x, float y, const PixelType& c) {
 		&(pPixelAt_normedPos(x, y)) = c;
 	}
-	void SetPixelAt_byVertex(ScreenCoord x, ScreenCoord y, STRUCT_ID vid, const byte* v) {
-		const auto& color = *static_cast<const NormColor4*>(static_cast<const void*>(v + StructReflectManager::GetOffset<COLOR>(vid, 0)));
-		*(pPixelAt(x, y)) = static_cast<PixelType>(color);
+	void SetPixelAt_byVertex(ScreenCoord x, ScreenCoord y, const StructWrapper& s) {
+		*(pPixelAt(x, y)) = s;
 	}
-	void SetPixelAt_byVertex_normedPos(float x, float y, STRUCT_ID vid, const byte* v) {
-		const auto& color = *static_cast<const NormColor4*>(static_cast<const void*>(v + StructReflectManager::GetOffset<COLOR>(vid, 0)));
-		&(pPixelAt_normedPos(x, y)) = static_cast<PixelType>(color);
+	void SetPixelAt_byVertex_normedPos(float x, float y, const StructWrapper& s) {
+		*(pPixelAt_normedPos(x, y)) = s;
 	}
 
 public:

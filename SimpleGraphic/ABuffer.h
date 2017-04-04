@@ -52,6 +52,7 @@ struct AlphaBlendFrag {
 		m_vec_color = new AlphaBlendData[DEFAULT_ALPHABUFFER_SIZE];
 #endif
 	}
+
 	AlphaBlendFrag(NormColor4 c)
 #if USE_BUDDLESORT
 		:m_vec_color()
@@ -67,6 +68,7 @@ struct AlphaBlendFrag {
 		m_vec_color[0] = AlphaBlendData(c, 0);
 #endif
 	}
+
 #if USE_BUDDLESORT
 	~AlphaBlendFrag(){
 		delete[] m_vec_color;
@@ -94,6 +96,13 @@ public:
 		m_vec_color.clear();
 #endif
 		m_blended_color.Zero();
+	}
+
+	AlphaBlendFrag& operator=(const StructWrapper& s){
+		const auto& vpos = *static_cast<const WorldPos*>(static_cast<const void*>(s.value + StructReflectManager::GetOffset<POSITION>(s.vid, 0)));
+		const auto& vcolor = *static_cast<const NormColor4*>(static_cast<const void*>(s.value + StructReflectManager::GetOffset<COLOR>(s.vid, 0)));
+		AddColor(AlphaBlendData(vcolor, vpos._z));
+		return *this;
 	}
 
 	void AddColor(const AlphaBlendData& c){
@@ -187,7 +196,7 @@ public:
 		const auto& vcolor = *static_cast<const NormColor4*>(static_cast<const void*>(v + StructReflectManager::GetOffset<COLOR>(vid, 0)));
 		pPixelAt(x, y)->AddColor(AlphaBlendData(vcolor, vpos._z));
 	}
-	void SetPixelAt_byVertex_normedPos(float x, float y, STRUCT_ID vid, const byte* v) {
+	void SetPixelAt_byVertex_normedPos(float x, float y, STRUCT_ID vid, const byte* v)  {
 		const auto& vpos = *static_cast<const WorldPos*>(static_cast<const void*>(v + StructReflectManager::GetOffset<POSITION>(vid, 0)));
 		const auto& vcolor = *static_cast<const NormColor4*>(static_cast<const void*>(v + StructReflectManager::GetOffset<COLOR>(vid, 0)));
 		pPixelAt_normedPos(x, y)->AddColor(AlphaBlendData(vcolor, vpos._z));

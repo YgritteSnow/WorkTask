@@ -8,6 +8,9 @@ typedef unsigned long STRUCT_ID;
 typedef unsigned char byte;
 #endif
 
+#define MAX_ATTRI_SIZE 16
+#define MAX_CID 16
+
 enum AttriType {
 	POSITION,
 	NORMAL,
@@ -17,7 +20,14 @@ enum AttriType {
 
 struct _StructReflect
 {
-	_StructReflect() :m_size(0) {}
+	_StructReflect()
+		: m_size(0)
+		, m_attriType_pos_size(0)
+		, m_attriType_normal_size(0)
+		, m_attriType_uv_size(0)
+		, m_attriType_color_size(0)
+		, m_attriType_all_size(0)
+	{}
 	template <typename T, typename C>
 	_StructReflect* AddAttri(const C T::* pField, AttriType attriType) {
 		STRIDE_TYPE offset = ((STRIDE_TYPE)&(((const T*)1024)->*pField)) - 1024;
@@ -27,11 +37,11 @@ struct _StructReflect
 	}
 
 	void push_back(STRIDE_TYPE offset, AttriType attrType) {
-		m_attriType_all.push_back(offset);
-		if (attrType == POSITION)m_attriType_pos.push_back(offset);
-		else if (attrType == NORMAL)m_attriType_normal.push_back(offset);
-		else if (attrType == UV)m_attriType_uv.push_back(offset);
-		else if (attrType == COLOR)m_attriType_color.push_back(offset);
+		m_attriType_all[m_attriType_all_size++] = offset;
+		if (attrType == POSITION)m_attriType_pos[m_attriType_pos_size++] = offset;
+		else if (attrType == NORMAL)m_attriType_normal[m_attriType_normal_size++] = offset;
+		else if (attrType == UV)m_attriType_uv[m_attriType_uv_size++] = offset;
+		else if (attrType == COLOR)m_attriType_color[m_attriType_color_size++] = offset;
 	}
 
 	template <AttriType attriType>
@@ -45,11 +55,17 @@ struct _StructReflect
 	template <>
 	STRIDE_TYPE get_attri<COLOR>(int index) { return m_attriType_color[index]; }
 
-	std::vector<STRIDE_TYPE> m_attriType_pos;
-	std::vector<STRIDE_TYPE> m_attriType_normal;
-	std::vector<STRIDE_TYPE> m_attriType_uv;
-	std::vector<STRIDE_TYPE> m_attriType_color;
-	std::vector<STRIDE_TYPE> m_attriType_all;
+	STRIDE_TYPE m_attriType_pos[MAX_ATTRI_SIZE];
+	STRIDE_TYPE m_attriType_normal[MAX_ATTRI_SIZE];
+	STRIDE_TYPE m_attriType_uv[MAX_ATTRI_SIZE];
+	STRIDE_TYPE m_attriType_color[MAX_ATTRI_SIZE];
+	STRIDE_TYPE m_attriType_all[MAX_ATTRI_SIZE];
+	
+	int m_attriType_pos_size;
+	int m_attriType_normal_size;
+	int m_attriType_uv_size;
+	int m_attriType_color_size;
+	int m_attriType_all_size;
 
 	STRIDE_TYPE m_size;
 };
@@ -61,8 +77,8 @@ struct StructReflectManager
 	static const auto& GetOffsetAll(STRUCT_ID vid) { return _id2ref[vid].m_attriType_all; }
 	static const auto& GetOffsetSize(STRUCT_ID vid) { return _id2ref[vid].m_size; }
 
-
-	static std::map<STRUCT_ID, _StructReflect > _id2ref;
+	static _StructReflect _id2ref[MAX_CID];
+	//static std::map<STRUCT_ID, _StructReflect > _id2ref;
 };
 
 #define DECLARE_REFLECTION_BEGIN() \
@@ -75,3 +91,13 @@ struct StructReflectManager
 
 #define DECLARE_REFECTION_END() \
 	}
+
+struct StructWrapper
+{
+	StructWrapper(STRUCT_ID vid, byte* value)
+		:vid(vid)
+		, value(value)
+	{}
+	STRUCT_ID vid;
+	byte* value;
+};

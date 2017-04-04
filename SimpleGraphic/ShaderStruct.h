@@ -17,9 +17,9 @@ public: \
 	STRUCT_ID GetOutId() const override; \
 	void Run(const byte* _vinIns, byte* _voutIns) override;
 
-#define DECLARE_VERTEXSHADER_START(vinClass, vinIns, voutClass, voutIns) \
-	STRUCT_ID GetOutId() const override { return GetID(voutClass); } \
-	void Run(const byte* _vinIns, byte* _voutIns) override \
+#define DECLARE_VERTEXSHADER_START(ShaderClass, vinClass, vinIns, voutClass, voutIns) \
+	STRUCT_ID ShaderClass::GetOutId() const { return GetID(voutClass); } \
+	void ShaderClass::Run(const byte* _vinIns, byte* _voutIns) \
 	{ \
 		const vinClass* vinIns = static_cast<const vinClass*>(static_cast<const void*>(_vinIns)); \
 		voutClass* voutIns = static_cast<voutClass*>(static_cast<void*>(_voutIns)); \
@@ -41,9 +41,9 @@ public:
 	void Run(const byte* _vinIns, byte* _voutIns) override; \
 	bool Test(const byte* _vinIns) override;
 
-#define DECLARE_PIXELSHADER_START(vinClass, vinIns, voutClass, voutIns) \
-	STRUCT_ID GetOutId() const override { return GetID(voutClass); } \
-	void Run(const byte* _vinIns, byte* _voutIns) override \
+#define DECLARE_PIXELSHADER_START(ShaderClass, vinClass, vinIns, voutClass, voutIns) \
+	STRUCT_ID ShaderClass::GetOutId() const { return GetID(voutClass); } \
+	void ShaderClass::Run(const byte* _vinIns, byte* _voutIns) \
 	{ \
 		const vinClass* vinIns = static_cast<const vinClass*>(static_cast<const void*>(_vinIns)); \
 		voutClass* voutIns = static_cast<voutClass*>(static_cast<void*>(_voutIns)); \
@@ -51,8 +51,8 @@ public:
 #define DECLARE_PIXELSHADER_END \
 	}
 
-#define DECLARE_PIXELSHADER_TEST_START(vinClass, vinIns) \
-	bool Test(const byte* _vinIns) override \
+#define DECLARE_PIXELSHADER_TEST_START(ShaderClass, vinClass, vinIns) \
+	bool ShaderClass::Test(const byte* _vinIns) \
 	{ \
 		const vinClass* vinIns = static_cast<const vinClass*>(static_cast<const void*>(_vinIns)); \
 

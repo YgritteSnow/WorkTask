@@ -146,7 +146,8 @@
   <ItemGroup>
     <ClCompile Include="ABuffer.cpp" />
     <ClCompile Include="BitMap.cpp" />
-    <ClCompile Include="Brush.cpp" />
+    <ClCompile Include="LightingShader.cpp" />
+    <ClCompile Include="Rasterizer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="InputEvent.cpp" />
@@ -173,7 +174,7 @@
     <ClInclude Include="ShaderStruct.h" />
     <ClInclude Include="ABuffer.h" />
     <ClInclude Include="BitMap.h" />
-    <ClInclude Include="Brush.h" />
+    <ClInclude Include="Rasterizer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="JMath.h" />

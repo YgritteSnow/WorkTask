@@ -96,9 +96,6 @@
     <ClCompile Include="Model.cpp">
       <Filter>SoftRender\Pipeline\Models</Filter>
     </ClCompile>
-    <ClCompile Include="Brush.cpp">
-      <Filter>SoftRender\Pipeline</Filter>
-    </ClCompile>
     <ClCompile Include="StructReflection.cpp">
       <Filter>SoftRender\Pipeline\Utilities</Filter>
     </ClCompile>
@@ -107,6 +104,12 @@
     </ClCompile>
     <ClCompile Include="VertexUtilities.cpp">
       <Filter>SoftRender\Pipeline\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Rasterizer.cpp">
+      <Filter>SoftRender\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="LightingShader.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -138,9 +141,6 @@
       <Filter>SoftRender\Pipeline</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
-      <Filter>SoftRender\Pipeline</Filter>
-    </ClInclude>
-    <ClInclude Include="Brush.h">
       <Filter>SoftRender\Pipeline</Filter>
     </ClInclude>
     <ClInclude Include="SimpleBrush.h">
@@ -190,6 +190,9 @@
     </ClInclude>
     <ClInclude Include="TestMesh.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rasterizer.h">
+      <Filter>SoftRender\Pipeline</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -13,6 +13,7 @@ typedef unsigned char StateMaskType;
 #define StateMaskAll				(0 - 1)
 #define StateMaskNull				(0)
 
+// 这个也去掉了
 #define StateMask_Light				(0x1 << 0)
 #define StateMaskValue_LightEnable	(0x0 << 0)
 #define StateMaskValue_LightDisable (0x1 << 0)
@@ -21,6 +22,7 @@ typedef unsigned char StateMaskType;
 #define StateMaskValue_Wareframe	(0x0 << 1)
 #define StateMaskValue_Fill			(0x1 << 1)
 
+// 这个可以去掉了
 #define StateMask_CalNormal			(0x1 << 2)
 #define StateMaskValue_CalNormal	(0x0 << 2)
 #define StateMaskValue_NotCalNormal	(0x1 << 2)
@@ -63,10 +65,6 @@ void ProcessVertex_noShader(VertexStruct* src_vertex, VertexStruct** p_dst_verte
 
 	ProcessVertex_pos(src_vertex, *p_dst_vertex, p_worldPos, vertex_count, modelMat);
 
-	if (CheckState(renderState, StateMask_CalNormal, StateMaskValue_CalNormal)) {
-		ProcessVertex_calNormal(src_vertex, *p_dst_vertex, vertex_count, indice, indice_count, modelMat);
-	}
-
 	ProcessVertex_transNormal(src_vertex, *p_dst_vertex, vertex_count, indice, indice_count, modelMat);
 	if (CheckState(renderState, StateMask_Light, StateMaskValue_LightEnable)) {
 		ProcessVertex_light(src_vertex, *p_dst_vertex, p_worldPos, vertex_count, modelMat);
@@ -80,8 +78,6 @@ void ProcessVertex_pos(VertexStruct* src_vertex, VertexStruct* dst_vertex, World
 		HomoPos tmp = modelMat.PreMulVec((dst_vertex + idx)->pos.ToVec4Pos());
 		worldPos[idx] = tmp.ToVec3Homo();
 
-		auto iii = CameraManager::GetInstance()->CurrentCamera()->GetViewMat();
-		auto ddd = CameraManager::GetInstance()->CurrentCamera()->GetProjMat();
 		auto tmp2 = CameraManager::GetInstance()->CurrentCamera()->GetViewProjMat().PreMulVec(tmp);
 		WorldPos screen_pos = CameraManager::GetInstance()->CurrentCamera()->TransToScreenPos(tmp2.ToVec3Homo());
 		(dst_vertex + idx)->pos = screen_pos;
@@ -90,7 +86,7 @@ void ProcessVertex_pos(VertexStruct* src_vertex, VertexStruct* dst_vertex, World
 
 // 计算顶点法向量
 template <typename VertexStruct>
-void ProcessVertex_calNormal(VertexStruct* src_vertex, VertexStruct* dst_vertex, size_t vertex_count, DWORD* indice, size_t indice_count, JMath::Mat44 modelMat) {
+void ProcessVertex_calNormal(VertexStruct* src_vertex, VertexStruct* dst_vertex, size_t vertex_count, DWORD* indice, size_t indice_count) {
 	for (size_t vertex_idx = 0; vertex_idx != vertex_count; ++vertex_idx) {
 		dst_vertex[vertex_idx].normal.Zero();
 	}

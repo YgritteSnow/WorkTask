@@ -2,6 +2,7 @@
 #define __BRUSH_H__
 
 #include <memory.h>
+#include <assert.h>
 #include "JMath.h"
 #include "Color.h"
 #include "TexManager.h"
@@ -39,12 +40,12 @@ public:
 		ScreenCoord coord_x = static_cast<ScreenCoord>(v1pos._x);
 		ScreenCoord coord_y = static_cast<ScreenCoord>(v1pos._y);
 
-		if (ShaderManager::TestPixel(v1)) {
+		if (!ShaderManager::TestPixel(v1)) {
 			return;
 		}
 		byte pixel[VERTEX_MAX_SIZE];
 		ShaderManager::ProcessPixel(v1, pixel);
-		back_buffer->SetPixelAt_byVertex(coord_x, coord_y, vid, pixel);
+		back_buffer->SetPixelAt_byVertex(coord_x, coord_y, StructWrapper(vid, pixel));
 	}
 
 	template <typename _TexBuffer>
@@ -73,9 +74,13 @@ public:
 		x_step /= max_count;
 		y_step /= max_count;
 
+		vpos._x = v0pos._x;
+		vpos._y = v0pos._y;
+
 		float ratio;
 		for (int idx = 0; idx < max_count; ++idx) {
-			ratio = use_x ? _calRat(v0pos._x, v1pos._x, vpos._x) : _calRat(v0pos._y, v1pos._y, vpos._y);
+			ratio = use_x ? calRat(v0pos._x, v1pos._x, vpos._x, v0pos._z, v1pos._z)
+				: calRat(v0pos._y, v1pos._y, vpos._y, v0pos._z, v1pos._z);
 			_interp(ratio, v0, v1, v, byte_size, offset_pos);
 
 			DrawDot(vid, v, back_buffer);
@@ -94,30 +99,29 @@ public:
 		STRIDE_TYPE byte_size = StructReflectManager::GetOffsetSize(vid);
 
 		const auto& offset_pos = StructReflectManager::GetOffset<POSITION>(vid, 0);
-		auto& v0pos = *static_cast<WorldPos*>(static_cast<void*>(v0 + offset_pos));
-		auto& v1pos = *static_cast<WorldPos*>(static_cast<void*>(v1 + offset_pos));
-
-		if (JMath::f_equal(v0pos._y, v1pos._y)) {
-			return;
-		}
+		auto v0pos = *static_cast<WorldPos*>(static_cast<void*>(v0 + offset_pos));
+		auto v1pos = *static_cast<WorldPos*>(static_cast<void*>(v1 + offset_pos));
 
 		if (v0pos._x > v1pos._x) {
 			std::swap(v0, v1);
-			std::swap(v0pos, v1pos);
 		}
+		v0pos = *static_cast<WorldPos*>(static_cast<void*>(v0 + offset_pos));
+		v1pos = *static_cast<WorldPos*>(static_cast<void*>(v1 + offset_pos));
 
 		byte v[VERTEX_MAX_SIZE];
 		auto& vpos = *static_cast<WorldPos*>(static_cast<void*>(v + offset_pos));
-		memcpy(v, v0, byte_size);
 		vpos._y = static_cast<float>(y);
-
+		ScreenCoord bgn = static_cast<ScreenCoord>(v0pos._x+0.5);
+		ScreenCoord end = static_cast<ScreenCoord>(v1pos._x+0.5);
+		vpos._x = bgn;
 		float ratio;
 		do {
-			ratio = _calRat(v0pos._y, v1pos._y, y);
+			ratio = calRat(v0pos._x, v1pos._x, vpos._x, v0pos._z, v1pos._z);
 			_interp(ratio, v0, v1, v, byte_size, offset_pos);
 			DrawDot(vid, v, back_buffer);
 			vpos._x += 1;
-		} while (vpos._x <= v1pos._x);
+			bgn += 1;
+		} while (bgn < end);
 	}
 
 	template <typename _TexBuffer>
@@ -129,33 +133,32 @@ public:
 		STRIDE_TYPE byte_size = StructReflectManager::GetOffsetSize(vid);
 
 		const auto& offset_pos = StructReflectManager::GetOffset<POSITION>(vid, 0);
-		auto& v0pos = *static_cast<WorldPos*>(static_cast<void*>(v0 + offset_pos));
-		auto& v1pos = *static_cast<WorldPos*>(static_cast<void*>(v1 + offset_pos));
-		auto& v2pos = *static_cast<WorldPos*>(static_cast<void*>(v2 + offset_pos));
+		auto v0pos = *static_cast<WorldPos*>(static_cast<void*>(v0 + offset_pos));
+		auto v1pos = *static_cast<WorldPos*>(static_cast<void*>(v1 + offset_pos));
+		auto v2pos = *static_cast<WorldPos*>(static_cast<void*>(v2 + offset_pos));
 
 		// 转换使三个点为y值从小到大排列
 		if (v0pos._y > v1pos._y) {
 			std::swap(v0, v1);
-			std::swap(v0pos, v1pos);
 		}
 		if (v0pos._y > v2pos._y) {
 			std::swap(v0, v2);
-			std::swap(v0pos, v2pos);
 		}
 		if (v1pos._y > v2pos._y) {
 			std::swap(v1, v2);
-			std::swap(v1pos, v2pos);
 		}
+		v0pos = *static_cast<WorldPos*>(static_cast<void*>(v0 + offset_pos));
+		v1pos = *static_cast<WorldPos*>(static_cast<void*>(v1 + offset_pos));
+		v2pos = *static_cast<WorldPos*>(static_cast<void*>(v2 + offset_pos));
 
 		// 整数格子
 		ScreenCoord y0_i = static_cast<ScreenCoord>(v0pos._y);
 		ScreenCoord y1_i = static_cast<ScreenCoord>(v1pos._y);
 		ScreenCoord y2_i = static_cast<ScreenCoord>(v2pos._y);
-		float y0 = v0pos._y;
-		float y1 = v1pos._y;
 
 		// 找到分割的中间点
-		if (JMath::f_equal(v0pos._y, v2pos._y)) {
+		if(y0_i == y2_i){
+		//if (JMath::f_equal(v0pos._y, v2pos._y)) {
 			return;
 		}
 
@@ -164,42 +167,55 @@ public:
 		auto& v_left_pos = *static_cast<WorldPos*>(static_cast<void*>(v_left + offset_pos));
 		auto& v_right_pos = *static_cast<WorldPos*>(static_cast<void*>(v_right + offset_pos));
 
+		// 修正顶点
+		float slide_02 = (v2pos._x - v0pos._x) / (v2pos._y - v0pos._y);
+		float slide_01 = (v1pos._x - v0pos._x) / (v1pos._y - v0pos._y);
+		float slide_12 = (v1pos._x - v2pos._x) / (v1pos._y - v2pos._y);
+		float x_02_0 = v0pos._x + (y0_i - v0pos._y)*slide_02;
+		float x_01_0 = v0pos._x + (y0_i - v0pos._y)*slide_01;
+		float x_01_1 = v0pos._x + (y1_i - v0pos._y)*slide_01;
+		float x_12_1 = v1pos._x + (y1_i - v1pos._y)*slide_12;
+		float x_02_2 = v2pos._x + (y2_i - v2pos._y)*slide_02;
+		float x_12_2 = v2pos._x + (y2_i - v2pos._y)*slide_12;
+		float x_02_1 = v2pos._x + (y1_i - v2pos._y)*slide_02;
+
 		// 对x和y进行线性步进
-		v_left_pos._x = v0pos._x;
-		v_right_pos._x = v0pos._x;
-		float k02 = (v2pos._x - v0pos._x) / (v2pos._y - v0pos._y);
-		float k01 = (v1pos._x - v0pos._x) / (v1pos._y - v0pos._y);
-		float k12 = (v1pos._x - v2pos._x) / (v1pos._y - v2pos._y);
+		v_left_pos._x = x_02_0;
+		v_right_pos._x = x_01_0;
+		float k02 = (x_02_2 - x_02_0) / (y2_i - y0_i);
+		float k01 = (x_01_1 - x_01_0) / (y1_i - y0_i);
+		float k12 = (x_12_1 - x_12_2) / (y1_i - y2_i);
 
 		float ratio_left, ratio_right;
-		if (!JMath::f_equal(v0pos._y, v1pos._y)) {
-			while (y0_i <= y1_i) {
-				v_left_pos._y = y0;
-				v_right_pos._y = y0;
-				ratio_left = _calRat(v0pos._y, v2pos._y, y0);
-				ratio_right = _calRat(v0pos._y, v1pos._y, y0);
+		if (y0_i != y1_i) {
+			while (y0_i < y1_i) {
+				v_left_pos._y = y0_i;
+				v_right_pos._y = y0_i;
+				ratio_left = calRat(v0pos._y, v2pos._y, y0_i, v0pos._z, v2pos._z);
+				ratio_right = calRat(v0pos._y, v1pos._y, y0_i, v0pos._z, v1pos._z);
 				_interp(ratio_left, v0, v2, v_left, byte_size, offset_pos);
 				_interp(ratio_right, v0, v1, v_right, byte_size, offset_pos);
 				DrawLine_h(vid, v_left, v_right, y0_i, back_buffer);
 				v_left_pos._x += k02;
 				v_right_pos._x += k01;
 				++y0_i;
-				++y0;
 			}
 		}
-		if (!JMath::f_equal(v1pos._y, v2pos._y)) {
+
+		v_left_pos._x = x_02_1;
+		v_right_pos._x = x_12_1;
+		if (y1_i != y2_i) {
 			while (y1_i < y2_i) {
-				v_left_pos._y = y1;
-				v_right_pos._y = y1;
-				ratio_left = _calRat(v0pos._y, v2pos._y, y1);
-				ratio_right = _calRat(v1pos._y, v2pos._y, y1);
+				v_left_pos._y = y1_i;
+				v_right_pos._y = y1_i;
+				ratio_left = calRat(v0pos._y, v2pos._y, y1_i, v0pos._z, v2pos._z);
+				ratio_right = calRat(v1pos._y, v2pos._y, y1_i, v1pos._z, v2pos._z);
 				_interp(ratio_left, v0, v2, v_left, byte_size, offset_pos);
 				_interp(ratio_right, v1, v2, v_right, byte_size, offset_pos);
 				DrawLine_h(vid, v_left, v_right, y1_i, back_buffer);
 				v_left_pos._x += k02;
 				v_right_pos._x += k12;
 				++y1_i;
-				++y1;
 			}
 		}
 	}
@@ -207,35 +223,48 @@ public:
 	/* *********************************************
 	* 工具函数
 	* *********************************************/
-	static void _correctPerpectUV(const float z_start, const float z_end, float z_cur,
-								  const float t_start, const float t_end, float& t_cur) {
-		float ratio = _calRat(z_start, z_end, z_cur);
-		t_cur = t_end + (t_start - t_end) * ratio;
-	}
-
 	static void _interp(const float ratio, const byte* t_start, const byte* t_end, byte* t_cur, STRIDE_TYPE byte_size, STRIDE_TYPE pos_stride) {
 		for (STRIDE_TYPE i = 0; i < byte_size; i+=sizeof(float)) {
 			if (i == pos_stride) {
 				i += sizeof(float) * 2; // 定位到z的位置
-				GetFloat(t_cur, i) = GetFloat(t_start, i) + (GetFloat(t_end, i) - GetFloat(t_start, i)) * ratio;
+				GetFloat(t_cur, i) = GetFloat(t_end, i) + (GetFloat(t_start, i) - GetFloat(t_end, i)) * ratio;
 			}
 			else {
-				GetFloat(t_cur, i) = GetFloat(t_start, i) + (GetFloat(t_end, i) - GetFloat(t_start, i)) * ratio;
+				GetFloat(t_cur, i) = GetFloat(t_end, i) + (GetFloat(t_start, i) - GetFloat(t_end, i)) * ratio;
 			}
 		}
 	}
 	static void _interp(const float ratio, const float t_start, const float t_end, float& t_cur) {
-		t_cur = t_start + (t_end - t_start) * ratio;
+		t_cur = t_end + (t_start - t_end) * ratio;
 	}
 
-	static float _calRat(float start, float end, float cur) {
+	static float calRat(float x_start, float x_end, float x_cur, float z_start, float z_end) {
+		float linear_ratio = _calRat(x_start, x_end, x_cur);
 #if USE_PERSPECTIVE_CORRECT
-		return JMath::f_equal(1/start, 1/end) ? 
-			(cur - end) / (start - end)
-			: ((1 / cur - 1 / end) / (1 / start - 1 / end));
+		float new_ratio = _transPerspRat(linear_ratio, z_start, z_end);
+		return new_ratio;
 #else
-		return (cur - end) / (start - end);
+		return linear_ratio;
 #endif
+	}
+	inline
+	static float _calRat(float start, float end, float cur) {
+		return JMath::f_equal(start, end) ? 0 : (cur - end) / (start - end);
+	}
+	static float _transPerspRat(float ratio, float z_start, float z_end) {
+		float z_cur;
+		if (JMath::f_equal(z_start, 0)) {
+			return ratio;// assert(0);
+		}
+		else if (JMath::f_equal(z_end, 0)) {
+			return ratio;// assert(0);
+		}
+		else if (JMath::f_equal(z_start, z_end)) {
+			return ratio;
+		}
+
+		z_cur = 1 / ((1 / z_start - 1 / z_end) * ratio + 1 / z_end);
+		return _calRat(z_start, z_end, z_cur);
 	}
 };
 
