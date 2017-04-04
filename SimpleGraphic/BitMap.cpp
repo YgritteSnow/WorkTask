@@ -1,5 +1,5 @@
 #include "BitMap.h"
-#include "Texture.h"
+#include "TexBuffer.h"
 #include <string.h>
 #include <atlimage.h>
 
@@ -23,7 +23,7 @@ typedef struct tagTGAFileHead
 #pragma pack(pop)
 
 namespace BitMap{
-	ImgBuffer<ShortColor4>* Load(const char* filename) {
+	TexBuffer<ShortColor4>* Load(const char* filename) {
 		FILE* pf = nullptr;
 		fopen_s(&pf, filename, "r");
 		if (!pf) {
@@ -39,7 +39,7 @@ namespace BitMap{
 		fseek(pf, 0, SEEK_SET);
 		delete[] dataPtr;*/
 
-		ImgBuffer<ShortColor4>* res = nullptr;
+		TexBuffer<ShortColor4>* res = nullptr;
 		std::string s_fn(filename);
 		if (s_fn.size() > std::string(".png").size() 
 			&& s_fn.find(".png") == s_fn.size() - std::string(".png").size()) {
@@ -56,7 +56,7 @@ namespace BitMap{
 		fclose(pf);
 		return res;
 	}
-	ImgBuffer<ShortColor4>* LoadBMP(FILE* pf, const char* filename){
+	TexBuffer<ShortColor4>* LoadBMP(FILE* pf, const char* filename){
 		WORD headSize;
 		fread(&headSize, 1, sizeof(WORD), pf);
 		if (headSize != 0x4d42) {
@@ -80,7 +80,7 @@ namespace BitMap{
 		BYTE *imagedata = new BYTE[width_byte * height];
 		fread(imagedata, height, width_byte, pf);
 
-		ImgBuffer<ShortColor4>* res = new ImgBuffer<ShortColor4>(strInfo.biWidth, strInfo.biHeight);
+		TexBuffer<ShortColor4>* res = new TexBuffer<ShortColor4>(strInfo.biWidth, strInfo.biHeight);
 		for (int y = 0; y < strInfo.biHeight; ++y) {
 			BYTE* linedata = imagedata + (width_byte * y);
 			for (int x = 0; x < strInfo.biWidth; ++x) {
@@ -94,10 +94,10 @@ namespace BitMap{
 
 		return res;
 	}
-	ImgBuffer<ShortColor4>* LoadPNG(FILE* pf, const char* filename) {
+	TexBuffer<ShortColor4>* LoadPNG(FILE* pf, const char* filename) {
 		return nullptr;
 	}
-	ImgBuffer<ShortColor4>* LoadTGA(FILE* pf, const char* filename) {
+	TexBuffer<ShortColor4>* LoadTGA(FILE* pf, const char* filename) {
 		TGAFileHead fileHead;
 		fread(&fileHead, 1, sizeof(TGAFileHead), pf);
 		if (fileHead.ImageType != 2 || // TRUECOLOR
@@ -110,7 +110,7 @@ namespace BitMap{
 			return nullptr;
 		}
 
-		ImgBuffer<ShortColor4>* res = new ImgBuffer<ShortColor4>(fileHead.Width, fileHead.Height);
+		TexBuffer<ShortColor4>* res = new TexBuffer<ShortColor4>(fileHead.Width, fileHead.Height);
 		bool has_alpha = fileHead.PixelDepth == 32;
 		auto channel = fileHead.PixelDepth / 8;
 		auto pitch = TO_MUL4(fileHead.Width * channel);

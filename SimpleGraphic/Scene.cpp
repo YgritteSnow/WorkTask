@@ -13,10 +13,8 @@ SceneManager* SceneManager::m_instance = nullptr;
 void Scene::Render(){
 	for (auto it = m_vec_model.begin(); it != m_vec_model.end(); ++it){
 		RenderManager::GetInstance()->RenderVertexIndice(
-			(*it)->GetVertexes(),
-			(*it)->GetVertexCount(),
-			(*it)->GetIndices(),
-			(*it)->GetIndiceCount(),
+			(*it)->GetVertexBuffer(),
+			(*it)->GetIndexBuffer(),
 			(*it)->GetModelMat()
 			);
 	}

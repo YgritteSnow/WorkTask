@@ -21,11 +21,11 @@ inline
 UINT TO_MUL4(UINT a) { return (a & 0x3) ? ( (a & 0xfffffc) + 0x4) : a; }
 
 template <typename ColorType>
-class ImgBuffer;
+class TexBuffer;
 
 namespace BitMap {
 	template <typename ColorType>
-	void Display(const ImgBuffer<ColorType>* buffer) {
+	void Display(const TexBuffer<ColorType>* buffer) {
 		//UINT BitMapChannel = sizeof(ColorType);
 		UINT BitMapChannel = 4;
 
@@ -77,9 +77,9 @@ namespace BitMap {
 		DeleteObject(bmp);
 	}
 
-	ImgBuffer<ShortColor4>* Load(const char* filename);
-	ImgBuffer<ShortColor4>* LoadBMP(FILE* pf, const char* filename);
-	ImgBuffer<ShortColor4>* LoadPNG(FILE* pf, const char* filename);
-	ImgBuffer<ShortColor4>* LoadTGA(FILE* pf, const char* filename);
+	TexBuffer<ShortColor4>* Load(const char* filename);
+	TexBuffer<ShortColor4>* LoadBMP(FILE* pf, const char* filename);
+	TexBuffer<ShortColor4>* LoadPNG(FILE* pf, const char* filename);
+	TexBuffer<ShortColor4>* LoadTGA(FILE* pf, const char* filename);
 }
 #endif

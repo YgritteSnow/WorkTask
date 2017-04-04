@@ -14,7 +14,8 @@ const int DEFAULT_ALPHABUFFER_SIZE = 2;
 #endif
 
 #include "Color.h"
-#include "Texture.h"
+#include "TexBuffer.h"
+#include "StructReflection.h"
 
 /* *********************************************
 * alpha buffer
@@ -49,6 +50,21 @@ struct AlphaBlendFrag {
 	{
 #if USE_BUDDLESORT
 		m_vec_color = new AlphaBlendData[DEFAULT_ALPHABUFFER_SIZE];
+#endif
+	}
+	AlphaBlendFrag(NormColor4 c)
+#if USE_BUDDLESORT
+		:m_vec_color()
+		, m_size(1)
+		, m_capacity(DEFAULT_ALPHABUFFER_SIZE)
+#else
+		: m_vec_color()
+#endif
+		, m_blended_color()
+	{
+#if USE_BUDDLESORT
+		m_vec_color = new AlphaBlendData[DEFAULT_ALPHABUFFER_SIZE];
+		m_vec_color[0] = AlphaBlendData(c, 0);
 #endif
 	}
 #if USE_BUDDLESORT
@@ -151,13 +167,12 @@ public:
 #else
 	std::vector<AlphaBlendData> m_vec_color;
 #endif
-	NormColor4 GetNormColor4() { return NormColor4(); }
 	NormColor4 m_blended_color;
 };
 
-class AlphaBuffer : public ImgBuffer<AlphaBlendFrag>{
+class AlphaBuffer : public TexBuffer<AlphaBlendFrag>{
 public:
-	AlphaBuffer(ScreenCoord width, ScreenCoord height) :ImgBuffer<AlphaBlendFrag>(width, height) {}
+	AlphaBuffer(ScreenCoord width, ScreenCoord height) :TexBuffer<AlphaBlendFrag>(width, height) {}
 
 	void clear() {
 		for (int x = 0; x < width; ++x) {
@@ -167,13 +182,15 @@ public:
 		}
 	}
 
-	template <typename VertexStruct>
-	void SetPixelAt_byVertex(ScreenCoord x, ScreenCoord y, const VertexStruct& v) {
-		pPixelAt(x, y)->AddColor(AlphaBlendData(v.color, v.pos._z));
+	void SetPixelAt_byVertex(ScreenCoord x, ScreenCoord y, STRUCT_ID vid, const byte* v) {
+		const auto& vpos = *static_cast<const WorldPos*>(static_cast<const void*>(v + StructReflectManager::GetOffset<POSITION>(vid, 0)));
+		const auto& vcolor = *static_cast<const NormColor4*>(static_cast<const void*>(v + StructReflectManager::GetOffset<COLOR>(vid, 0)));
+		pPixelAt(x, y)->AddColor(AlphaBlendData(vcolor, vpos._z));
 	}
-	template <typename VertexStruct>
-	void SetPixelAt_byVertex_normedPos(float x, float y, const VertexStruct& v) {
-		pPixelAt_normedPos(x, y)->AddColor(AlphaBlendData(v.color, v.pos._z));
+	void SetPixelAt_byVertex_normedPos(float x, float y, STRUCT_ID vid, const byte* v) {
+		const auto& vpos = *static_cast<const WorldPos*>(static_cast<const void*>(v + StructReflectManager::GetOffset<POSITION>(vid, 0)));
+		const auto& vcolor = *static_cast<const NormColor4*>(static_cast<const void*>(v + StructReflectManager::GetOffset<COLOR>(vid, 0)));
+		pPixelAt_normedPos(x, y)->AddColor(AlphaBlendData(vcolor, vpos._z));
 	}
 
 	void Blend() {

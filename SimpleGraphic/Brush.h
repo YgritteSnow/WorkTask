@@ -4,195 +4,200 @@
 #include <memory.h>
 #include "JMath.h"
 #include "Color.h"
-#include "Texture.h"
-#include "TargetBuffer.h"
+#include "TexManager.h"
+#include "ABuffer.h"
+#include "StructReflection.h"
+#include "ShaderManager.h"
+
+// 顶点最大size
+// pos(3)+color(4)+uv(2)+normal(3)=(float)12=48
+// 考虑到G-buffer可能会用的比较多，所以这里暂定128
+#define VERTEX_MAX_SIZE 128
+
+#define USE_PERSPECTIVE_CORRECT 1
+inline
+const float& GetFloat(const byte* x, STRUCT_ID offset) {
+	return *static_cast<const float*>(static_cast<const void*>((x)+(offset)));
+}
+
+inline
+float& GetFloat(byte* x, STRUCT_ID offset) {
+	return *static_cast<float*>(static_cast<void*>((x)+(offset)));
+}
 
 // 使用顶点数据进行画图
-template <typename VertexStruct>
 class VertexBrush {
 public:
-	template <typename TargetBuffer>
+	template <typename ColorType>
 	static void DrawDot(
-		VertexStruct v1,
-		TargetBuffer* back_buffer,
-		ImgBuffer<DepthBufferPixel>* depth_buffer
+		STRUCT_ID vid,
+		byte* v1,
+		TexBuffer<ColorType>* back_buffer
 	) {
+		const auto& v1pos = *static_cast<WorldPos*>(static_cast<void*>(v1 + StructReflectManager::GetOffset<POSITION>(vid, 0)));
 
-		ScreenCoord coord_x = static_cast<ScreenCoord>(v1.pos._x);
-		ScreenCoord coord_y = static_cast<ScreenCoord>(v1.pos._y);
+		ScreenCoord coord_x = static_cast<ScreenCoord>(v1pos._x);
+		ScreenCoord coord_y = static_cast<ScreenCoord>(v1pos._y);
 
-		// 排除近平面以前、远平面以后、相机背面
-		if (v1.pos._z < 0 || v1.pos._z > 1) {
+		if (ShaderManager::TestPixel(v1)) {
 			return;
 		}
-		// 排除屏幕以外
-		else if (coord_x < 0 || coord_x >= back_buffer->width || coord_y < 0 || coord_y >= back_buffer->height) {
-			return;
-		}
-		// 进行深度测试
-		else if (depth_buffer && v1.pos._z >= depth_buffer->GetPixel_coordPos(coord_x, coord_y)) {
-			return;
-		}
-
-		// 更新深度缓存
-		if ( depth_buffer && v1.pos._z < depth_buffer->GetPixel_coordPos(coord_x, coord_y)) {
-			*depth_buffer->pPixelAt(coord_x, coord_y) = v1.pos._z;
-		}
-		// 根据贴图更新颜色
-		if (TextureManager::GetInstance()->GetTexture()) {
-			v1.color *= TextureManager::GetInstance()->GetTexture()->GetPixel_normedPos_smart(v1.uv._x, v1.uv._y);
-		}
-
-		//back_buffer->SetPixelAt(coord_x, coord_y, v1.color);
-		back_buffer->SetPixelAt_byVertex(coord_x, coord_y, v1);
+		byte pixel[VERTEX_MAX_SIZE];
+		ShaderManager::ProcessPixel(v1, pixel);
+		back_buffer->SetPixelAt_byVertex(coord_x, coord_y, vid, pixel);
 	}
 
-	template <typename TargetBuffer>
+	template <typename _TexBuffer>
 	static void DrawLine(
-		VertexStruct v0, VertexStruct v1,
-		TargetBuffer* back_buffer,
-		ImgBuffer<DepthBufferPixel>* depth_buffer
+		STRUCT_ID vid,
+		byte* v0, byte* v1,
+		_TexBuffer* back_buffer
 	) {
-		if (JMath::f_equal(v1.pos._x, v0.pos._x) && JMath::f_equal(v1.pos._y, v0.pos._y)) {
+		STRIDE_TYPE byte_size = StructReflectManager::GetOffsetSize(vid);
+		const auto& offset_pos = StructReflectManager::GetOffset<POSITION>(vid, 0);
+		const auto& v0pos = *static_cast<WorldPos*>(static_cast<void*>(v0 + offset_pos));
+		const auto& v1pos = *static_cast<WorldPos*>(static_cast<void*>(v1 + offset_pos));
+
+		if (JMath::f_equal(v1pos._x, v0pos._x) && JMath::f_equal(v1pos._y, v0pos._y)) {
 			return;
 		}
 
-		VertexStruct v = v0;
+		byte v[VERTEX_MAX_SIZE];
+		auto& vpos = *static_cast<WorldPos*>(static_cast<void*>(v + offset_pos));
 
 		// 步进长度
-		float x_step = v1.pos._x - v0.pos._x;
-		float y_step = v1.pos._y - v0.pos._y;
+		float x_step = v1pos._x - v0pos._x;
+		float y_step = v1pos._y - v0pos._y;
 		bool use_x = fabs(x_step) > fabs(y_step);
 		float max_count = max(fabs(x_step), fabs(y_step));
 		x_step /= max_count;
 		y_step /= max_count;
-		float z_step = (v1.pos._z - v0.pos._z) / max_count;
 
-		// 颜色插值
-		NormColor4 color_bgn = v0.color;
-		NormColor4 color_step = (v1.color - v0.color) / max_count;
-
+		float ratio;
 		for (int idx = 0; idx < max_count; ++idx) {
-			float defaultRat = use_x ? _calRat(v0.pos._x, v1.pos._x, v.pos._x) : _calRat(v0.pos._y, v1.pos._y, v.pos._y);
-			_correctPerpectUV(v0.pos._z, v1.pos._z, v.pos._z, v0.uv, v1.uv, v.uv, defaultRat);
-			DrawDot(v, back_buffer, depth_buffer);
-			v.color += color_step;
-			v.pos._z += z_step;
-			v.pos._y += y_step;
-			v.pos._x += x_step;
+			ratio = use_x ? _calRat(v0pos._x, v1pos._x, vpos._x) : _calRat(v0pos._y, v1pos._y, vpos._y);
+			_interp(ratio, v0, v1, v, byte_size, offset_pos);
+
+			DrawDot(vid, v, back_buffer);
+			vpos._y += y_step;
+			vpos._x += x_step;
 		}
 	}
 
-	template <typename TargetBuffer>
+	template <typename _TexBuffer>
 	static void DrawLine_h(
-		VertexStruct v0, VertexStruct v1,
+		STRUCT_ID vid,
+		byte* v0, byte* v1,
 		ScreenCoord y,
-		TargetBuffer* back_buffer,
-		ImgBuffer<DepthBufferPixel>* depth_buffer
+		_TexBuffer* back_buffer
 	) {
-		if (v0.pos._x > v1.pos._x) {
-			std::swap(v0, v1);
-		}
+		STRIDE_TYPE byte_size = StructReflectManager::GetOffsetSize(vid);
 
-		VertexStruct v = v0;
-		v.pos._y = static_cast<float>(y);
+		const auto& offset_pos = StructReflectManager::GetOffset<POSITION>(vid, 0);
+		auto& v0pos = *static_cast<WorldPos*>(static_cast<void*>(v0 + offset_pos));
+		auto& v1pos = *static_cast<WorldPos*>(static_cast<void*>(v1 + offset_pos));
 
-		NormColor4 color_step = JMath::f_equal(v1.pos._x, v0.pos._x) ? NormColor4() : ((v1.color - v0.color) / (v1.pos._x - v0.pos._x));
-		float z_step = JMath::f_equal(v1.pos._x, v0.pos._x) ? 0 : ((v1.pos._z - v0.pos._z) / (v1.pos._x - v0.pos._x));
-		do {
-			_correctPerpectUV(v0.pos._z, v1.pos._z, v.pos._z, v0.uv, v1.uv, v.uv, _calRat(v0.pos._x, v1.pos._x, v.pos._x));
-			DrawDot(v, back_buffer, depth_buffer);
-			v.color += color_step;
-			v.pos._z += z_step;
-			v.pos._x += 1;
-		} while (v.pos._x <= v1.pos._x);
-	}
-
-	template <typename TargetBuffer>
-	static void DrawTriangle(
-		VertexStruct v0, VertexStruct v1, VertexStruct v2,
-		TargetBuffer* back_buffer,
-		ImgBuffer<DepthBufferPixel>* depth_buffer
-	) {
-		// 转换使三个点为y值从小到大排列
-		if (v0.pos._y > v1.pos._y) {
-			std::swap(v0, v1);
-		}
-		if (v0.pos._y > v2.pos._y) {
-			std::swap(v0, v2);
-		}
-		if (v1.pos._y > v2.pos._y) {
-			std::swap(v1, v2);
-		}
-
-		// 整数格子
-		ScreenCoord y0_i = static_cast<ScreenCoord>(v0.pos._y);
-		ScreenCoord y1_i = static_cast<ScreenCoord>(v1.pos._y);
-		ScreenCoord y2_i = static_cast<ScreenCoord>(v2.pos._y);
-		float y0 = v0.pos._y;
-		float y1 = v1.pos._y;
-
-		// 找到分割的中间点
-		if (JMath::f_equal(v0.pos._y, v2.pos._y)) {
+		if (JMath::f_equal(v0pos._y, v1pos._y)) {
 			return;
 		}
 
-		VertexStruct v_left;
-		VertexStruct v_right;
+		if (v0pos._x > v1pos._x) {
+			std::swap(v0, v1);
+			std::swap(v0pos, v1pos);
+		}
 
-		// 对位置插值
-		v_left.pos._x = v0.pos._x;
-		v_right.pos._x = v0.pos._x;
-		float k02 = (v2.pos._x - v0.pos._x) / (v2.pos._y - v0.pos._y);
-		float k01 = (v1.pos._x - v0.pos._x) / (v1.pos._y - v0.pos._y);
-		float k12 = (v1.pos._x - v2.pos._x) / (v1.pos._y - v2.pos._y);
+		byte v[VERTEX_MAX_SIZE];
+		auto& vpos = *static_cast<WorldPos*>(static_cast<void*>(v + offset_pos));
+		memcpy(v, v0, byte_size);
+		vpos._y = static_cast<float>(y);
 
-		// 对 1/z 的插值
-		v_left.pos._z = v0.pos._z;
-		v_right.pos._z = v0.pos._z;
-		float zk02 = (1.f / (v2.pos._y - v0.pos._y)) * (v2.pos._z - v0.pos._z);
-		float zk01 = (1.f / (v1.pos._y - v0.pos._y)) * (v1.pos._z - v0.pos._z);
-		float zk12 = (1.f / (v2.pos._y - v1.pos._y)) * (v2.pos._z - v1.pos._z);
+		float ratio;
+		do {
+			ratio = _calRat(v0pos._y, v1pos._y, y);
+			_interp(ratio, v0, v1, v, byte_size, offset_pos);
+			DrawDot(vid, v, back_buffer);
+			vpos._x += 1;
+		} while (vpos._x <= v1pos._x);
+	}
 
-		// 对颜色插值
-		v_left.color = v0.color;
-		v_right.color = v0.color;
-		NormColor4 color02 = (1.f / (v2.pos._y - v0.pos._y)) * (v2.color - v0.color);
-		NormColor4 color01 = (1.f / (v1.pos._y - v0.pos._y)) * (v1.color - v0.color);
-		NormColor4 color12 = (1.f / (v2.pos._y - v1.pos._y)) * (v2.color - v1.color);
+	template <typename _TexBuffer>
+	static void DrawTriangle(
+		STRUCT_ID vid,
+		byte* v0, byte* v1, byte* v2,
+		_TexBuffer* back_buffer
+	) {
+		STRIDE_TYPE byte_size = StructReflectManager::GetOffsetSize(vid);
 
-		if (!JMath::f_equal(v0.pos._y, v1.pos._y)) {
-			while (y0_i < y1_i) {
-				_correctPerpectUV(v0.pos._z, v2.pos._z, v_left.pos._z, v0.uv, v2.uv, v_left.uv, _calRat(v0.pos._y, v2.pos._y, y0));
-				_correctPerpectUV(v0.pos._z, v1.pos._z, v_right.pos._z, v0.uv, v1.uv, v_right.uv, _calRat(v0.pos._y, v1.pos._y, y0));
-				DrawLine_h(v_left, v_right, y0_i, back_buffer, depth_buffer);
-				v_left.pos._x += k02;
-				v_right.pos._x += k01;
-				v_left.color += color02;
-				v_right.color += color01;
-				v_left.pos._z += zk02;
-				v_right.pos._z += zk01;
+		const auto& offset_pos = StructReflectManager::GetOffset<POSITION>(vid, 0);
+		auto& v0pos = *static_cast<WorldPos*>(static_cast<void*>(v0 + offset_pos));
+		auto& v1pos = *static_cast<WorldPos*>(static_cast<void*>(v1 + offset_pos));
+		auto& v2pos = *static_cast<WorldPos*>(static_cast<void*>(v2 + offset_pos));
+
+		// 转换使三个点为y值从小到大排列
+		if (v0pos._y > v1pos._y) {
+			std::swap(v0, v1);
+			std::swap(v0pos, v1pos);
+		}
+		if (v0pos._y > v2pos._y) {
+			std::swap(v0, v2);
+			std::swap(v0pos, v2pos);
+		}
+		if (v1pos._y > v2pos._y) {
+			std::swap(v1, v2);
+			std::swap(v1pos, v2pos);
+		}
+
+		// 整数格子
+		ScreenCoord y0_i = static_cast<ScreenCoord>(v0pos._y);
+		ScreenCoord y1_i = static_cast<ScreenCoord>(v1pos._y);
+		ScreenCoord y2_i = static_cast<ScreenCoord>(v2pos._y);
+		float y0 = v0pos._y;
+		float y1 = v1pos._y;
+
+		// 找到分割的中间点
+		if (JMath::f_equal(v0pos._y, v2pos._y)) {
+			return;
+		}
+
+		byte v_left[VERTEX_MAX_SIZE];
+		byte v_right[VERTEX_MAX_SIZE];
+		auto& v_left_pos = *static_cast<WorldPos*>(static_cast<void*>(v_left + offset_pos));
+		auto& v_right_pos = *static_cast<WorldPos*>(static_cast<void*>(v_right + offset_pos));
+
+		// 对x和y进行线性步进
+		v_left_pos._x = v0pos._x;
+		v_right_pos._x = v0pos._x;
+		float k02 = (v2pos._x - v0pos._x) / (v2pos._y - v0pos._y);
+		float k01 = (v1pos._x - v0pos._x) / (v1pos._y - v0pos._y);
+		float k12 = (v1pos._x - v2pos._x) / (v1pos._y - v2pos._y);
+
+		float ratio_left, ratio_right;
+		if (!JMath::f_equal(v0pos._y, v1pos._y)) {
+			while (y0_i <= y1_i) {
+				v_left_pos._y = y0;
+				v_right_pos._y = y0;
+				ratio_left = _calRat(v0pos._y, v2pos._y, y0);
+				ratio_right = _calRat(v0pos._y, v1pos._y, y0);
+				_interp(ratio_left, v0, v2, v_left, byte_size, offset_pos);
+				_interp(ratio_right, v0, v1, v_right, byte_size, offset_pos);
+				DrawLine_h(vid, v_left, v_right, y0_i, back_buffer);
+				v_left_pos._x += k02;
+				v_right_pos._x += k01;
 				++y0_i;
 				++y0;
 			}
-
 		}
-
-		v_right.pos._x = v1.pos._x;
-		v_right.color = v1.color;
-		v_right.pos._z = v1.pos._z;
-
-		if (!JMath::f_equal(v1.pos._y, v2.pos._y)) {
+		if (!JMath::f_equal(v1pos._y, v2pos._y)) {
 			while (y1_i < y2_i) {
-				_correctPerpectUV(v0.pos._z, v2.pos._z, v_left.pos._z, v0.uv, v2.uv, v_left.uv, _calRat(v0.pos._y, v2.pos._y, y1));
-				_correctPerpectUV(v1.pos._z, v2.pos._z, v_right.pos._z, v1.uv, v2.uv, v_right.uv, _calRat(v1.pos._y, v2.pos._y, y1));
-				DrawLine_h(v_left, v_right, y1_i, back_buffer, depth_buffer);
-				v_left.pos._x += k02;
-				v_right.pos._x += k12;
-				v_left.color += color02;
-				v_right.color += color12;
-				v_left.pos._z += zk02;
-				v_right.pos._z += zk12;
+				v_left_pos._y = y1;
+				v_right_pos._y = y1;
+				ratio_left = _calRat(v0pos._y, v2pos._y, y1);
+				ratio_right = _calRat(v1pos._y, v2pos._y, y1);
+				_interp(ratio_left, v0, v2, v_left, byte_size, offset_pos);
+				_interp(ratio_right, v1, v2, v_right, byte_size, offset_pos);
+				DrawLine_h(vid, v_left, v_right, y1_i, back_buffer);
+				v_left_pos._x += k02;
+				v_right_pos._x += k12;
 				++y1_i;
 				++y1;
 			}
@@ -202,19 +207,35 @@ public:
 	/* *********************************************
 	* 工具函数
 	* *********************************************/
-	static void _correctPerpectUV(float z_start, float z_end, float z_cur,
-		const UVPos& uv_start, const UVPos& uv_end, UVPos& uv_cur, float defaultRat) {
-		if (JMath::f_equal(1 / z_start, 1 / z_end)) {
-			uv_cur = uv_end + (uv_start - uv_end) * defaultRat;
+	static void _correctPerpectUV(const float z_start, const float z_end, float z_cur,
+								  const float t_start, const float t_end, float& t_cur) {
+		float ratio = _calRat(z_start, z_end, z_cur);
+		t_cur = t_end + (t_start - t_end) * ratio;
+	}
+
+	static void _interp(const float ratio, const byte* t_start, const byte* t_end, byte* t_cur, STRIDE_TYPE byte_size, STRIDE_TYPE pos_stride) {
+		for (STRIDE_TYPE i = 0; i < byte_size; i+=sizeof(float)) {
+			if (i == pos_stride) {
+				i += sizeof(float) * 2; // 定位到z的位置
+				GetFloat(t_cur, i) = GetFloat(t_start, i) + (GetFloat(t_end, i) - GetFloat(t_start, i)) * ratio;
+			}
+			else {
+				GetFloat(t_cur, i) = GetFloat(t_start, i) + (GetFloat(t_end, i) - GetFloat(t_start, i)) * ratio;
+			}
 		}
-		else {
-			float rat = (1 / z_cur - 1 / z_end) / (1 / z_start - 1 / z_end);
-			uv_cur = uv_end + (uv_start - uv_end) * rat;
-		}
+	}
+	static void _interp(const float ratio, const float t_start, const float t_end, float& t_cur) {
+		t_cur = t_start + (t_end - t_start) * ratio;
 	}
 
 	static float _calRat(float start, float end, float cur) {
-		return JMath::f_equal(start, end) ? 0 : ((cur - end) / (start - end));
+#if USE_PERSPECTIVE_CORRECT
+		return JMath::f_equal(1/start, 1/end) ? 
+			(cur - end) / (start - end)
+			: ((1 / cur - 1 / end) / (1 / start - 1 / end));
+#else
+		return (cur - end) / (start - end);
+#endif
 	}
 };
 
