@@ -16,8 +16,8 @@ const TCHAR* WINDOW_NAME = _T("jj");
 const TCHAR* WINDOW_CAPTION = _T("SimpleGraphics - by jj");
 unsigned int WINDOW_POS_X = 100;
 unsigned int WINDOW_POS_Y = 100;
-unsigned int WINDOW_WIDTH = 800;
-unsigned int WINDOW_HEIGHT = 600;
+unsigned int WINDOW_WIDTH = 300;
+unsigned int WINDOW_HEIGHT = 300;
 TimeType MAX_FRAME_RATE = 0.0001;
 HWND g_hwnd = NULL;
 
@@ -94,7 +94,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	
 	if (InitManagers() == S_OK){
 		// 设置相机
-		CameraManager::GetInstance()->CurrentCamera()->SetProjMat(1.4f, (float)WINDOW_WIDTH / WINDOW_HEIGHT, 1.f, 1000.f);
+		CameraManager::GetInstance()->CurrentCamera()->SetProjMat(5.f, (float)WINDOW_WIDTH / WINDOW_HEIGHT, 1.f, 100.f);
 		CameraManager::GetInstance()->CurrentCamera()->SetViewMat(WorldPos(0, 0, 5), WorldPos(0, 0, 0), WorldPos(0, 1, 0));
 
 		// 设置场景，添加模型
@@ -102,18 +102,18 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		
 		// 模型（球（远））
 		TestModel* dummyModel_far = new TestModel;
-		dummyModel_far->DummyBall(1, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 0, 5));
+		dummyModel_far->DummyBall(1, 5, 10, NormColor4(1, 1, 1, 1), WorldPos(0, 0, 2));
 		dummyScene->AddModel(dummyModel_far);
 		
 		// 模型（球（近））
-		TestModel* dummyModel_near = new TestModel;
-		dummyModel_near->DummyBall(0.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(-0.3, -0.3, 4));
-		dummyScene->AddModel(dummyModel_near);
+		//TestModel* dummyModel_near = new TestModel;
+		//dummyModel_near->DummyBall(0.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(-0.3, -0.3, 4));
+		//dummyScene->AddModel(dummyModel_near);
 
-		//// 模型（水平地面）
-		//TestModel* dummyModel_ground = new TestModel;
-		//dummyModel_ground->DummyGround(4, 4, NormColor4(1, 1, 1, 1), WorldPos(0, -2, 9));
-		//dummyScene->AddModel(dummyModel_ground);
+		// 模型（水平地面）
+		TestModel* dummyModel_ground = new TestModel;
+		dummyModel_ground->DummyGround(4, 4, NormColor4(1, 1, 1, 1), WorldPos(0, -2, 9));
+		dummyScene->AddModel(dummyModel_ground);
 		
 		//// 模型（一个四方面片）
 		//TestModel* dummyModel_quad = new TestModel;
