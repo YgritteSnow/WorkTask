@@ -181,41 +181,45 @@ public:
 
 		// 对x和y进行线性步进
 		v_left_pos._x = x_02_0;
-		v_right_pos._x = x_01_0;
+		v_right_pos._x = (v0pos._x < v1pos._x) ? max(x_01_0, v1pos._x - 1) : min(x_01_0, v1pos._x + 1);
 		float k02 = (x_02_2 - x_02_0) / (y2_i - y0_i);
 		float k01 = (x_01_1 - x_01_0) / (y1_i - y0_i);
 		float k12 = (x_12_1 - x_12_2) / (y1_i - y2_i);
 
 		float ratio_left, ratio_right;
 		if (y0_i != y1_i) {
+			v_left_pos._y = v0pos._y;
+			v_right_pos._y = v0pos._y;
 			while (y0_i < y1_i) {
-				v_left_pos._y = y0_i;
-				v_right_pos._y = y0_i;
-				ratio_left = calRat(v0pos._y, v2pos._y, y0_i, v0pos._z, v2pos._z);
-				ratio_right = calRat(v0pos._y, v1pos._y, y0_i, v0pos._z, v1pos._z);
+				ratio_left = calRat(v0pos._y, v2pos._y, v_left_pos._y, v0pos._z, v2pos._z);
+				ratio_right = calRat(v0pos._y, v1pos._y, v_right_pos._y, v0pos._z, v1pos._z);
 				_interp(ratio_left, v0, v2, v_left, byte_size, offset_pos);
 				_interp(ratio_right, v0, v1, v_right, byte_size, offset_pos);
 				DrawLine_h(vid, v_left, v_right, y0_i, back_buffer);
 				v_left_pos._x += k02;
 				v_right_pos._x += k01;
 				++y0_i;
+				v_left_pos._y = y0_i;
+				v_right_pos._y = y0_i;
 			}
 		}
 
 		v_left_pos._x = x_02_1;
-		v_right_pos._x = x_12_1;
+		v_right_pos._x = (v2pos._x < v1pos._x) ? max(x_12_1, v1pos._x - 1) : min(x_12_1, v1pos._x + 1);
 		if (y1_i != y2_i) {
+			v_left_pos._y = v1pos._y;
+			v_right_pos._y = v1pos._y;
 			while (y1_i < y2_i) {
-				v_left_pos._y = y1_i;
-				v_right_pos._y = y1_i;
-				ratio_left = calRat(v0pos._y, v2pos._y, y1_i, v0pos._z, v2pos._z);
-				ratio_right = calRat(v1pos._y, v2pos._y, y1_i, v1pos._z, v2pos._z);
+				ratio_left = calRat(v0pos._y, v2pos._y, v_left_pos._y, v0pos._z, v2pos._z);
+				ratio_right = calRat(v1pos._y, v2pos._y, v_right_pos._y, v1pos._z, v2pos._z);
 				_interp(ratio_left, v0, v2, v_left, byte_size, offset_pos);
 				_interp(ratio_right, v1, v2, v_right, byte_size, offset_pos);
 				DrawLine_h(vid, v_left, v_right, y1_i, back_buffer);
 				v_left_pos._x += k02;
 				v_right_pos._x += k12;
 				++y1_i;
+				v_left_pos._y = y1_i;
+				v_right_pos._y = y1_i;
 			}
 		}
 	}
@@ -239,6 +243,7 @@ public:
 	}
 
 	static float calRat(float x_start, float x_end, float x_cur, float z_start, float z_end) {
+		if (x_end - x_start < 1)return 0;
 		float linear_ratio = _calRat(x_start, x_end, x_cur);
 #if USE_PERSPECTIVE_CORRECT
 		float new_ratio = _transPerspRat(linear_ratio, z_start, z_end);

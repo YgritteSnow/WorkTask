@@ -110,10 +110,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		//dummyModel_near->DummyBall(0.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(-0.3, -0.3, 4));
 		//dummyScene->AddModel(dummyModel_near);
 
-		// 模型（水平地面）
-		TestModel* dummyModel_ground = new TestModel;
-		dummyModel_ground->DummyGround(4, 4, NormColor4(1, 1, 1, 1), WorldPos(0, -2, 9));
-		dummyScene->AddModel(dummyModel_ground);
+		//// 模型（水平地面）
+		//TestModel* dummyModel_ground = new TestModel;
+		//dummyModel_ground->DummyGround(4, 4, NormColor4(1, 1, 1, 1), WorldPos(0, -2, 9));
+		//dummyScene->AddModel(dummyModel_ground);
 		
 		//// 模型（一个四方面片）
 		//TestModel* dummyModel_quad = new TestModel;
