@@ -167,24 +167,12 @@ public:
 		auto& v_left_pos = *static_cast<WorldPos*>(static_cast<void*>(v_left + offset_pos));
 		auto& v_right_pos = *static_cast<WorldPos*>(static_cast<void*>(v_right + offset_pos));
 
-		// 修正顶点
-		float slide_02 = (v2pos._x - v0pos._x) / (v2pos._y - v0pos._y);
-		float slide_01 = (v1pos._x - v0pos._x) / (v1pos._y - v0pos._y);
-		float slide_12 = (v1pos._x - v2pos._x) / (v1pos._y - v2pos._y);
-		float x_02_0 = v0pos._x + (y0_i - v0pos._y)*slide_02;
-		float x_01_0 = v0pos._x + (y0_i - v0pos._y)*slide_01;
-		float x_01_1 = v0pos._x + (y1_i - v0pos._y)*slide_01;
-		float x_12_1 = v1pos._x + (y1_i - v1pos._y)*slide_12;
-		float x_02_2 = v2pos._x + (y2_i - v2pos._y)*slide_02;
-		float x_12_2 = v2pos._x + (y2_i - v2pos._y)*slide_12;
-		float x_02_1 = v2pos._x + (y1_i - v2pos._y)*slide_02;
-
-		// 对x和y进行线性步进
-		v_left_pos._x = x_02_0;
-		v_right_pos._x = (v0pos._x < v1pos._x) ? max(x_01_0, v1pos._x - 1) : min(x_01_0, v1pos._x + 1);
-		float k02 = (x_02_2 - x_02_0) / (y2_i - y0_i);
-		float k01 = (x_01_1 - x_01_0) / (y1_i - y0_i);
-		float k12 = (x_12_1 - x_12_2) / (y1_i - y2_i);
+		// 对位置插值
+		v_left_pos._x = v0pos._x;
+		v_right_pos._x = v0pos._x;
+		float k02 = (v2pos._x - v0pos._x) / (v2pos._y - v0pos._y);
+		float k01 = (v1pos._x - v0pos._x) / (v1pos._y - v0pos._y);
+		float k12 = (v1pos._x - v2pos._x) / (v1pos._y - v2pos._y);
 
 		float ratio_left, ratio_right;
 		if (y0_i != y1_i) {
@@ -204,8 +192,7 @@ public:
 			}
 		}
 
-		v_left_pos._x = x_02_1;
-		v_right_pos._x = (v2pos._x < v1pos._x) ? max(x_12_1, v1pos._x - 1) : min(x_12_1, v1pos._x + 1);
+		v_right_pos._x = v1pos._x;
 		if (y1_i != y2_i) {
 			v_left_pos._y = v1pos._y;
 			v_right_pos._y = v1pos._y;

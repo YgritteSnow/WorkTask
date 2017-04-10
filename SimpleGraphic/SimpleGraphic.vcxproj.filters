@@ -40,6 +40,9 @@
     <Filter Include="SoftRender\Scene">
       <UniqueIdentifier>{5e2620c1-3acb-4c04-9e70-d834619d907d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SoftRender\Pipeline\Rasterizer">
+      <UniqueIdentifier>{4f44eb99-717f-47c6-b4e3-74f3126df6b8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="JMath.cpp">
@@ -105,11 +108,11 @@
     <ClCompile Include="VertexUtilities.cpp">
       <Filter>SoftRender\Pipeline\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Rasterizer.cpp">
-      <Filter>SoftRender\Pipeline</Filter>
-    </ClCompile>
     <ClCompile Include="LightingShader.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rasterizer.cpp">
+      <Filter>SoftRender\Pipeline\Rasterizer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -192,7 +195,7 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Rasterizer.h">
-      <Filter>SoftRender\Pipeline</Filter>
+      <Filter>SoftRender\Pipeline\Rasterizer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

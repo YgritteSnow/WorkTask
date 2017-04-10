@@ -94,7 +94,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	
 	if (InitManagers() == S_OK){
 		// 设置相机
-		CameraManager::GetInstance()->CurrentCamera()->SetProjMat(5.f, (float)WINDOW_WIDTH / WINDOW_HEIGHT, 1.f, 100.f);
+		CameraManager::GetInstance()->CurrentCamera()->SetProjMat(2.f, (float)WINDOW_WIDTH / WINDOW_HEIGHT, 1.f, 100.f);
 		CameraManager::GetInstance()->CurrentCamera()->SetViewMat(WorldPos(0, 0, 5), WorldPos(0, 0, 0), WorldPos(0, 1, 0));
 
 		// 设置场景，添加模型

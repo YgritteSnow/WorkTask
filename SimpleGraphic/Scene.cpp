@@ -3,6 +3,8 @@
 #include "Scene.h"
 #include "RenderManager.h"
 #include "Material.h"
+#include "BitMap.h"
+#include <tchar.h>
 
 
 /* *********************************************
@@ -62,6 +64,8 @@ void SceneManager::Render() {
 		break;
 	}
 	RenderManager::GetInstance()->Present();
+
+	BitMap::DrawText(_T("asdfasdf"), ShortColor4(100, 100, 100, 100), ScreenPos(0, 0, 0));
 }
 
 void SceneManager::Update(TimeType delta_time){
