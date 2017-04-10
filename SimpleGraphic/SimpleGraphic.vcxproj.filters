@@ -43,6 +43,9 @@
     <Filter Include="SoftRender\Pipeline\Rasterizer">
       <UniqueIdentifier>{4f44eb99-717f-47c6-b4e3-74f3126df6b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SoftRender\Debug">
+      <UniqueIdentifier>{deb9baf9-c950-4d42-a805-9befdcc2c2e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="JMath.cpp">
@@ -113,6 +116,9 @@
     </ClCompile>
     <ClCompile Include="Rasterizer.cpp">
       <Filter>SoftRender\Pipeline\Rasterizer</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugGUI.cpp">
+      <Filter>SoftRender\Debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="Rasterizer.h">
       <Filter>SoftRender\Pipeline\Rasterizer</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugGUI.h">
+      <Filter>SoftRender\Debug</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

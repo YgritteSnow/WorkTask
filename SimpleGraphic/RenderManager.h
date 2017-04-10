@@ -12,6 +12,7 @@
 #include "VertexBuffer.h"
 #include "ShaderManager.h"
 #include "LightingShader.h"
+#include "DebugGUI.h"
 
 extern UINT WINDOW_WIDTH;
 extern UINT WINDOW_HEIGHT;
@@ -57,6 +58,7 @@ public:
 		auto vsShader = ShaderManager::GetInstance()->GetVertexShader();
 		auto vb_temp = new VertexBuffer(vsShader->GetOutId(), vb->m_length);
 		ShaderManager::ProcessVertex(vb, vb_temp);
+		DebugManager::GetInstance()->SetVertexCount(vb->m_length);
 		// 三角形操作
 		// 这一步根据顶点位置和绕序，进行剔除
 		MaskType* cull_mask = new MaskType[static_cast<int>(ib->size()/TRIANGLE_COUNT)];
@@ -64,10 +66,14 @@ public:
 
 		const auto& indice_count = ib->size();
 		const auto& vb_vid = vb_temp->GetId();
+
+		unsigned int tmp_triangle_count = 0;
 		for (size_t idx = 0; idx < indice_count - 2; idx+=3){
 			if (IS_CULLED(cull_mask[idx / 3])){
 				continue;
 			}
+			tmp_triangle_count += 1;
+
 			auto indice_idx_0 = (*ib)[idx];
 			auto indice_idx_1 = (*ib)[idx + 1];
 			auto indice_idx_2 = (*ib)[idx + 2];
@@ -88,6 +94,8 @@ public:
 				RenderTriangle_fill(vb_vid, v0, v1, v2);
 			}
 		}
+		DebugManager::GetInstance()->SetValidTriangleCount(tmp_triangle_count);
+		DebugManager::GetInstance()->SetTriangleCount(indice_count/3);
 
 		delete[] cull_mask;
 	}

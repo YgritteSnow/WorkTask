@@ -11,6 +11,7 @@
 
 #include "TestModel.h"
 #include "LightingShader.h"
+#include "DebugGUI.h"
 
 const TCHAR* WINDOW_NAME = _T("jj");
 const TCHAR* WINDOW_CAPTION = _T("SimpleGraphics - by jj");
@@ -160,7 +161,12 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 				if (TimeManager::GetInstance()->Tick()){
 					CameraManager::GetInstance()->Update(TimeManager::GetInstance()->GetFrameInterval());
 					SceneManager::GetInstance()->Update(TimeManager::GetInstance()->GetFrameInterval());
+
+					RenderManager::GetInstance()->Clear();
 					SceneManager::GetInstance()->Render();
+					RenderManager::GetInstance()->Present();
+
+					DebugManager::GetInstance()->Render();
 				}
 			}
 		}
@@ -181,6 +187,7 @@ LRESULT InitManagers() {
 	if (!TextureManager::Init()) {return E_FAIL;}
 	if (!MaterialManager::Init()) {return E_FAIL;}
 	if (!ShaderManager::Init()) { return E_FAIL; }
+	if (!DebugManager::Init()) { return E_FAIL; }
 	return S_OK;
 }
 void UnInitManagers() {
@@ -193,4 +200,5 @@ void UnInitManagers() {
 	MaterialManager::UnInit();
 	InputEventHandlerManager::UnInit();
 	ShaderManager::UnInit();
+	DebugManager::UnInit();
 }

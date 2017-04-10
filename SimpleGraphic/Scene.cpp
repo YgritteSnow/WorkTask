@@ -4,7 +4,6 @@
 #include "RenderManager.h"
 #include "Material.h"
 #include "BitMap.h"
-#include <tchar.h>
 
 
 /* *********************************************
@@ -58,14 +57,10 @@ void SceneManager::UnInit(){
 }
 
 void SceneManager::Render() {
-	RenderManager::GetInstance()->Clear();
 	for (auto it = m_vec_scenes.begin(); it != m_vec_scenes.end(); ++it){
 		(*it)->Render();
 		break;
 	}
-	RenderManager::GetInstance()->Present();
-
-	BitMap::DrawText(_T("asdfasdf"), ShortColor4(100, 100, 100, 100), ScreenPos(0, 0, 0));
 }
 
 void SceneManager::Update(TimeType delta_time){

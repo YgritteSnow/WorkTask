@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <cstdio>
 #include <wingdi.h>
+#include <tchar.h>
 
 #include "Color.h"
 
@@ -14,7 +15,6 @@ void DEBUG_ASSERT(bool x){
 	}
 }
 
-extern TCHAR* WINDOW_NAME;
 extern HWND g_hwnd;
 
 inline
