@@ -78,16 +78,20 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-/Debug
+/*/x64
+/*/Win32
+/x64
+/Win32
+/*/Debug
+/*/Release
 *.suo
 *.sdf
-/*/Debug
 *.db
 *.opendb
 *.ipdb
 *.iobj
-/*/Release
 *.pdb
 *.opensdf
 *.psess
 *.vsp
+/x64/Debug

@@ -1,18 +1,23 @@
-#include <iostream>
 #include <Windows.h>
+#include <iostream>
 #include <tchar.h>
 #include "RenderManager.h"
 #include "Scene.h"
 #include "Light.h"
-#include "Texture.h"
+#include "TexManager.h"
 #include "InputEvent.h"
+
+#include "StructMeta.h"
+
+#include "TestModel.h"
+#include "LightingShader.h"
 
 const TCHAR* WINDOW_NAME = _T("jj");
 const TCHAR* WINDOW_CAPTION = _T("SimpleGraphics - by jj");
-UINT WINDOW_POS_X = 100;
-UINT WINDOW_POS_Y = 100;
-UINT WINDOW_WIDTH = 400;
-UINT WINDOW_HEIGHT = 300;
+unsigned int WINDOW_POS_X = 100;
+unsigned int WINDOW_POS_Y = 100;
+unsigned int WINDOW_WIDTH = 300;
+unsigned int WINDOW_HEIGHT = 300;
 TimeType MAX_FRAME_RATE = 0.0001;
 HWND g_hwnd = NULL;
 
@@ -83,29 +88,37 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	if (FAILED(ShowWindow(g_hwnd, SW_SHOWDEFAULT))){
 		return E_FAIL;
 	}
+
+	// 这里注册所有的 Vertex 类型
+	REFLECTION_FILTER_FUNC();
 	
 	if (InitManagers() == S_OK){
 		// 设置相机
-		CameraManager::GetInstance()->CurrentCamera()->SetProjMat(1.4f, (float)WINDOW_WIDTH / WINDOW_HEIGHT, 1.f, 1000.f);
+		CameraManager::GetInstance()->CurrentCamera()->SetProjMat(5.f, (float)WINDOW_WIDTH / WINDOW_HEIGHT, 1.f, 100.f);
 		CameraManager::GetInstance()->CurrentCamera()->SetViewMat(WorldPos(0, 0, 5), WorldPos(0, 0, 0), WorldPos(0, 1, 0));
-
-		// 模型（球（远））
-		Model<DummyVertex>* dummyModel_far = new Model<DummyVertex>;
-		dummyModel_far->DummyBall(1, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 0, 5));
-
-		// 模型（球（近））
-		Model<DummyVertex>* dummyModel_near = new Model<DummyVertex>;
-		dummyModel_near->DummyBall(0.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(-0.3, -0.3, 4));
-
-		// 模型（水平地面）
-		Model<DummyVertex>* dummyModel_ground = new Model<DummyVertex>;
-		dummyModel_ground->DummyGround(4, 4, NormColor4(1, 1, 1, 1), WorldPos(0, -0.3, 3));
 
 		// 设置场景，添加模型
 		Scene* dummyScene = new Scene;
-		dummyScene->AddModel(dummyModel_ground);
-		dummyScene->AddModel(dummyModel_near);
+		
+		// 模型（球（远））
+		TestModel* dummyModel_far = new TestModel;
+		dummyModel_far->DummyBall(1, 5, 10, NormColor4(1, 1, 1, 1), WorldPos(0, 0, 2));
 		dummyScene->AddModel(dummyModel_far);
+		
+		// 模型（球（近））
+		//TestModel* dummyModel_near = new TestModel;
+		//dummyModel_near->DummyBall(0.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(-0.3, -0.3, 4));
+		//dummyScene->AddModel(dummyModel_near);
+
+		//// 模型（水平地面）
+		//TestModel* dummyModel_ground = new TestModel;
+		//dummyModel_ground->DummyGround(4, 4, NormColor4(1, 1, 1, 1), WorldPos(0, -2, 9));
+		//dummyScene->AddModel(dummyModel_ground);
+		
+		//// 模型（一个四方面片）
+		//TestModel* dummyModel_quad = new TestModel;
+		//dummyModel_quad->DummyQuad();
+		//dummyScene->AddModel(dummyModel_quad);
 
 		SceneManager::GetInstance()->AddScene(dummyScene);
 
@@ -128,8 +141,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 
 		// 设置渲染状态
 		RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Fill);
-		RenderManager::GetInstance()->SetRenderState(StateMask_Light, StateMaskValue_LightEnable);
-		RenderManager::GetInstance()->SetRenderState(StateMask_CalNormal, StateMaskValue_NotCalNormal);
 		RenderManager::GetInstance()->SetRenderState(StateMask_BackCull, StateMaskValue_BackCullR);
 		RenderManager::GetInstance()->SetRenderState(StateMask_DepthBuffer, StateMaskValue_UseDepth);
 		RenderManager::GetInstance()->SetRenderState(StateMask_Alpha, StateMaskValue_UseAlpha);
@@ -169,6 +180,7 @@ LRESULT InitManagers() {
 	if (!LightManager::Init()) {return E_FAIL;}
 	if (!TextureManager::Init()) {return E_FAIL;}
 	if (!MaterialManager::Init()) {return E_FAIL;}
+	if (!ShaderManager::Init()) { return E_FAIL; }
 	return S_OK;
 }
 void UnInitManagers() {
@@ -180,4 +192,5 @@ void UnInitManagers() {
 	TextureManager::UnInit();
 	MaterialManager::UnInit();
 	InputEventHandlerManager::UnInit();
+	ShaderManager::UnInit();
 }

@@ -5,110 +5,194 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="SoftRender">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="SoftRender\Utilities">
+      <UniqueIdentifier>{d716c080-b353-4915-b092-7af3df08a6c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SoftRender\Camera">
+      <UniqueIdentifier>{90555f19-14fa-471a-a335-4aef0cfa1c69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SoftRender\Input">
+      <UniqueIdentifier>{3570a438-c552-4af7-80f2-8c6c31b29048}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SoftRender\Pipeline">
+      <UniqueIdentifier>{1fa3bda8-4589-43da-9765-89c02522d485}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SoftRender\Pipeline\ImgBuffers">
+      <UniqueIdentifier>{62b4bfc1-61ca-4f24-ab1c-0135331376df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SoftRender\Pipeline\Shaders">
+      <UniqueIdentifier>{3131560c-72cc-4a77-bcec-82105ca2d296}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SoftRender\Pipeline\Utilities">
+      <UniqueIdentifier>{c745b497-a658-41b4-b877-da4c6103a0de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SoftRender\Pipeline\Models">
+      <UniqueIdentifier>{33154c1d-39d6-4b6d-abf1-86096ed63784}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SoftRender\Scene">
+      <UniqueIdentifier>{5e2620c1-3acb-4c04-9e70-d834619d907d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="testbed.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderManager.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleBrush.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Color.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Header Files</Filter>
+    <ClCompile Include="JMath.cpp">
+      <Filter>SoftRender\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="JTime.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JMath.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>SoftRender\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="BitMap.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>SoftRender\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Header Files</Filter>
+    <ClCompile Include="Camera.cpp">
+      <Filter>SoftRender\Camera</Filter>
     </ClCompile>
     <ClCompile Include="InputEvent.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>SoftRender\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Brush.cpp">
-      <Filter>Header Files</Filter>
+    <ClCompile Include="Color.cpp">
+      <Filter>SoftRender\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="TargetBuffer.cpp">
-      <Filter>Header Files</Filter>
+    <ClCompile Include="Scene.cpp">
+      <Filter>SoftRender\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderManager.cpp">
+      <Filter>SoftRender\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>SoftRender\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>SoftRender\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleBrush.cpp">
+      <Filter>SoftRender\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="TexManager.cpp">
+      <Filter>SoftRender\Pipeline\ImgBuffers</Filter>
+    </ClCompile>
+    <ClCompile Include="framework.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderManager.cpp">
+      <Filter>SoftRender\Pipeline\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="TexBuffer.cpp">
+      <Filter>SoftRender\Pipeline\ImgBuffers</Filter>
+    </ClCompile>
+    <ClCompile Include="ABuffer.cpp">
+      <Filter>SoftRender\Pipeline\ImgBuffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>SoftRender\Pipeline\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>SoftRender\Pipeline\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="StructReflection.cpp">
+      <Filter>SoftRender\Pipeline\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="StructMeta.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexUtilities.cpp">
+      <Filter>SoftRender\Pipeline\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Rasterizer.cpp">
+      <Filter>SoftRender\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="LightingShader.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="RenderManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleBrush.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Color.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="JMath.h">
+      <Filter>SoftRender\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="JTime.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JMath.h">
-      <Filter>Header Files</Filter>
+      <Filter>SoftRender\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="BitMap.h">
-      <Filter>Header Files</Filter>
+      <Filter>SoftRender\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Camera.h">
+      <Filter>SoftRender\Camera</Filter>
     </ClInclude>
     <ClInclude Include="InputEvent.h">
-      <Filter>Header Files</Filter>
+      <Filter>SoftRender\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Brush.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Color.h">
+      <Filter>SoftRender\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="TargetBuffer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Scene.h">
+      <Filter>SoftRender\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderManager.h">
+      <Filter>SoftRender\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>SoftRender\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>SoftRender\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleBrush.h">
+      <Filter>SoftRender\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="ABuffer.h">
+      <Filter>SoftRender\Pipeline\ImgBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="TexManager.h">
+      <Filter>SoftRender\Pipeline\ImgBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="TexBuffer.h">
+      <Filter>SoftRender\Pipeline\ImgBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderManager.h">
+      <Filter>SoftRender\Pipeline\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexUtilities.h">
+      <Filter>SoftRender\Pipeline\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>SoftRender\Pipeline\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBuffer.h">
+      <Filter>SoftRender\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>SoftRender\Pipeline\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderStruct.h">
+      <Filter>SoftRender\Pipeline\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="LightingShader.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestVertex.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestModel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StructReflection.h">
+      <Filter>SoftRender\Pipeline\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="StructMeta.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMesh.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rasterizer.h">
+      <Filter>SoftRender\Pipeline</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

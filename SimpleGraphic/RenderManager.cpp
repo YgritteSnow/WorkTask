@@ -40,11 +40,11 @@ RenderManager* RenderManager::GetInstance(){
 * 建立和释放缓存
 * *********************************************/
 bool RenderManager::SetupBuffer(ScreenCoord width, ScreenCoord height) {
-	m_imgBuffer_back = new ImgBuffer<NormColor4>(width, height);
+	m_imgBuffer_back = new TexBuffer<NormColor4>(width, height);
 	if (!m_imgBuffer_back) { return false; }
-	m_imgBuffer_front = new ImgBuffer<NormColor4>(width, height);
+	m_imgBuffer_front = new TexBuffer<NormColor4>(width, height);
 	if (!m_imgBuffer_front) { return false; }
-	m_imgBuffer_depth = new ImgBuffer<DepthBufferPixel>(width, height);
+	m_imgBuffer_depth = new TexBuffer<DepthBufferPixel>(width, height);
 	if (!m_imgBuffer_depth) { return false; }
 	m_imgBuffer_alpha = new AlphaBuffer(width, height);
 	if (!m_imgBuffer_alpha) { return false; }
@@ -82,15 +82,15 @@ void RenderManager::Clear() {
 }
 
 void RenderManager::Present() {
-	OnRenderFinish();
+	OnBeforePresent();
 	auto tmp = m_imgBuffer_front;
 	m_imgBuffer_front = m_imgBuffer_back;
 	m_imgBuffer_back = tmp;
 	BitMap::Display(m_imgBuffer_front);
 }
 
-void RenderManager::OnRenderFinish() {
-	if (CheckState(StateMask_Alpha, StateMaskValue_UseAlpha)){
+void RenderManager::OnBeforePresent() {
+	if (CheckCurState(StateMask_Alpha, StateMaskValue_UseAlpha)){
 		m_imgBuffer_alpha->Blend();
 		for (int x = 0; x < m_imgBuffer_back->width; ++x) {
 			for (int y = 0; y < m_imgBuffer_back->height; ++y) {

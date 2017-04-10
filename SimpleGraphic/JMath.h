@@ -120,9 +120,9 @@ namespace JMath {
 		}
 
 		// 转换为齐次坐标
-		Vec4<DataType> ToVec4Pos(){ return Vec4<DataType>(_x, _y, _z, 1); }
-		Vec4<DataType> ToVec4Dir(){ return Vec4<DataType>(_x, _y, _z, 0); }
-		Vec2<DataType> ToVec2(){ return Vec2<DataType>(_x, _y); }
+		Vec4<DataType> ToVec4Pos() const { return Vec4<DataType>(_x, _y, _z, 1); }
+		Vec4<DataType> ToVec4Dir() const { return Vec4<DataType>(_x, _y, _z, 0); }
+		Vec2<DataType> ToVec2() const { return Vec2<DataType>(_x, _y); }
 	public:
 		DataType _x, _y, _z;
 	};

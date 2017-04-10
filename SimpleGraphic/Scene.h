@@ -1,8 +1,8 @@
 #ifndef __SCENE_H__
 #define __SCENE_H__
 
-#include <vector>
 #include <Windows.h>
+#include <vector>
 
 #include "JMath.h"
 #include "Color.h"
@@ -16,15 +16,15 @@
 class Scene : public InputEventHandler {
 public:
 	void Render();
-	void AddModel(Model<DummyVertex>* model){ m_vec_model.push_back(model); }
-	void DelModel(Model<DummyVertex>* model){ m_vec_model.erase(std::find(m_vec_model.begin(), m_vec_model.end(), model)); }
+	void AddModel(Model* model){ m_vec_model.push_back(model); }
+	void DelModel(Model* model){ m_vec_model.erase(std::find(m_vec_model.begin(), m_vec_model.end(), model)); }
 public:
 	void Update(TimeType delta_time);
 	bool HandleMouseEvent(const MouseEventObject& mouseEvent) override;
 	bool HanldeKeyEvent(const KeyEventObject& keyEvent) override;
 	bool HandleMouseMoveEvent(const MouseEventObject& mouseEvent) override;
 private:
-	std::vector< Model<DummyVertex>* > m_vec_model;
+	std::vector< Model* > m_vec_model;
 	Camera* m_vec_camera;
 };
 
