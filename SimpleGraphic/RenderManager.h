@@ -58,7 +58,7 @@ public:
 		auto vsShader = ShaderManager::GetInstance()->GetVertexShader();
 		auto vb_temp = new VertexBuffer(vsShader->GetOutId(), vb->m_length);
 		ShaderManager::ProcessVertex(vb, vb_temp);
-		DebugManager::GetInstance()->SetVertexCount(vb->m_length);
+		DebugManager::GetInstance()->AddVertexCount(vb->m_length);
 		// 三角形操作
 		// 这一步根据顶点位置和绕序，进行剔除
 		MaskType* cull_mask = new MaskType[static_cast<int>(ib->size()/TRIANGLE_COUNT)];
@@ -94,8 +94,8 @@ public:
 				RenderTriangle_fill(vb_vid, v0, v1, v2);
 			}
 		}
-		DebugManager::GetInstance()->SetValidTriangleCount(tmp_triangle_count);
-		DebugManager::GetInstance()->SetTriangleCount(indice_count/3);
+		DebugManager::GetInstance()->AddValidTriangleCount(tmp_triangle_count);
+		DebugManager::GetInstance()->AddTriangleCount(indice_count/3);
 
 		delete[] cull_mask;
 	}

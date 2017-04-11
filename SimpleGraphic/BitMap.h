@@ -83,13 +83,13 @@ namespace BitMap {
 	TexBuffer<ShortColor4>* LoadTGA(FILE* pf, const char* filename);
 
 	template <typename ColorType>
-	void DrawText(std::wstring text, ColorType color, ScreenPos pos) {
+	void DisplayText(TCHAR* text, ColorType color, ScreenPos pos) {
 		HDC hdc;
 		hdc = GetDC(g_hwnd);
 		auto& tmp_color = static_cast<ShortColor4>(color);
 		SetTextColor(hdc, RGB(tmp_color._x, tmp_color._y, tmp_color._z));
 		SetBkMode(hdc, TRANSPARENT);
-		TextOut(hdc, pos._x, pos._y, text.c_str(), lstrlen(text.c_str()));
+		TextOut(hdc, pos._x, pos._y, text, lstrlen(text));
 		ReleaseDC(g_hwnd, hdc);
 	}
 }

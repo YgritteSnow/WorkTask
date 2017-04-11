@@ -2,7 +2,7 @@
 
 #include "Color.h"
 #include "RenderManager.h"
-#include "Camera.h"
+#include "CameraManager.h"
 #include "TexBuffer.h"
 
 

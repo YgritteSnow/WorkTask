@@ -6,7 +6,7 @@
 
 #include "JMath.h"
 #include "Color.h"
-#include "Camera.h"
+#include "CameraManager.h"
 #include "Model.h"
 #include "InputEvent.h"
 

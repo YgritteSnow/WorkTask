@@ -15,7 +15,7 @@
 // 考虑到G-buffer可能会用的比较多，所以这里暂定128
 #define VERTEX_MAX_SIZE 128
 
-#define USE_PERSPECTIVE_CORRECT 1
+#define USE_PERSPECTIVE_CORRECT 0
 inline
 const float& GetFloat(const byte* x, STRUCT_ID offset) {
 	return *static_cast<const float*>(static_cast<const void*>((x)+(offset)));
@@ -140,16 +140,19 @@ public:
 		// 转换使三个点为y值从小到大排列
 		if (v0pos._y > v1pos._y) {
 			std::swap(v0, v1);
+			v0pos = *static_cast<WorldPos*>(static_cast<void*>(v0 + offset_pos));
+			v1pos = *static_cast<WorldPos*>(static_cast<void*>(v1 + offset_pos));
 		}
 		if (v0pos._y > v2pos._y) {
 			std::swap(v0, v2);
+			v0pos = *static_cast<WorldPos*>(static_cast<void*>(v0 + offset_pos));
+			v2pos = *static_cast<WorldPos*>(static_cast<void*>(v2 + offset_pos));
 		}
 		if (v1pos._y > v2pos._y) {
 			std::swap(v1, v2);
+			v1pos = *static_cast<WorldPos*>(static_cast<void*>(v1 + offset_pos));
+			v2pos = *static_cast<WorldPos*>(static_cast<void*>(v2 + offset_pos));
 		}
-		v0pos = *static_cast<WorldPos*>(static_cast<void*>(v0 + offset_pos));
-		v1pos = *static_cast<WorldPos*>(static_cast<void*>(v1 + offset_pos));
-		v2pos = *static_cast<WorldPos*>(static_cast<void*>(v2 + offset_pos));
 
 		// 整数格子
 		ScreenCoord y0_i = static_cast<ScreenCoord>(v0pos._y);
@@ -230,7 +233,7 @@ public:
 	}
 
 	static float calRat(float x_start, float x_end, float x_cur, float z_start, float z_end) {
-		if (x_end - x_start < 1)return 0;
+		//if (x_end - x_start < 1)return 0;
 		float linear_ratio = _calRat(x_start, x_end, x_cur);
 #if USE_PERSPECTIVE_CORRECT
 		float new_ratio = _transPerspRat(linear_ratio, z_start, z_end);

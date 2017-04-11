@@ -1,6 +1,6 @@
 #include "Light.h"
 #include "Material.h"
-#include "Camera.h"
+#include "CameraManager.h"
 #include <cmath>
 
 /* *********************************************

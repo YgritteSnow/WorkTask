@@ -146,8 +146,10 @@
   <ItemGroup>
     <ClCompile Include="ABuffer.cpp" />
     <ClCompile Include="BitMap.cpp" />
+    <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="DebugGUI.cpp" />
     <ClCompile Include="LightingShader.cpp" />
+    <ClCompile Include="PointCamera.cpp" />
     <ClCompile Include="Rasterizer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Color.cpp" />
@@ -170,9 +172,11 @@
     <ClCompile Include="VertexUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CameraManager.h" />
     <ClInclude Include="DebugGUI.h" />
     <ClInclude Include="LightingShader.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="PointCamera.h" />
     <ClInclude Include="ShaderStruct.h" />
     <ClInclude Include="ABuffer.h" />
     <ClInclude Include="BitMap.h" />

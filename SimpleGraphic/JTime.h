@@ -33,22 +33,8 @@ public:
 	}
 	static TimeManager* GetInstance(){ return m_instance; }
 public:
-	bool Tick(){
-		DWORD new_clockTime = GetTickCount();
-		TimeType new_slip = static_cast<TimeType>(new_clockTime - m_clockTime) / 1000;
-		m_clockTime = new_clockTime;
+	bool Tick();
 
-		m_lastSlip += new_slip;
-		if (m_lastSlip > m_minFrameInterval){
-			m_lastFrameInterval = m_lastSlip;
-			m_lastSlip = 0;
-			return true;
-		}
-		else{
-			m_lastSlip += m_minFrameInterval;
-			return false;
-		}
-	}
 	TimeType GetCurTime(){ return static_cast<TimeType>(m_clockTime); }
 	TimeType GetFrameInterval(){ return m_lastFrameInterval; }
 	TimeType GetFrameRate(){ return 1 / m_lastFrameInterval; }
