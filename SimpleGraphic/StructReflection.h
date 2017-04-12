@@ -16,6 +16,7 @@ enum AttriType {
 	NORMAL,
 	UV,
 	COLOR,
+	FLOATPARA,
 };
 
 struct _StructReflect
@@ -26,6 +27,7 @@ struct _StructReflect
 		, m_attriType_normal_size(0)
 		, m_attriType_uv_size(0)
 		, m_attriType_color_size(0)
+		, m_attriType_float_size(0)
 		, m_attriType_all_size(0)
 	{}
 	template <typename T, typename C>
@@ -42,6 +44,7 @@ struct _StructReflect
 		else if (attrType == NORMAL)m_attriType_normal[m_attriType_normal_size++] = offset;
 		else if (attrType == UV)m_attriType_uv[m_attriType_uv_size++] = offset;
 		else if (attrType == COLOR)m_attriType_color[m_attriType_color_size++] = offset;
+		else if (attrType == FLOATPARA)m_attriType_float[m_attriType_float_size++] = offset;
 	}
 
 	template <AttriType attriType>
@@ -54,17 +57,21 @@ struct _StructReflect
 	STRIDE_TYPE get_attri<UV>(int index) { return m_attriType_uv[index]; }
 	template <>
 	STRIDE_TYPE get_attri<COLOR>(int index) { return m_attriType_color[index]; }
+	template <>
+	STRIDE_TYPE get_attri<FLOATPARA>(int index) { return m_attriType_float[index]; }
 
 	STRIDE_TYPE m_attriType_pos[MAX_ATTRI_SIZE];
 	STRIDE_TYPE m_attriType_normal[MAX_ATTRI_SIZE];
 	STRIDE_TYPE m_attriType_uv[MAX_ATTRI_SIZE];
 	STRIDE_TYPE m_attriType_color[MAX_ATTRI_SIZE];
+	STRIDE_TYPE m_attriType_float[MAX_ATTRI_SIZE];
 	STRIDE_TYPE m_attriType_all[MAX_ATTRI_SIZE];
 	
 	int m_attriType_pos_size;
 	int m_attriType_normal_size;
 	int m_attriType_uv_size;
 	int m_attriType_color_size;
+	int m_attriType_float_size;
 	int m_attriType_all_size;
 
 	STRIDE_TYPE m_size;

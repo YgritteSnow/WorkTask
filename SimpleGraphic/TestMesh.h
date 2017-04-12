@@ -14,6 +14,12 @@ private:
 			m_vertexBuffer->m_length,
 			m_indexBuffer->m_vec_indice,
 			m_indexBuffer->m_length);
+		ProcessVertex_calBiNormal(
+			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
+			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
+			m_vertexBuffer->m_length,
+			m_indexBuffer->m_vec_indice,
+			m_indexBuffer->m_length);
 	}
 	void Dummy() {
 		m_vertexBuffer = new VertexBuffer(GetID(TestVertex), 4);
@@ -54,8 +60,14 @@ private:
 		ProcessVertex_calNormal(
 			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
 			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
-			m_vertexBuffer->m_length, 
-			m_indexBuffer->m_vec_indice, 
+			m_vertexBuffer->m_length,
+			m_indexBuffer->m_vec_indice,
+			m_indexBuffer->m_length);
+		ProcessVertex_calBiNormal(
+			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
+			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
+			m_vertexBuffer->m_length,
+			m_indexBuffer->m_vec_indice,
 			m_indexBuffer->m_length);
 	}
 	void Dummy() {
@@ -174,6 +186,12 @@ private:
 			m_vertexBuffer->m_length,
 			m_indexBuffer->m_vec_indice,
 			m_indexBuffer->m_length);
+		ProcessVertex_calBiNormal(
+			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
+			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
+			m_vertexBuffer->m_length,
+			m_indexBuffer->m_vec_indice,
+			m_indexBuffer->m_length);
 	}
 	void Dummy() {
 		std::vector<TestVertex> t_vertex;
@@ -218,6 +236,12 @@ public:
 	void OnLoad() override {
 		Dummy();
 		ProcessVertex_calNormal(
+			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
+			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
+			m_vertexBuffer->m_length,
+			m_indexBuffer->m_vec_indice,
+			m_indexBuffer->m_length);
+		ProcessVertex_calBiNormal(
 			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
 			static_cast<TestVertex*>(static_cast<void*>(m_vertexBuffer->m_vec_vertex)),
 			m_vertexBuffer->m_length,

@@ -16,17 +16,18 @@ public:
 	static void UnInit();
 	static ShaderManager* GetInstance();
 
-	static void ProcessVertex(const VertexBuffer* vin, const VertexBuffer* vout) {
+	static void ProcessVertex(VertexBuffer* vin, const VertexBuffer* vout) {
 		for (int i = 0; i < vin->m_length; ++i) {
 			m_instance->m_vsMain->Run(vin->GetVertex(i), vout->GetVertex(i));
 		}
 	}
 
-	static void ProcessPixel(const byte* pin, byte* pout) {
+	static STRUCT_ID ProcessPixel(byte* pin, byte* pout) {
 		m_instance->m_psMain->Run(pin, pout);
+		return m_instance->m_psMain->GetOutId();
 	}
 
-	static bool TestPixel(const byte* v) {
+	static bool TestPixel(byte* v) {
 		return m_instance->m_psMain->Test(v);
 	}
 

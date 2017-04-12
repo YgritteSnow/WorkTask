@@ -8,39 +8,60 @@
 
 DECLARE_VERTEXSHADER_START(TestVSShader, TestVertex, pVin, TestVertex_v2p, pVout)
 {
-	// uv照抄
+	// 照抄
 	pVout->uv = pVin->uv;
+	pVout->color = pVin->color;
 
-	HomoPos tmp = modelMat.PreMulVec(pVin->pos.ToVec4Pos());
-	WorldPos worldPos = tmp.ToVec3Homo();
+	// 转换位置：世界 - 视角&投影 - 屏幕
+	HomoPos worldPos = modelMat.PreMulVec(pVin->pos.ToVec4Pos());
+	HomoPos viewPos = CameraManager::GetInstance()->CurrentCamera()->GetViewProjMat().PreMulVec(worldPos);
+	pVout->z = viewPos._w;
 
-	// 转换位置到世界空间
-	auto invview = CameraManager::GetInstance()->CurrentCamera()->GetInvViewMat();
-	auto t1 = invview.PreMulVec(tmp);
-	auto proj = CameraManager::GetInstance()->CurrentCamera()->GetProjMat();
-	auto t2 = proj.PreMulVec(t1);
+	WorldPos screenPos = CameraManager::GetInstance()->CurrentCamera()->TransToScreenPos(viewPos.ToVec3Homo());
+	pVout->pos = screenPos;
 
-	HomoPos tmp2 = CameraManager::GetInstance()->CurrentCamera()->GetViewProjMat().PreMulVec(tmp);
-
-	WorldPos screen_pos = CameraManager::GetInstance()->CurrentCamera()->TransToScreenPos(t2.ToVec3Homo());
-	pVout->pos = screen_pos;
 	// 转换法线到世界空间
 	pVout->normal = pVin->normal;
-	pVout->normal.Normalise();
-	auto tt = modelMat.PreMulVec(pVout->normal.ToVec4Dir());
 	pVout->normal = modelMat.PreMulVec(pVout->normal.ToVec4Dir()).ToVec3();
-	// 颜色使用光照
-	pVout->color = LightManager::GetInstance()->Process(
-		pVin->color,
-		pVout->normal,
-		worldPos);
+	// 转换切线到世界空间
+	pVout->biNormal = pVin->biNormal;
+	pVout->biNormal = modelMat.PreMulVec(pVout->biNormal.ToVec4Dir()).ToVec3();
+	// 计算副切线
+	pVout->taNormal = pVout->biNormal.CrossProduct(pVout->normal);
+
+	// 记录世界坐标
+	pVout->worldPos = worldPos.ToVec3Homo();
+
 }
 DECLARE_VERTEXSHADER_END
 
 DECLARE_PIXELSHADER_START(TestPSShader, TestVertex_v2p, pVout, TestPixel, pPout)
 {
 	pPout->pos = pVout->pos;
-	pPout->color = pVout->color;
+	pVout->normal.Normalise();
+	pVout->biNormal.Normalise();
+	pVout->taNormal.Normalise();
+
+	// 根据法线贴图微调法线
+	if (m_cur_normalTexture) {
+		auto normal_color = m_cur_normalTexture->GetPixel_normedPos_smart(pVout->uv._x, pVout->uv._y);
+		normal_color = (normal_color - 0.5) * 2;
+		WorldPos normal_offset;
+		normal_offset._x = pVout->biNormal._x * normal_color._x + pVout->taNormal._x * normal_color._y + pVout->normal._x * normal_color._z;
+		normal_offset._y = pVout->biNormal._y * normal_color._x + pVout->taNormal._y * normal_color._y + pVout->normal._y * normal_color._z;
+		normal_offset._z = pVout->biNormal._z * normal_color._x + pVout->taNormal._z * normal_color._y + pVout->normal._z * normal_color._z;
+		normal_offset.Normalise();
+		pVout->normal._x = normal_offset._x;
+		pVout->normal._y = normal_offset._y;
+		pVout->normal._z = normal_offset._z;
+		pVout->normal.Normalise();
+	}
+
+	// 颜色使用光照
+	pPout->color = LightManager::GetInstance()->Process(
+		pVout->color,
+		pVout->normal,
+		pVout->worldPos);
 
 	// 更新深度缓存
 	if (RenderManager::GetInstance()->CheckCurState(StateMask_Alpha, StateMaskValue_NoAlpha)
@@ -53,8 +74,8 @@ DECLARE_PIXELSHADER_START(TestPSShader, TestVertex_v2p, pVout, TestPixel, pPout)
 		}
 	}
 	// 根据贴图更新颜色
-	if (TextureManager::GetInstance()->GetTexture()) {
-		pPout->color *= TextureManager::GetInstance()->GetTexture()->GetPixel_normedPos_smart(pVout->uv._x, pVout->uv._y);
+	if (m_cur_texture) {
+		pPout->color *= m_cur_texture->GetPixel_normedPos_smart(pVout->uv._x, pVout->uv._y);
 	}
 }
 DECLARE_PIXELSHADER_END

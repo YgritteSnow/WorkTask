@@ -2,6 +2,9 @@
 
 #include <tchar.h>
 
+extern unsigned int WINDOW_WIDTH;
+extern unsigned int WINDOW_HEIGHT;
+
 class DebugManager
 {
 private:
@@ -18,6 +21,8 @@ public:
 	void AddValidTriangleCount(unsigned int c);
 	void AddTriangleCount(unsigned int c);
 	void AddVertexCount(unsigned int c);
+	
+	void SetLightCount(unsigned int c);
 
 	void OnRenderBegin();
 
@@ -33,4 +38,5 @@ private:
 	unsigned int m_triangleCount_valid;
 	unsigned int m_vertexCount;
 	float m_fps;
+	unsigned int m_lightCount;
 };

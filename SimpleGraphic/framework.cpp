@@ -17,8 +17,8 @@ const TCHAR* WINDOW_NAME = _T("jj");
 const TCHAR* WINDOW_CAPTION = _T("SimpleGraphics - by jj");
 unsigned int WINDOW_POS_X = 100;
 unsigned int WINDOW_POS_Y = 100;
-unsigned int WINDOW_WIDTH = 300;
-unsigned int WINDOW_HEIGHT = 300;
+unsigned int WINDOW_WIDTH = 500;
+unsigned int WINDOW_HEIGHT = 500;
 TimeType MAX_FRAME_RATE = 120.f;
 HWND g_hwnd = NULL;
 
@@ -96,19 +96,19 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	if (InitManagers() == S_OK){
 		// 设置相机
 		CameraManager::GetInstance()->CurrentCamera()->SetProjMat(3.f, (float)WINDOW_WIDTH / WINDOW_HEIGHT, 1.f, 100.f);
-		CameraManager::GetInstance()->CurrentCamera()->SetViewMat(WorldPos(0, 0, 5), WorldPos(0, 0, 0), WorldPos(0, 1, 0));
+		CameraManager::GetInstance()->CurrentCamera()->SetViewMat(WorldPos(1, 0, 5), WorldPos(0, 0, 0), WorldPos(0, 1, 0));
 
 		// 设置场景，添加模型
 		Scene* dummyScene = new Scene;
 		
 		//// 模型（球（远））
 		//TestModel* dummyModel_far = new TestModel;
-		//dummyModel_far->DummyBall(1, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 0, 7));
+		//dummyModel_far->DummyBall(3, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 0, 4));
 		//dummyScene->AddModel(dummyModel_far);
 		
 		//// 模型（球（近））
 		//TestModel* dummyModel_near = new TestModel;
-		//dummyModel_near->DummyBall(0.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 1, 4));
+		//dummyModel_near->DummyBall(2, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 1, 2));
 		//dummyScene->AddModel(dummyModel_near);
 
 		//// 模型（水平地面）
@@ -118,7 +118,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		
 		// 模型（一个四方面片）
 		TestModel* dummyModel_quad = new TestModel;
-		dummyModel_quad->DummyQuad(1,1,5);
+		dummyModel_quad->DummyQuad(4,4,5);
 		dummyScene->AddModel(dummyModel_quad);
 
 		SceneManager::GetInstance()->AddScene(dummyScene);
@@ -127,24 +127,24 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		MaterialManager::GetInstance()->SetMaterial(Material(
 			NormColor4(1, 1, 1, 1) * 0.1,
 			NormColor4(1, 1, 1, 1) * 0.3,
-			NormColor4(0.7, 0.7, 0.7, 50),
-			NormColor4(1, 1, 1, 1) * 0.1
+			NormColor4(0.7, 0.7, 0.7, 2),
+			NormColor4(1, 1, 1, 1) * 0
 		));
 
 		// 设置贴图
 		TextureManager::GetInstance()->SetTexture("tex_alpha_color.tga");
 
 		// 设置光照
-		LightManager::GetInstance()->AddLight(new AmbientLight(NormColor4(1, 1, 1, 1)));
-		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 1, 0, 1) * 2, WorldPos(1, 0, 0)));
-		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 0, 1, 1) * 2, WorldPos(-1, 0, 0)));
-		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 0, 0, 1) * 2, WorldPos(0, 1, 0)));
+		//LightManager::GetInstance()->AddLight(new AmbientLight(NormColor4(1, 1, 1, 1)));
+		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 1, 1, 1) * 2, WorldPos(1, 0, 0)));
+		//LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 0, 1, 1) * 2, WorldPos(-1, 0, 0)));
+		//LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 0, 0, 1) * 2, WorldPos(0, 1, 0)));
 
 		// 设置渲染状态
 		RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Fill);
 		RenderManager::GetInstance()->SetRenderState(StateMask_BackCull, StateMaskValue_BackCullR);
 		RenderManager::GetInstance()->SetRenderState(StateMask_DepthBuffer, StateMaskValue_UseDepth);
-		RenderManager::GetInstance()->SetRenderState(StateMask_Alpha, StateMaskValue_UseAlpha);
+		RenderManager::GetInstance()->SetRenderState(StateMask_Alpha, StateMaskValue_NoAlpha);
 
 		// 主循环
 		MSG msg;

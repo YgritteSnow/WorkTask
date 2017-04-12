@@ -17,6 +17,11 @@ public:
 class TestPSShader : public PixelShader
 {
 public:
+	TexBuffer<NormColor4>* m_cur_texture;
+	TexBuffer<NormColor4>* m_cur_normalTexture;
+	void SetTexture(TexBuffer<NormColor4>* tex) { m_cur_texture = tex; }
+	void SetNormalTexture(TexBuffer<NormColor4>* tex) { m_cur_normalTexture = tex; }
+public:
 	DECLARE_PIXELSHADER(TestVertex_v2p, pVout, TestPixel, pPout);
 };
 

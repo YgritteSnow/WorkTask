@@ -4,6 +4,7 @@
 #include <vector>
 #include "JMath.h"
 #include "Color.h"
+#include "DebugGUI.h"
 
 /* *********************************************
 * Light
@@ -58,7 +59,10 @@ public:
 	static void UnInit();
 	static LightManager* GetInstance(){return m_instance;};
 
-	void AddLight(Light* l){ m_vec_light.push_back(l); }
+	void AddLight(Light* l){
+		m_vec_light.push_back(l);
+		DebugManager::GetInstance()->SetLightCount(m_vec_light.size());
+	}
 public:
 	NormColor4 Process(NormColor4 origin_color, WorldPos normal, WorldPos pos);
 private:

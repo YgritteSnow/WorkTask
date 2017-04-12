@@ -46,6 +46,9 @@
     <Filter Include="SoftRender\Debug">
       <UniqueIdentifier>{deb9baf9-c950-4d42-a805-9befdcc2c2e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SoftRender\Pipeline\Light">
+      <UniqueIdentifier>{6854c95d-3fb8-4ffe-a768-69d0119c8fe2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="JMath.cpp">
@@ -70,15 +73,6 @@
       <Filter>SoftRender\Scene</Filter>
     </ClCompile>
     <ClCompile Include="RenderManager.cpp">
-      <Filter>SoftRender\Pipeline</Filter>
-    </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>SoftRender\Pipeline</Filter>
-    </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>SoftRender\Pipeline</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleBrush.cpp">
       <Filter>SoftRender\Pipeline</Filter>
     </ClCompile>
     <ClCompile Include="TexManager.cpp">
@@ -126,6 +120,15 @@
     <ClCompile Include="CameraManager.cpp">
       <Filter>SoftRender\Camera</Filter>
     </ClCompile>
+    <ClCompile Include="SimpleBrush.cpp">
+      <Filter>SoftRender\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>SoftRender\Pipeline\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>SoftRender\Pipeline\Light</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="JMath.h">
@@ -152,15 +155,6 @@
     <ClInclude Include="RenderManager.h">
       <Filter>SoftRender\Pipeline</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>SoftRender\Pipeline</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>SoftRender\Pipeline</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleBrush.h">
-      <Filter>SoftRender\Pipeline</Filter>
-    </ClInclude>
     <ClInclude Include="ABuffer.h">
       <Filter>SoftRender\Pipeline\ImgBuffers</Filter>
     </ClInclude>
@@ -178,9 +172,6 @@
     </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>SoftRender\Pipeline\Models</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBuffer.h">
-      <Filter>SoftRender\Pipeline</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>SoftRender\Pipeline\Models</Filter>
@@ -217,6 +208,18 @@
     </ClInclude>
     <ClInclude Include="CameraManager.h">
       <Filter>SoftRender\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleBrush.h">
+      <Filter>SoftRender\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBuffer.h">
+      <Filter>SoftRender\Pipeline\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>SoftRender\Pipeline\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>SoftRender\Pipeline\Light</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

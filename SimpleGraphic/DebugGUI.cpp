@@ -21,12 +21,13 @@ void DebugManager::UnInit() {
 }
 
 DebugManager::DebugManager()
-	: m_fps(1.f)
+	: m_lineHeight(14)
+	, m_lineStart(10)
+	, m_fps(0.f)
 	, m_triangleCount(0)
 	, m_triangleCount_valid(0)
 	, m_vertexCount(0)
-	, m_lineHeight(14)
-	, m_lineStart(10)
+	, m_lightCount(0)
 {}
 
 void DebugManager::Render() {
@@ -34,11 +35,19 @@ void DebugManager::Render() {
 	char tmp_char[128];
 	ScreenCoord height = 0;
 
+	wsprintf(tmp, _T("Window:  (%d, %d)"), WINDOW_WIDTH, WINDOW_HEIGHT);
+	BitMap::DisplayText(tmp, ShortColor4(100, 100, 100, 100), ScreenPos(m_lineStart, height, 0));
+	height += m_lineHeight;
+
 	wsprintf(tmp, _T("Primitive Count:  %d/%d"), m_triangleCount_valid, m_triangleCount);
 	BitMap::DisplayText(tmp, ShortColor4(100, 100, 100, 100), ScreenPos(m_lineStart, height, 0));
 	height += m_lineHeight;
 
 	wsprintf(tmp, _T("Vertex Count:  %d"), m_vertexCount);
+	BitMap::DisplayText(tmp, ShortColor4(100, 100, 100, 100), ScreenPos(m_lineStart, height, 0));
+	height += m_lineHeight;
+
+	wsprintf(tmp, _T("Light Count:  %d"), m_lightCount);
 	BitMap::DisplayText(tmp, ShortColor4(100, 100, 100, 100), ScreenPos(m_lineStart, height, 0));
 	height += m_lineHeight;
 
@@ -68,4 +77,7 @@ void DebugManager::AddVertexCount(unsigned int c) {
 }
 void DebugManager::SetFPS(float c) {
 	m_fps = c * 0.1f + m_fps * 0.9f;
+}
+void DebugManager::SetLightCount(unsigned int c) {
+	m_lightCount = c;
 }

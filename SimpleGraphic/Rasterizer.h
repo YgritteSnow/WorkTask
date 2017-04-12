@@ -15,7 +15,7 @@
 // 考虑到G-buffer可能会用的比较多，所以这里暂定128
 #define VERTEX_MAX_SIZE 128
 
-#define USE_PERSPECTIVE_CORRECT 0
+#define USE_PERSPECTIVE_CORRECT 1
 inline
 const float& GetFloat(const byte* x, STRUCT_ID offset) {
 	return *static_cast<const float*>(static_cast<const void*>((x)+(offset)));
@@ -44,8 +44,8 @@ public:
 			return;
 		}
 		byte pixel[VERTEX_MAX_SIZE];
-		ShaderManager::ProcessPixel(v1, pixel);
-		back_buffer->SetPixelAt_byVertex(coord_x, coord_y, StructWrapper(vid, pixel));
+		auto out_vid = ShaderManager::ProcessPixel(v1, pixel);
+		back_buffer->SetPixelAt_byVertex(coord_x, coord_y, StructWrapper(out_vid, pixel));
 	}
 
 	template <typename _TexBuffer>
@@ -58,6 +58,10 @@ public:
 		const auto& offset_pos = StructReflectManager::GetOffset<POSITION>(vid, 0);
 		const auto& v0pos = *static_cast<WorldPos*>(static_cast<void*>(v0 + offset_pos));
 		const auto& v1pos = *static_cast<WorldPos*>(static_cast<void*>(v1 + offset_pos));
+
+		const auto& offset_z = StructReflectManager::GetOffset<FLOATPARA>(vid, 0);
+		const auto& v0pos_z = *static_cast<float*>(static_cast<void*>(v0 + offset_z));
+		const auto& v1pos_z = *static_cast<float*>(static_cast<void*>(v1 + offset_z));
 
 		if (JMath::f_equal(v1pos._x, v0pos._x) && JMath::f_equal(v1pos._y, v0pos._y)) {
 			return;
@@ -79,8 +83,8 @@ public:
 
 		float ratio;
 		for (int idx = 0; idx < max_count; ++idx) {
-			ratio = use_x ? calRat(v0pos._x, v1pos._x, vpos._x, v0pos._z, v1pos._z)
-				: calRat(v0pos._y, v1pos._y, vpos._y, v0pos._z, v1pos._z);
+			ratio = use_x ? calRat(v0pos._x, v1pos._x, vpos._x, v0pos_z, v1pos_z)
+				: calRat(v0pos._y, v1pos._y, vpos._y, v0pos_z, v1pos_z);
 			_interp(ratio, v0, v1, v, byte_size, offset_pos);
 
 			DrawDot(vid, v, back_buffer);
@@ -105,6 +109,11 @@ public:
 		if (v0pos._x > v1pos._x) {
 			std::swap(v0, v1);
 		}
+
+		const auto& offset_z = StructReflectManager::GetOffset<FLOATPARA>(vid, 0);
+		auto v0pos_z = *static_cast<float*>(static_cast<void*>(v0 + offset_z));
+		auto v1pos_z = *static_cast<float*>(static_cast<void*>(v1 + offset_z));
+
 		v0pos = *static_cast<WorldPos*>(static_cast<void*>(v0 + offset_pos));
 		v1pos = *static_cast<WorldPos*>(static_cast<void*>(v1 + offset_pos));
 
@@ -116,7 +125,7 @@ public:
 		vpos._x = bgn;
 		float ratio;
 		do {
-			ratio = calRat(v0pos._x, v1pos._x, vpos._x, v0pos._z, v1pos._z);
+			ratio = calRat(v0pos._x, v1pos._x, vpos._x, v0pos_z, v1pos_z);
 			_interp(ratio, v0, v1, v, byte_size, offset_pos);
 			DrawDot(vid, v, back_buffer);
 			vpos._x += 1;
@@ -154,6 +163,11 @@ public:
 			v2pos = *static_cast<WorldPos*>(static_cast<void*>(v2 + offset_pos));
 		}
 
+		const auto& offset_z = StructReflectManager::GetOffset<FLOATPARA>(vid, 0);
+		auto v0pos_z = *static_cast<float*>(static_cast<void*>(v0 + offset_z));
+		auto v1pos_z = *static_cast<float*>(static_cast<void*>(v1 + offset_z));
+		auto v2pos_z = *static_cast<float*>(static_cast<void*>(v2 + offset_z));
+
 		// 整数格子
 		ScreenCoord y0_i = static_cast<ScreenCoord>(v0pos._y);
 		ScreenCoord y1_i = static_cast<ScreenCoord>(v1pos._y);
@@ -182,8 +196,8 @@ public:
 			v_left_pos._y = v0pos._y;
 			v_right_pos._y = v0pos._y;
 			while (y0_i < y1_i) {
-				ratio_left = calRat(v0pos._y, v2pos._y, v_left_pos._y, v0pos._z, v2pos._z);
-				ratio_right = calRat(v0pos._y, v1pos._y, v_right_pos._y, v0pos._z, v1pos._z);
+				ratio_left = calRat(v0pos._y, v2pos._y, v_left_pos._y, v0pos_z, v2pos_z);
+				ratio_right = calRat(v0pos._y, v1pos._y, v_right_pos._y, v0pos_z, v1pos_z);
 				_interp(ratio_left, v0, v2, v_left, byte_size, offset_pos);
 				_interp(ratio_right, v0, v1, v_right, byte_size, offset_pos);
 				DrawLine_h(vid, v_left, v_right, y0_i, back_buffer);
@@ -200,8 +214,8 @@ public:
 			v_left_pos._y = v1pos._y;
 			v_right_pos._y = v1pos._y;
 			while (y1_i < y2_i) {
-				ratio_left = calRat(v0pos._y, v2pos._y, v_left_pos._y, v0pos._z, v2pos._z);
-				ratio_right = calRat(v1pos._y, v2pos._y, v_right_pos._y, v1pos._z, v2pos._z);
+				ratio_left = calRat(v0pos._y, v2pos._y, v_left_pos._y, v0pos_z, v2pos_z);
+				ratio_right = calRat(v1pos._y, v2pos._y, v_right_pos._y, v1pos_z, v2pos_z);
 				_interp(ratio_left, v0, v2, v_left, byte_size, offset_pos);
 				_interp(ratio_right, v1, v2, v_right, byte_size, offset_pos);
 				DrawLine_h(vid, v_left, v_right, y1_i, back_buffer);
