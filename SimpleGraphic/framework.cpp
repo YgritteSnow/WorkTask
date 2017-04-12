@@ -95,7 +95,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 	
 	if (InitManagers() == S_OK){
 		// 设置相机
-		CameraManager::GetInstance()->CurrentCamera()->SetProjMat(1.f, (float)WINDOW_WIDTH / WINDOW_HEIGHT, 1.f, 100.f);
+		CameraManager::GetInstance()->CurrentCamera()->SetProjMat(3.f, (float)WINDOW_WIDTH / WINDOW_HEIGHT, 1.f, 100.f);
 		CameraManager::GetInstance()->CurrentCamera()->SetViewMat(WorldPos(0, 0, 5), WorldPos(0, 0, 0), WorldPos(0, 1, 0));
 
 		// 设置场景，添加模型
@@ -106,20 +106,20 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		//dummyModel_far->DummyBall(1, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 0, 7));
 		//dummyScene->AddModel(dummyModel_far);
 		
-		// 模型（球（近））
-		TestModel* dummyModel_near = new TestModel;
-		dummyModel_near->DummyBall(0.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 1, 4));
-		dummyScene->AddModel(dummyModel_near);
+		//// 模型（球（近））
+		//TestModel* dummyModel_near = new TestModel;
+		//dummyModel_near->DummyBall(0.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 1, 4));
+		//dummyScene->AddModel(dummyModel_near);
 
-		// 模型（水平地面）
-		TestModel* dummyModel_ground = new TestModel;
-		dummyModel_ground->DummyGround(3, 3, NormColor4(1, 1, 1, 1), WorldPos(0, -4, 8));
-		dummyScene->AddModel(dummyModel_ground);
+		//// 模型（水平地面）
+		//TestModel* dummyModel_ground = new TestModel;
+		//dummyModel_ground->DummyGround(3, 3, NormColor4(1, 1, 1, 1), WorldPos(0, -4, 8));
+		//dummyScene->AddModel(dummyModel_ground);
 		
 		// 模型（一个四方面片）
-		//TestModel* dummyModel_quad = new TestModel;
-		//dummyModel_quad->DummyQuad();
-		//dummyScene->AddModel(dummyModel_quad);
+		TestModel* dummyModel_quad = new TestModel;
+		dummyModel_quad->DummyQuad(1,1,5);
+		dummyScene->AddModel(dummyModel_quad);
 
 		SceneManager::GetInstance()->AddScene(dummyScene);
 

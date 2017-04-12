@@ -14,11 +14,11 @@ public:
 		m_mesh = new TestCubeMesh();
 		m_mesh->Load();
 	}
-	void DummyQuad() {
+	void DummyQuad(float width, float height, float dist) {
 		m_vsMain = new TestVSShader();
 		m_psMain = new TestPSShader();
-		m_worldMat.SetTranslate(0, 0, 3);
-		m_mesh = new TestQuadMesh();
+		m_worldMat.SetTranslate(0, 0, dist);
+		m_mesh = new TestQuadMesh(width, height);
 		m_mesh->Load();
 	}
 	void DummyBall(float radius, int h_count, int r_count, NormColor4 color, WorldPos pos) {

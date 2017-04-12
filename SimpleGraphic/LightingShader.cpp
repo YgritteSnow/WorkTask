@@ -15,9 +15,14 @@ DECLARE_VERTEXSHADER_START(TestVSShader, TestVertex, pVin, TestVertex_v2p, pVout
 	WorldPos worldPos = tmp.ToVec3Homo();
 
 	// 转换位置到世界空间
+	auto invview = CameraManager::GetInstance()->CurrentCamera()->GetInvViewMat();
+	auto t1 = invview.PreMulVec(tmp);
+	auto proj = CameraManager::GetInstance()->CurrentCamera()->GetProjMat();
+	auto t2 = proj.PreMulVec(t1);
+
 	HomoPos tmp2 = CameraManager::GetInstance()->CurrentCamera()->GetViewProjMat().PreMulVec(tmp);
-	const auto& tmp22 = tmp2.ToVec3Homo();
-	WorldPos screen_pos = CameraManager::GetInstance()->CurrentCamera()->TransToScreenPos(tmp22);
+
+	WorldPos screen_pos = CameraManager::GetInstance()->CurrentCamera()->TransToScreenPos(t2.ToVec3Homo());
 	pVout->pos = screen_pos;
 	// 转换法线到世界空间
 	pVout->normal = pVin->normal;

@@ -33,7 +33,7 @@ namespace JMath{
 
 	void Mat44::SetTranslate(float x, float y, float z){
 		this->SetIdentity();
-		SetRow(3, x, y, z, 1);
+		SetCol(3, x, y, z, 1);
 	}
 
 	void Mat44::SetTranslate(WorldPos pos){
@@ -46,10 +46,10 @@ namespace JMath{
 		auto x_dir = upDirect.CrossProduct(lookat);
 		x_dir.Normalise();
 		auto y_dir = lookat.CrossProduct(x_dir);
-		SetRow(0, x_dir._x, x_dir._y, x_dir._z, 0);
-		SetRow(1, y_dir._x, y_dir._y, y_dir._z, 0);
-		SetRow(2, lookat._x, lookat._y, lookat._z, 0);
-		SetRow(3, cameraPos._x, cameraPos._y, cameraPos._z, 1);
+		SetCol(0, x_dir._x, x_dir._y, x_dir._z, 0);
+		SetCol(1, y_dir._x, y_dir._y, y_dir._z, 0);
+		SetCol(2, lookat._x, lookat._y, lookat._z, 0);
+		SetCol(3, cameraPos._x, cameraPos._y, cameraPos._z, 1);
 	}
 
 	void Mat44::SetProjMat(float fov, float aspect, float nearPlane, float farPlane){
@@ -77,13 +77,21 @@ namespace JMath{
 			_m[row][0], _m[row][1], _m[row][2], _m[row][3]
 			);
 	}
+
+	void Mat44::SetCol(int row, float m0, float m1, float m2, float m3) {
+		_m[0][row] = m0;
+		_m[1][row] = m1;
+		_m[2][row] = m2;
+		_m[3][row] = m3;
+	}
+
 	HomoPos Mat44::GetCol(int col) const {
 		return HomoPos(
 			_m[0][col], _m[1][col], _m[2][col], _m[3][col]
 			);
 	}
 
-	HomoPos Mat44::PostMulVec(HomoPos pos) const {
+	HomoPos Mat44::PreMulVec(HomoPos pos) const {
 		return HomoPos(
 			_m[0][0] * pos._x + _m[0][1] * pos._y + _m[0][2] * pos._z + _m[0][3] * pos._w,
 			_m[1][0] * pos._x + _m[1][1] * pos._y + _m[1][2] * pos._z + _m[1][3] * pos._w,
@@ -91,7 +99,7 @@ namespace JMath{
 			_m[3][0] * pos._x + _m[3][1] * pos._y + _m[3][2] * pos._z + _m[3][3] * pos._w
 			);
 	}
-	HomoPos Mat44::PreMulVec(HomoPos pos) const {
+	HomoPos Mat44::PostMulVec(HomoPos pos) const {
 		return HomoPos(
 			_m[0][0] * pos._x + _m[1][0] * pos._y + _m[2][0] * pos._z + _m[3][0] * pos._w,
 			_m[0][1] * pos._x + _m[1][1] * pos._y + _m[2][1] * pos._z + _m[3][1] * pos._w,
@@ -117,35 +125,33 @@ namespace JMath{
 		Mat44 tmp;
 		tmp.SetIdentity();
 		tmp._m[0][0] = std::cos(y);
-		tmp._m[0][1] = std::sin(y);
 		tmp._m[1][1] = std::cos(y);
-		tmp._m[1][0] = -std::sin(y);
+		tmp._m[0][1] = -std::sin(y);
+		tmp._m[1][0] = std::sin(y);
 		return tmp;
 	}
 	Mat44 Mat44::GenByRotateY(float y){
 		Mat44 tmp;
 		tmp.SetIdentity();
 		tmp._m[1][1] = std::cos(y);
-		tmp._m[1][2] = std::sin(y);
 		tmp._m[2][2] = std::cos(y);
-		tmp._m[2][1] = -std::sin(y);
+		tmp._m[1][2] = -std::sin(y);
+		tmp._m[2][1] = std::sin(y);
 		return tmp;
 	}
 	Mat44 Mat44::GenByRotateX(float y){
 		Mat44 tmp;
 		tmp.SetIdentity();
 		tmp._m[2][2] = std::cos(y);
-		tmp._m[2][0] = std::sin(y);
 		tmp._m[0][0] = std::cos(y);
-		tmp._m[0][2] = -std::sin(y);
+		tmp._m[0][2] = std::sin(y);
+		tmp._m[2][0] = -std::sin(y);
 		return tmp;
 	}
 	Mat44 Mat44::GenByTranslate(float x, float y, float z){
 		Mat44 tmp;
 		tmp.SetIdentity();
-		tmp._m[3][0] = x;
-		tmp._m[3][1] = y;
-		tmp._m[3][2] = z;
+		tmp.SetCol(3, x, y, z, 1);
 		return tmp;
 	}
 	Mat44 Mat44::RotateXYZ(float x, float y, float z) const {
@@ -158,7 +164,7 @@ namespace JMath{
 	}
 
 	WorldPos Mat44::GetTranslate() const {
-		return WorldPos(_m[3][0], _m[3][1], _m[3][2]); 
+		return WorldPos(_m[0][3], _m[1][3], _m[2][3]); 
 	}
 
 	float Mat44::Determinant() const {

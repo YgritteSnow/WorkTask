@@ -276,6 +276,7 @@ namespace JMath{
 		void SetProjMat(float fov, float aspect, float nearPlane, float farPlane);
 		void SetRow(int row, float m0, float m1, float m2, float m3);
 		HomoPos GetRow(int row) const;
+		void SetCol(int col, float m0, float m1, float m2, float m3);
 		HomoPos GetCol(int col) const;
 		WorldPos Mat44::GetTranslate() const;
 

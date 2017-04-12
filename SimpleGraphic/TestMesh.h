@@ -161,6 +161,10 @@ private:
 
 class TestQuadMesh : public Mesh
 {
+public:
+	TestQuadMesh(float w, float h)
+		: m_width(w), m_height(h)
+	{}
 private:
 	void OnLoad() override {
 		Dummy();
@@ -175,17 +179,17 @@ private:
 		std::vector<TestVertex> t_vertex;
 		std::vector<DWORD> t_index;
 
-		t_vertex.push_back(TestVertex(WorldPos(-1, -1, 0), NormColor4(1, 0, 0, 1), WorldPos(0, 0, -1), UVPos(0, 0)));
-		t_vertex.push_back(TestVertex(WorldPos(-1, 1, 0), NormColor4(0, 1, 0, 1), WorldPos(0, 0, -1), UVPos(0, 1)));
-		t_vertex.push_back(TestVertex(WorldPos(1, 1, 0), NormColor4(0, 0, 1, 1), WorldPos(0, 0, -1), UVPos(1, 1)));
-		t_vertex.push_back(TestVertex(WorldPos(1, -1, 0), NormColor4(1, 1, 1, 1), WorldPos(0, 0, -1), UVPos(1, 0)));
+		t_vertex.push_back(TestVertex(WorldPos(-m_width, -m_height, 0), NormColor4(1, 0, 0, 1), WorldPos(0, 0, -1), UVPos(0, 0)));
+		t_vertex.push_back(TestVertex(WorldPos(-m_width, m_height, 0), NormColor4(0, 1, 0, 1), WorldPos(0, 0, -1), UVPos(0, 1)));
+		t_vertex.push_back(TestVertex(WorldPos(m_width, m_height, 0), NormColor4(0, 0, 1, 1), WorldPos(0, 0, -1), UVPos(1, 1)));
+		t_vertex.push_back(TestVertex(WorldPos(m_width, -m_height, 0), NormColor4(1, 1, 1, 1), WorldPos(0, 0, -1), UVPos(1, 0)));
 
 		t_index.push_back(0);
-		t_index.push_back(1);
 		t_index.push_back(2);
-		//t_index.push_back(0);
-		//t_index.push_back(2);
-		//t_index.push_back(3);
+		t_index.push_back(1);
+		t_index.push_back(0);
+		t_index.push_back(3);
+		t_index.push_back(2);
 
 		// 这里转换一下上边的数据
 		m_vertexBuffer = new VertexBuffer(GetID(TestVertex), t_vertex.size());
@@ -197,6 +201,9 @@ private:
 			m_indexBuffer->m_vec_indice[i] = t_index[i];
 		}
 	}
+private:
+	float m_width;
+	float m_height;
 };
 
 class TestGroundMesh : public Mesh

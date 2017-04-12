@@ -22,10 +22,10 @@ bool PointCamera::HanldeKeyEvent(const KeyEventObject& keyEvent) {
 	return false;
 }
 bool PointCamera::HandleMouseMoveEvent(const MouseEventObject& mouseEvent) {
-	float para = -0.01;
+	float para = -3.14;
 	if (m_isDown) {
-		m_viewMat = m_downViewMat.RotateXYZ((mouseEvent.x_current - m_downMousePos._x) * para,
-			(mouseEvent.y_current - m_downMousePos._y) * para, mouseEvent.x_move * 0);
+		m_viewMat = m_downViewMat.RotateXYZ((mouseEvent.x_current - m_downMousePos._x) / WINDOW_WIDTH * para,
+			(mouseEvent.y_current - m_downMousePos._y) / WINDOW_HEIGHT * para, mouseEvent.x_move * 0);
 		CalInvViewMat();
 	}
 	return false;

@@ -17,7 +17,7 @@ public:
 	Camera() :m_viewMat(), m_projMat() { CalInvViewMat(); }
 	void SetViewMat(WorldPos lookat, WorldPos cameraPos, WorldPos upDirect);
 	void SetProjMat(float fov, float aspect, float nearPlane, float farPlane);
-	JMath::Mat44 GetViewMat() const { return m_invViewMat; };
+	JMath::Mat44 GetInvViewMat() const { return m_invViewMat; };
 	JMath::Mat44 GetProjMat() const { return m_projMat; };
 	JMath::Mat44 GetViewProjMat() const { return m_invViewMat.PostMulMat(m_projMat); };
 
