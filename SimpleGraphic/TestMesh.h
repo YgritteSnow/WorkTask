@@ -203,11 +203,11 @@ private:
 		t_vertex.push_back(TestVertex(WorldPos(m_width, -m_height, 0), NormColor4(1, 1, 1, 1), WorldPos(0, 0, -1), UVPos(1, 0)));
 
 		t_index.push_back(0);
-		t_index.push_back(2);
 		t_index.push_back(1);
-		t_index.push_back(0);
-		t_index.push_back(3);
 		t_index.push_back(2);
+		t_index.push_back(0);
+		t_index.push_back(2);
+		t_index.push_back(3);
 
 		// 这里转换一下上边的数据
 		m_vertexBuffer = new VertexBuffer(GetID(TestVertex), t_vertex.size());
@@ -263,11 +263,11 @@ public:
 		t_vertex.push_back(TestVertex(WorldPos(center._x - width, center._y, center._z + height), c, WorldPos(0, 1, 0), UVPos(0, 1)));
 
 		t_index.push_back(0);
+		t_index.push_back(2);
 		t_index.push_back(1);
-		t_index.push_back(2);
 		t_index.push_back(0);
-		t_index.push_back(2);
 		t_index.push_back(3);
+		t_index.push_back(2);
 
 		// 这里转换一下上边的数据
 		m_vertexBuffer = new VertexBuffer(GetID(TestVertex), t_vertex.size());

@@ -3,6 +3,9 @@
 #include "ShaderStruct.h"
 #include "TestVertex.h"
 #include "StructMeta.h"
+#include "Light.h"
+
+const int MAX_LIGHT = 10;
 
 class TestVSShader : public VertexShader
 {
@@ -17,10 +20,26 @@ public:
 class TestPSShader : public PixelShader
 {
 public:
+	TestPSShader()
+		: m_cur_texture(nullptr)
+		, m_cur_normalTexture(nullptr)
+		, cur_light_count(0)
+	{}
+	void SetDiffuseTexture(TexBuffer<NormColor4>* tex) { m_cur_texture = tex; }
+	void SetNormalTexture(TexBuffer<NormColor4>* tex) { m_cur_normalTexture = tex; }
+	void AddLight(Light* l) {
+		if (cur_light_count == MAX_LIGHT)
+			return;
+		m_vec_light[cur_light_count] = l;
+		cur_light_count++;
+	}
+	void SetMaterial(Material* m) { m_material = m; }
+public:
 	TexBuffer<NormColor4>* m_cur_texture;
 	TexBuffer<NormColor4>* m_cur_normalTexture;
-	void SetTexture(TexBuffer<NormColor4>* tex) { m_cur_texture = tex; }
-	void SetNormalTexture(TexBuffer<NormColor4>* tex) { m_cur_normalTexture = tex; }
+	Light* m_vec_light[MAX_LIGHT];
+	int cur_light_count;
+	Material* m_material;
 public:
 	DECLARE_PIXELSHADER(TestVertex_v2p, pVout, TestPixel, pPout);
 };

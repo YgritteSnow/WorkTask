@@ -35,6 +35,7 @@ public:
 public:
 	void SetMaterial(const Material& m) { m_cur_material = m; }
 	void ClearMaterial() { m_cur_material = Material(); }
+	Material* CurMaterial() { return &m_cur_material; }
 
 	NormColor4 GetAmbient() { return m_cur_material.ambient; }
 	NormColor4 GetDiffuse() { return m_cur_material.diffuse; }

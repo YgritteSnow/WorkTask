@@ -57,11 +57,30 @@ DECLARE_PIXELSHADER_START(TestPSShader, TestVertex_v2p, pVout, TestPixel, pPout)
 		pVout->normal.Normalise();
 	}
 
-	// 颜色使用光照
-	pPout->color = LightManager::GetInstance()->Process(
-		pVout->color,
-		pVout->normal,
-		pVout->worldPos);
+	// 光照（旧）
+	//pPout->color = LightManager::GetInstance()->ProcessDummy(
+	//	pVout->color,
+	//	pVout->normal,
+	//	pVout->worldPos);
+
+	// 光照（新）
+	NormColor4 ambient;
+	NormColor4 diffuse;
+	NormColor4 specular;
+	for (int i = 0; i < cur_light_count; ++i) {
+		ambient += m_vec_light[i]->ProcessAmbient(m_material, pVout->normal, pVout->worldPos);
+		diffuse += m_vec_light[i]->ProcessDiffuse(m_material, pVout->normal, pVout->worldPos);
+		specular += m_vec_light[i]->ProcessSpecular(m_material, pVout->normal, pVout->worldPos);
+	}
+	// 根据贴图更新颜色
+	float color_w = 1.f;
+	if (m_cur_texture) {
+		const auto& pixel = m_cur_texture->GetPixel_normedPos_smart(pVout->uv._x, pVout->uv._y);
+		diffuse *= pixel;
+		color_w = pixel._w;
+	}
+	pPout->color = ambient + diffuse + specular;
+	pPout->color._w = color_w;
 
 	// 更新深度缓存
 	if (RenderManager::GetInstance()->CheckCurState(StateMask_Alpha, StateMaskValue_NoAlpha)
@@ -72,10 +91,6 @@ DECLARE_PIXELSHADER_START(TestPSShader, TestVertex_v2p, pVout, TestPixel, pPout)
 		if (pVout->pos._z < depth_buffer->GetPixel_coordPos(coord_x, coord_y)) {
 			*depth_buffer->pPixelAt(coord_x, coord_y) = pVout->pos._z;
 		}
-	}
-	// 根据贴图更新颜色
-	if (m_cur_texture) {
-		pPout->color *= m_cur_texture->GetPixel_normedPos_smart(pVout->uv._x, pVout->uv._y);
 	}
 }
 DECLARE_PIXELSHADER_END
