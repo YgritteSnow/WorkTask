@@ -27,7 +27,7 @@ DECLARE_VERTEXSHADER_START(TestVSShader, TestVertex, pVin, TestVertex_v2p, pVout
 	pVout->biNormal = pVin->biNormal;
 	pVout->biNormal = modelMat.PreMulVec(pVout->biNormal.ToVec4Dir()).ToVec3();
 	// 计算副切线
-	pVout->taNormal = pVout->biNormal.CrossProduct(pVout->normal);
+	pVout->taNormal = pVout->normal.CrossProduct(pVout->biNormal);
 
 	// 记录世界坐标
 	pVout->worldPos = worldPos.ToVec3Homo();
@@ -38,6 +38,8 @@ DECLARE_VERTEXSHADER_END
 DECLARE_PIXELSHADER_START(TestPSShader, TestVertex_v2p, pVout, TestPixel, pPout)
 {
 	pPout->pos = pVout->pos;
+	pPout->pos._z = pVout->z;
+
 	pVout->normal.Normalise();
 	pVout->biNormal.Normalise();
 	pVout->taNormal.Normalise();
@@ -88,8 +90,8 @@ DECLARE_PIXELSHADER_START(TestPSShader, TestVertex_v2p, pVout, TestPixel, pPout)
 		auto& depth_buffer = RenderManager::GetInstance()->GetDepthBuffer();
 		ScreenCoord coord_x = static_cast<ScreenCoord>(pVout->pos._x);
 		ScreenCoord coord_y = static_cast<ScreenCoord>(pVout->pos._y);
-		if (pVout->pos._z < depth_buffer->GetPixel_coordPos(coord_x, coord_y)) {
-			*depth_buffer->pPixelAt(coord_x, coord_y) = pVout->pos._z;
+		if (pVout->z < depth_buffer->GetPixel_coordPos(coord_x, coord_y)) {
+			*depth_buffer->pPixelAt(coord_x, coord_y) = pVout->z;
 		}
 	}
 }
@@ -111,7 +113,7 @@ DECLARE_PIXELSHADER_TEST_START(TestPSShader, TestVertex_v2p, pix)
 	if (RenderManager::GetInstance()->CheckCurState(StateMask_Alpha, StateMaskValue_NoAlpha)
 		&& RenderManager::GetInstance()->CheckCurState(StateMask_DepthBuffer, StateMaskValue_UseDepth)) {
 		auto& depth_buffer = RenderManager::GetInstance()->GetDepthBuffer();
-		if (pix->pos._z >= depth_buffer->GetPixel_coordPos(coord_x, coord_y)) {
+		if (pix->z >= depth_buffer->GetPixel_coordPos(coord_x, coord_y)) {
 			return false;
 		}
 	}

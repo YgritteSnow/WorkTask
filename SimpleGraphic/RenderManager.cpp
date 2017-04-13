@@ -77,7 +77,7 @@ void RenderManager::RenderDummy(){}
 
 void RenderManager::Clear() {
 	m_imgBuffer_back->clear();
-	m_imgBuffer_depth->clear(DepthBufferPixel(1.f));
+	m_imgBuffer_depth->clear(DepthBufferPixel(1000.f));
 	m_imgBuffer_alpha->clear();
 }
 

@@ -158,13 +158,13 @@ public:
 		for (int idx = 0; idx < m_size; ++idx){
 			w = 1 - (1 - w) * (1 - (m_vec_color + idx)->color._w);
 			m_blended_color = BlendColor(m_blended_color, (m_vec_color+idx)->color);
-			m_blended_color._w = w;
+			m_blended_color._w = 1;
 		}
 #else
 		for (auto it = m_vec_color.begin(); it != m_vec_color.end(); ++it) {
 			w = 1 - (1 - w) * (1 - it->color._w);
 			m_blended_color = BlendColor(m_blended_color, it->color);
-			m_blended_color._w = w;
+			m_blended_color._w = 1;
 		}
 #endif
 	}

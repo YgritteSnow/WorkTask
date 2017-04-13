@@ -111,26 +111,26 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 
 		// 设置光照
 		//LightManager::GetInstance()->AddLight(new AmbientLight(NormColor4(1, 1, 1, 1)));
-		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 1, 1, 1), WorldPos(1, 0, 0)));
-		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 0, 1, 1) * 2, WorldPos(-1, 0, 0)));
-		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 0, 0, 1) * 2, WorldPos(0, 1, 0)));
+		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 1, 0, 1), WorldPos(1, 0, 0)));
+		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 0, 1, 1), WorldPos(-1, 0, 0)));
+		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 0, 0, 1), WorldPos(0, 1, 0)));
 
 		// 设置场景，添加模型
 		Scene* dummyScene = new Scene;
 		
 		// 模型（球（远））
 		TestModel* dummyModel_far = new TestModel;
-		dummyModel_far->DummyBall(1.2, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 0, 4));
+		dummyModel_far->DummyBall(0.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 0, 4));
 		dummyScene->AddModel(dummyModel_far);
 		
-		// 模型（球（近））
-		TestModel* dummyModel_near = new TestModel;
-		dummyModel_near->DummyBall(2, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 1, 2));
-		dummyScene->AddModel(dummyModel_near);
+		//// 模型（球（近））
+		//TestModel* dummyModel_near = new TestModel;
+		//dummyModel_near->DummyBall(0.4, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0.4, 0, 2));
+		//dummyScene->AddModel(dummyModel_near);
 
 		// 模型（水平地面）
 		TestModel* dummyModel_ground = new TestModel;
-		dummyModel_ground->DummyGround(1, 1, NormColor4(1, 1, 1, 1), WorldPos(0, -2, 6));
+		dummyModel_ground->DummyGround(2, 2, NormColor4(1, 1, 1, 1), WorldPos(0, -0.5, 3));
 		dummyScene->AddModel(dummyModel_ground);
 		
 		//// 模型（一个四方面片）

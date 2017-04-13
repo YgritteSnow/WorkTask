@@ -117,9 +117,9 @@ void ProcessVertex_calBiNormal(VertexStruct* src_vertex, VertexStruct* dst_verte
 
 		// º∆À„«–œÚ¡ø
 		WorldPos biNormal = WorldPos(
-			v02 * src_v01._x - v01 * src_v02._x,
-			v02 * src_v01._y - v01 * src_v02._y,
-			v02 * src_v01._z - v01 * src_v02._z
+			- v02 * src_v01._x + v01 * src_v02._x,
+			- v02 * src_v01._y + v01 * src_v02._y,
+			- v02 * src_v01._z + v01 * src_v02._z
 			);
 		
 		dst_vertex[vertex_idx_0].biNormal += biNormal;
