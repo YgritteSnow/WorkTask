@@ -132,14 +132,14 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		//dummyModel_near->DummyBall(0.4, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0.4, 0, 2));
 		//dummyScene->AddModel(dummyModel_near);
 
-		// 模型（水平地面）
-		TestModel* dummyModel_ground = new TestModel;
-		dummyModel_ground->DummyGround(2, 2, NormColor4(1, 1, 1, 1), WorldPos(0, -0.5, 3));
-		dummyScene->AddModel(dummyModel_ground);
+		//// 模型（水平地面）
+		//TestModel* dummyModel_ground = new TestModel;
+		//dummyModel_ground->DummyGround(2, 2, NormColor4(1, 1, 1, 1), WorldPos(0, -0.5, 3));
+		//dummyScene->AddModel(dummyModel_ground);
 
 		// 蒙皮模型（蛇）
 		TestSkinnedModel* dummyModel_snake = new TestSkinnedModel;
-		dummyModel_snake->DummySnake();
+		dummyModel_snake->DummySnake(0.2, 0.5, 2, 3, 4);
 		dummyScene->AddModel(dummyModel_snake);
 		
 		//// 模型（一个四方面片）

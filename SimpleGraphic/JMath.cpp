@@ -3,7 +3,6 @@
 #include <cmath>
 #include <memory.h>
 
-
 const int MAX_N = 4;
 bool GetMatrixInverse(const float src[MAX_N][MAX_N], int n, float des[MAX_N][MAX_N]);
 float getDeterminant(const float arcs[MAX_N][MAX_N], int n);
@@ -15,6 +14,7 @@ namespace JMath{
 	const float EPSL = 0.0001f; // todo 
 	bool f_equal(float l, float r) { return std::fabs(l - r) < EPSL; }
 	extern const float PI = 3.14159265359;
+	extern const float PI_M2 = PI * 2;
 
 	/* *********************************************
 	* Matrix

@@ -8,10 +8,18 @@ struct TestSkinnedVertex {
 	TestSkinnedVertex(float px, float py, float pz, float u, float v)
 		:pos(px, py, pz)
 		, uv(u, v)
+		, color(1, 1, 1, 1)
+		, biNormal(1, 0, 0)
+		, normal(1, 0, 0)
+		, vertexBone()
+	{}
+	TestSkinnedVertex(float px, float py, float pz, float u, float v, const VertexBone& b)
+		:pos(px, py, pz)
+		, uv(u, v)
 		, color(1,1,1,1)
 		, biNormal(1, 0, 0)
 		, normal(1, 0, 0)
-		, vertexBone(0, 1)
+		, vertexBone(b)
 	{}
 	WorldPos pos;
 	NormColor4 color;

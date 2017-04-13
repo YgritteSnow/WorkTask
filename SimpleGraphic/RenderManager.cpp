@@ -134,9 +134,9 @@ void RenderManager::RenderVertexIndice(VertexBuffer* vb, IndexBuffer* ib, JMath:
 		}
 		tmp_triangle_count += 1;
 
-		auto indice_idx_0 = (*ib)[idx];
-		auto indice_idx_1 = (*ib)[idx + 1];
-		auto indice_idx_2 = (*ib)[idx + 2];
+		auto indice_idx_0 = ib->m_vec_indice[idx];
+		auto indice_idx_1 = ib->m_vec_indice[idx + 1];
+		auto indice_idx_2 = ib->m_vec_indice[idx + 2];
 
 		const auto& v0 = vb_temp->GetVertex(indice_idx_0);
 		const auto& v1 = vb_temp->GetVertex(indice_idx_1);

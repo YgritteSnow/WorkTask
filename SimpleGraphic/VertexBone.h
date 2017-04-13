@@ -28,7 +28,7 @@ struct VertexBone
 		bone_index[2] = b2;
 		bone_weight[2] = b2w;
 	}
-	VertexBone(int b0, float b0w, int b1, float b1w, int b2, float b2w) {
+	VertexBone(int b0, float b0w, int b1, float b1w, int b2, float b2w, int b3, float b3w) {
 		bone_count = 4;
 		bone_index[0] = b0;
 		bone_weight[0] = b0w;
@@ -36,8 +36,8 @@ struct VertexBone
 		bone_weight[1] = b1w;
 		bone_index[2] = b2;
 		bone_weight[2] = b2w;
-		bone_index[3] = b2;
-		bone_weight[2] = b2w;
+		bone_index[3] = b3;
+		bone_weight[3] = b3w;
 	}
 	int bone_index[MAX_BONE];
 	float bone_weight[MAX_BONE];

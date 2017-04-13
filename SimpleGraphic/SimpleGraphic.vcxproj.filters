@@ -92,9 +92,6 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>SoftRender\Models</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>SoftRender\Models</Filter>
-    </ClCompile>
     <ClCompile Include="StructReflection.cpp">
       <Filter>SoftRender\Pipeline\Utilities</Filter>
     </ClCompile>
@@ -223,9 +220,6 @@
     <ClInclude Include="Light.h">
       <Filter>SoftRender\Pipeline\Light</Filter>
     </ClInclude>
-    <ClInclude Include="Bone.h">
-      <Filter>Animator</Filter>
-    </ClInclude>
     <ClInclude Include="Skeleton.h">
       <Filter>Animator</Filter>
     </ClInclude>
@@ -243,6 +237,9 @@
     </ClInclude>
     <ClInclude Include="TestSkinnedMesh.h">
       <Filter>TestBed</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBone.h">
+      <Filter>Animator</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

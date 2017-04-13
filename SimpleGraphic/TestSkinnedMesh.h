@@ -2,9 +2,18 @@
 #include "StructMeta.h"
 #include "SkinnedMesh.h"
 #include "VertexUtilities.h"
+#include "TestSkinnedVertex.h"
 
 class TestSnakeMesh : public SkinnedMesh
 {
+public:
+	TestSnakeMesh(float radius, float length, float slice_count, float step_count, float radius_count)
+		: m_radius(radius)
+		, m_length(length)
+		, m_sliceCount(slice_count)
+		, m_stepCount(step_count)
+		, m_radiusCount(radius_count)
+	{}
 private:
 	virtual void OnLoad() override {
 		Dummy();
@@ -22,25 +31,76 @@ private:
 			m_indexBuffer->m_length);
 	}
 	void Dummy() {
-		m_vertexBuffer = new VertexBuffer(GetID(TestSkinnedVertex), 4);
-		m_indexBuffer = new IndexBuffer(12);
+		std::vector<TestSkinnedVertex> tmp_vertex;
+		std::vector<DWORD> tmp_indice;
 
-		m_vertexBuffer->SetVertex(0, TestSkinnedVertex(-1, -1, -1, 1, 0, 0, 1));
-		m_vertexBuffer->SetVertex(1, TestSkinnedVertex(-1,  1, -1, 1, 1, 0, 1));
-		m_vertexBuffer->SetVertex(2, TestSkinnedVertex(-1,  1,  1, 0, 0, 1, 1));
-		m_vertexBuffer->SetVertex(3, TestSkinnedVertex( 1,  1,  1, 0, 1, 1, 1));
+		// 计算顶点
+		float radius_step = JMath::PI_M2 / m_radiusCount;
+		float length_step = m_length / m_stepCount;
+		float cur_height = 0;
+		// 每一截
+		for (int slice_i = 0; slice_i < m_sliceCount; ++slice_i) {
+			float bottom_height = slice_i * m_length;
+			float top_height = bottom_height + m_length;
+			// 每一层高度
+			for (cur_height = bottom_height; cur_height < top_height - length_step/2; cur_height += length_step) {
+				// 每一个角度
+				for (float radius_i = 0; radius_i < 3.1416 - radius_step/2; radius_i += radius_step) {
+					tmp_vertex.push_back(TestSkinnedVertex(std::cos(radius_i), cur_height, std::sin(radius_i)
+						, radius_i/JMath::PI_M2, cur_height / m_length / m_sliceCount));
+				}
+			}
+		}
+		// 补上最后一层
+		for (float radius_i = 0; radius_i < 3.1416 - radius_step/2; radius_i += radius_step) {
+			tmp_vertex.push_back(TestSkinnedVertex(std::cos(radius_i), cur_height, std::sin(radius_i)
+				, radius_i / JMath::PI_M2, cur_height / m_length / m_sliceCount));
+		}
 
-		m_indexBuffer->m_vec_indice[0] = 0;
-		m_indexBuffer->m_vec_indice[1] = 1;
-		m_indexBuffer->m_vec_indice[2] = 2;
-		m_indexBuffer->m_vec_indice[3] = 2;
-		m_indexBuffer->m_vec_indice[4] = 1;
-		m_indexBuffer->m_vec_indice[5] = 3;
-		m_indexBuffer->m_vec_indice[6] = 3;
-		m_indexBuffer->m_vec_indice[7] = 1;
-		m_indexBuffer->m_vec_indice[8] = 0;
-		m_indexBuffer->m_vec_indice[9] = 3;
-		m_indexBuffer->m_vec_indice[10] = 0;
-		m_indexBuffer->m_vec_indice[11] = 2;
+		// 计算索引
+		int row_count = m_radiusCount;
+		int height_count = m_sliceCount * m_stepCount;
+		int aaa = 0;
+		for(int height_i = 0; height_i < height_count; ++height_i){
+			int row_i = height_i * row_count;
+			int row_dest = row_i + row_count;
+			for (; row_i < row_dest - 1; ++row_i) {
+				tmp_indice.push_back(row_i);
+				tmp_indice.push_back(row_i + 1);
+				tmp_indice.push_back(row_i + row_count);
+
+				tmp_indice.push_back(row_i + 1);
+				tmp_indice.push_back(row_i + 1 + row_count);
+				tmp_indice.push_back(row_i + row_count);
+				aaa += 6;
+			}
+			tmp_indice.push_back(row_i);
+			tmp_indice.push_back(row_i + 1 - row_count);
+			tmp_indice.push_back(row_i + row_count);
+
+			tmp_indice.push_back(row_i + 1 - row_count);
+			tmp_indice.push_back(row_i + 1);
+			tmp_indice.push_back(row_i + row_count);
+			aaa += 6;
+		}
+
+		// 转换一下上边的数据
+		m_vertexBuffer = new VertexBuffer(GetID(TestSkinnedVertex), tmp_vertex.size());
+		m_indexBuffer = new IndexBuffer(tmp_indice.size());
+		for (int i = 0; i < tmp_vertex.size(); ++i) {
+			m_vertexBuffer->SetVertex(i, tmp_vertex[i]);
+		}
+		aaa = 0;
+		for (int i = 0; i < tmp_indice.size(); ++i) {
+			aaa += 1;
+			m_indexBuffer->m_vec_indice[i] = tmp_indice[i];
+		}
+
 	}
+private:
+	float m_radius;		// 半径
+	float m_length;		// 每截长度
+	int m_sliceCount;		// 几截
+	int m_stepCount;	// 每一截分成几份
+	int m_radiusCount;	// 弧度分成几份
 };

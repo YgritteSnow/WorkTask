@@ -16,6 +16,7 @@ namespace JMath {
 	extern const float EPSL;
 	bool f_equal(float l, float r);
 	extern const float PI;
+	extern const float PI_M2;
 
 	/* *********************************************
 	* Vector3
