@@ -10,6 +10,7 @@
 #include "StructMeta.h"
 
 #include "TestModel.h"
+#include "TestSkinnedModel.h"
 #include "LightingShader.h"
 #include "DebugGUI.h"
 
@@ -111,17 +112,20 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 
 		// 设置光照
 		//LightManager::GetInstance()->AddLight(new AmbientLight(NormColor4(1, 1, 1, 1)));
+		//for (int i = 0; i < 1000; ++i) {
+		//	LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 0.1, 0, 1), WorldPos(1, 0, 0)));
+		//}
 		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 1, 0, 1), WorldPos(1, 0, 0)));
-		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 0, 1, 1), WorldPos(-1, 0, 0)));
-		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 0, 0, 1), WorldPos(0, 1, 0)));
+		//LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 0, 1, 1), WorldPos(-1, 0, 0)));
+		//LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 0, 0, 1), WorldPos(0, 1, 0)));
 
 		// 设置场景，添加模型
 		Scene* dummyScene = new Scene;
 		
-		// 模型（球（远））
-		TestModel* dummyModel_far = new TestModel;
-		dummyModel_far->DummyBall(0.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 0, 4));
-		dummyScene->AddModel(dummyModel_far);
+		//// 模型（球（远））
+		//TestModel* dummyModel_far = new TestModel;
+		//dummyModel_far->DummyBall(0.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 0, 4));
+		//dummyScene->AddModel(dummyModel_far);
 		
 		//// 模型（球（近））
 		//TestModel* dummyModel_near = new TestModel;
@@ -132,6 +136,11 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		TestModel* dummyModel_ground = new TestModel;
 		dummyModel_ground->DummyGround(2, 2, NormColor4(1, 1, 1, 1), WorldPos(0, -0.5, 3));
 		dummyScene->AddModel(dummyModel_ground);
+
+		// 蒙皮模型（蛇）
+		TestSkinnedModel* dummyModel_snake = new TestSkinnedModel;
+		dummyModel_snake->DummySnake();
+		dummyScene->AddModel(dummyModel_snake);
 		
 		//// 模型（一个四方面片）
 		//TestModel* dummyModel_quad = new TestModel;

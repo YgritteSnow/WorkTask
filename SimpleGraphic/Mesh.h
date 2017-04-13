@@ -16,16 +16,14 @@
 
 class Mesh {
 public:
-	Mesh() {
-		m_vertexBuffer = nullptr;
-		m_indexBuffer = nullptr;
-	}
+	Mesh();
+	~Mesh();
 
 	// 这里的参数以后应该至少提供资源的handle
-	virtual void Load() { OnLoad(); }
+	virtual void Load();
 
-	VertexBuffer* GetVertexBuffer() { return m_vertexBuffer; }
-	IndexBuffer* GetIndexBuffer() { return m_indexBuffer; }
+	VertexBuffer* GetVertexBuffer();
+	IndexBuffer* GetIndexBuffer();
 
 protected:
 	virtual void OnLoad() = 0;

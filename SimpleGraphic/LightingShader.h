@@ -5,7 +5,7 @@
 #include "StructMeta.h"
 #include "Light.h"
 
-const int MAX_LIGHT = 10;
+const int MAX_LIGHT = 5;
 
 class TestVSShader : public VertexShader
 {
