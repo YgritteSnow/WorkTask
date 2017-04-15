@@ -145,10 +145,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ABuffer.cpp" />
+    <ClCompile Include="Animator.cpp" />
     <ClCompile Include="BitMap.cpp" />
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="DebugGUI.cpp" />
     <ClCompile Include="LightingShader.cpp" />
+    <ClCompile Include="LightingSkinnedShader.cpp" />
     <ClCompile Include="PointCamera.cpp" />
     <ClCompile Include="Rasterizer.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -164,6 +166,7 @@
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="SimpleBrush.cpp" />
     <ClCompile Include="framework.cpp" />
+    <ClCompile Include="Skelenton.cpp" />
     <ClCompile Include="SkinnedMesh.cpp" />
     <ClCompile Include="StructMeta.cpp" />
     <ClCompile Include="StructReflection.cpp" />
@@ -175,6 +178,7 @@
     <ClInclude Include="Animator.h" />
     <ClInclude Include="CameraManager.h" />
     <ClInclude Include="DebugGUI.h" />
+    <ClInclude Include="LightingSkinnedShader.h" />
     <ClInclude Include="LightingShader.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="PointCamera.h" />
@@ -194,7 +198,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="SimpleBrush.h" />
-    <ClInclude Include="Skeleton.h" />
+    <ClInclude Include="Skelenton.h" />
     <ClInclude Include="SkinnedMesh.h" />
     <ClInclude Include="StructMeta.h" />
     <ClInclude Include="StructReflection.h" />

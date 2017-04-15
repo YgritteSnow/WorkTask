@@ -1,5 +1,9 @@
 #pragma once
-
+/**
+ * 顶点属性 - 骨骼绑定
+ * 描述顶点绑定到的骨骼点及其权重
+ * 最多绑定到 4 个骨骼点
+**/
 const int MAX_BONE = 4;
 
 struct VertexBone

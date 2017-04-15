@@ -14,7 +14,7 @@ public:
 	virtual bool HandleMouseMoveEvent(const MouseEventObject& mouseEvent) override;
 
 private:
-	JMath::Mat44 m_downViewMat;
+	Matrix44 m_downViewMat;
 	ScreenPos m_downMousePos;
 	bool m_isDown;
 };

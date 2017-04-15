@@ -1,24 +1,24 @@
 #pragma once
 #include "JMath.h"
 #include "ShaderStruct.h"
-#include "TestVertex.h"
+#include "TestSkinnedVertex.h"
 #include "StructMeta.h"
 #include "Light.h"
 
-class TestVSShader : public VertexShader
+class TestSkinnedVSShader : public VertexShader
 {
 public:
 	Matrix44 modelMat;
 	void SetModelMat(const Matrix44& mat) { modelMat = mat; }
 
 public:
-	DECLARE_VERTEXSHADER(TestVertex, pVin, TestVertex_v2p, pVout);
+	DECLARE_VERTEXSHADER(TestSkinnedVertex, pVin, TestSkinnedVertex_v2p, pVout);
 };
 
-class TestPSShader : public PixelShader
+class TestSkinnedPSShader : public PixelShader
 {
 public:
-	TestPSShader()
+	TestSkinnedPSShader()
 		: m_cur_texture(nullptr)
 		, m_cur_normalTexture(nullptr)
 		, cur_light_count(0)
@@ -40,15 +40,15 @@ public:
 	int cur_light_count;
 	Material* m_material;
 public:
-	DECLARE_PIXELSHADER(TestVertex_v2p, pVout, TestPixel, pPout);
+	DECLARE_PIXELSHADER(TestSkinnedVertex_v2p, pVout, TestPixel, pPout);
 };
 
-//class TestVSShader : public VertexShader
+//class TestSkinnedVSShader : public VertexShader
 //{
-//	DECLARE_VERTEXSHADER(TestVertex, pVin, TestVertex_v2p, pVout);
+//	DECLARE_VERTEXSHADER(TestSkinnedVertex, pVin, TestSkinnedVertex_v2p, pVout);
 //};
 //
-//class TestPSShader : public PixelShader
+//class TestSkinnedPSShader : public PixelShader
 //{
-//	DECLARE_PIXELSHADER(TestVertex_v2p, pVout, TestPixel, pPout);
+//	DECLARE_PIXELSHADER(TestSkinnedVertex_v2p, pVout, TestPixel, pPout);
 //};

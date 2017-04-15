@@ -112,7 +112,7 @@ bool RenderManager::CheckCurState(StateMaskType state, StateMaskType value) {
 }
 
 // 渲染缓存
-void RenderManager::RenderVertexIndice(VertexBuffer* vb, IndexBuffer* ib, JMath::Mat44 modelMat) {
+void RenderManager::RenderVertexIndice(VertexBuffer* vb, IndexBuffer* ib, Matrix44 modelMat) {
 	// 顶点操作
 	// 这一步要将顶点变换到屏幕空间
 	auto vsShader = ShaderManager::GetInstance()->GetVertexShader();

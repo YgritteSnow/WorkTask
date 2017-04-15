@@ -24,6 +24,7 @@ bool ShaderManager::Init() {
 	if (!m_instance) {
 		return false;
 	}
+	return true;
 }
 
 void ShaderManager::UnInit() {

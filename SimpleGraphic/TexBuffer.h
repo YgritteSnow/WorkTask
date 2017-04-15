@@ -23,7 +23,7 @@ public:
 		m_data = new PixelType[width*height];
 	};
 	~TexBuffer() {
-		delete m_data;
+		delete[] m_data;
 		m_data = nullptr;
 	}
 public:

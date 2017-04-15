@@ -45,15 +45,15 @@ private:
 			// 每一层高度
 			for (cur_height = bottom_height; cur_height < top_height - length_step/2; cur_height += length_step) {
 				// 每一个角度
-				for (float radius_i = 0; radius_i < 3.1416 - radius_step/2; radius_i += radius_step) {
-					tmp_vertex.push_back(TestSkinnedVertex(std::cos(radius_i), cur_height, std::sin(radius_i)
+				for (float radius_i = 0; radius_i < JMath::PI_M2 - radius_step/2; radius_i += radius_step) {
+					tmp_vertex.push_back(TestSkinnedVertex(m_radius * std::cos(radius_i), cur_height, m_radius * std::sin(radius_i)
 						, radius_i/JMath::PI_M2, cur_height / m_length / m_sliceCount));
 				}
 			}
 		}
 		// 补上最后一层
-		for (float radius_i = 0; radius_i < 3.1416 - radius_step/2; radius_i += radius_step) {
-			tmp_vertex.push_back(TestSkinnedVertex(std::cos(radius_i), cur_height, std::sin(radius_i)
+		for (float radius_i = 0; radius_i < JMath::PI_M2 - radius_step/2; radius_i += radius_step) {
+			tmp_vertex.push_back(TestSkinnedVertex(m_radius * std::cos(radius_i), cur_height, m_radius * std::sin(radius_i)
 				, radius_i / JMath::PI_M2, cur_height / m_length / m_sliceCount));
 		}
 

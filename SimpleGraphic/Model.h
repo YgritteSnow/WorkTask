@@ -21,13 +21,13 @@ public:
 	VertexBuffer* GetVertexBuffer() { return m_mesh->GetVertexBuffer(); }
 	IndexBuffer* GetIndexBuffer() { return m_mesh->GetIndexBuffer(); }
 
-	JMath::Mat44 GetModelMat() { return m_worldMat; }
+	Matrix44 GetModelMat() { return m_worldMat; }
 	void RotateXYZ(float x, float y, float z) { m_worldMat = m_worldMat.RotateXYZ(x, y, z); }
 	void Translate(float x, float y, float z) { m_worldMat = m_worldMat.Translate(x, y, z); }
 	VertexShader* GetVertexShader() { return m_vsMain; }
 	PixelShader* GetPixelShader() { return m_psMain; }
 protected:
-	JMath::Mat44 m_worldMat;// 世界矩阵
+	Matrix44 m_worldMat;// 世界矩阵
 	Mesh* m_mesh;// 模型数据
 
 	VertexShader* m_vsMain;

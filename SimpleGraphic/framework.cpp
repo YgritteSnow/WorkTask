@@ -139,7 +139,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 
 		// 蒙皮模型（蛇）
 		TestSkinnedModel* dummyModel_snake = new TestSkinnedModel;
-		dummyModel_snake->DummySnake(0.2, 0.5, 2, 3, 4);
+		dummyModel_snake->DummySnake(0.2, 0.5, 2, 3, 9);
 		dummyScene->AddModel(dummyModel_snake);
 		
 		//// 模型（一个四方面片）
@@ -150,7 +150,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		SceneManager::GetInstance()->AddScene(dummyScene);
 
 		// 设置渲染状态
-		RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Fill);
+		RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Wareframe);
 		RenderManager::GetInstance()->SetRenderState(StateMask_BackCull, StateMaskValue_BackCull);
 		RenderManager::GetInstance()->SetRenderState(StateMask_DepthBuffer, StateMaskValue_UseDepth);
 		RenderManager::GetInstance()->SetRenderState(StateMask_Alpha, StateMaskValue_UseAlpha);

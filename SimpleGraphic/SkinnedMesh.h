@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Mesh.h"
-#include "Skeleton.h"
+#include "Skelenton.h"
 #include "Animator.h"
 
 class SkinnedMesh : public Mesh
@@ -15,6 +15,5 @@ private:
 	void RefreshVertexBuffer();
 
 private:
-	Skeleton* m_skeleton;
 	Animator* m_animator;
 };

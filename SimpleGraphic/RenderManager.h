@@ -47,7 +47,7 @@ public:
 	// «Â≥˝ª∫¥Ê
 	void Clear();
 	// ‰÷»æª∫¥Ê
-	void RenderVertexIndice(VertexBuffer* vb, IndexBuffer* ib, JMath::Mat44 modelMat);
+	void RenderVertexIndice(VertexBuffer* vb, IndexBuffer* ib, Matrix44 modelMat);
 	// debug”√
 	void RenderDummy();
 	// Ã·Ωªª∫¥Ê

@@ -17,9 +17,9 @@ public:
 	Camera() :m_viewMat(), m_projMat() { CalInvViewMat(); }
 	void SetViewMat(WorldPos lookat, WorldPos cameraPos, WorldPos upDirect);
 	void SetProjMat(float fov, float aspect, float nearPlane, float farPlane);
-	JMath::Mat44 GetInvViewMat() const { return m_invViewMat; };
-	JMath::Mat44 GetProjMat() const { return m_projMat; };
-	JMath::Mat44 GetViewProjMat() const { return m_invViewMat.PostMulMat(m_projMat); };
+	Matrix44 GetInvViewMat() const { return m_invViewMat; };
+	Matrix44 GetProjMat() const { return m_projMat; };
+	Matrix44 GetViewProjMat() const { return m_invViewMat.PostMulMat(m_projMat); };
 
 	WorldPos TransToScreenPos(WorldPos pos) const { return WorldPos((pos._x + 0.5f) * WINDOW_WIDTH, (pos._y + 0.5f) * WINDOW_HEIGHT, pos._z); }
 
@@ -32,10 +32,10 @@ public:
 
 protected:
 	// 相机矩阵
-	JMath::Mat44 m_viewMat;
-	JMath::Mat44 m_invViewMat;
+	Matrix44 m_viewMat;
+	Matrix44 m_invViewMat;
 	// 投影矩阵
-	JMath::Mat44 m_projMat;
+	Matrix44 m_projMat;
 	// 视口矩阵
 	ScreenCoord m_screen_width, m_screen_height;
 };

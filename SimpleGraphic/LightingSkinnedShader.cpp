@@ -1,12 +1,13 @@
-#include "LightingShader.h"
+#include "LightingSkinnedShader.h"
 
 #include "Color.h"
 #include "RenderManager.h"
 #include "CameraManager.h"
 #include "TexBuffer.h"
 #include "TestVertex.h"
+#include "TestSkinnedVertex.h"
 
-DECLARE_VERTEXSHADER_START(TestVSShader, TestVertex, pVin, TestVertex_v2p, pVout)
+DECLARE_VERTEXSHADER_START(TestSkinnedVSShader, TestSkinnedVertex, pVin, TestSkinnedVertex_v2p, pVout)
 {
 	// 照抄
 	pVout->uv = pVin->uv;
@@ -35,7 +36,7 @@ DECLARE_VERTEXSHADER_START(TestVSShader, TestVertex, pVin, TestVertex_v2p, pVout
 }
 DECLARE_VERTEXSHADER_END
 
-DECLARE_PIXELSHADER_START(TestPSShader, TestVertex_v2p, pVout, TestPixel, pPout)
+DECLARE_PIXELSHADER_START(TestSkinnedPSShader, TestSkinnedVertex_v2p, pVout, TestPixel, pPout)
 {
 	pPout->pos = pVout->pos;
 	pPout->pos._z = pVout->z;
@@ -97,7 +98,7 @@ DECLARE_PIXELSHADER_START(TestPSShader, TestVertex_v2p, pVout, TestPixel, pPout)
 }
 DECLARE_PIXELSHADER_END
 
-DECLARE_PIXELSHADER_TEST_START(TestPSShader, TestVertex_v2p, pix)
+DECLARE_PIXELSHADER_TEST_START(TestSkinnedPSShader, TestSkinnedVertex_v2p, pix)
 {
 	// 排除近平面以前、远平面以后、相机背面
 	if (pix->pos._z < 0 || pix->pos._z > 1) {

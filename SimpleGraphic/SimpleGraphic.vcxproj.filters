@@ -45,8 +45,8 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="SoftRender\Models">
-      <UniqueIdentifier>{33154c1d-39d6-4b6d-abf1-86096ed63784}</UniqueIdentifier>
+    <Filter Include="Model">
+      <UniqueIdentifier>{43b9a856-aaf6-476c-a490-a1b21497d828}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -89,9 +89,6 @@
     <ClCompile Include="ABuffer.cpp">
       <Filter>SoftRender\Pipeline\ImgBuffers</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>SoftRender\Models</Filter>
-    </ClCompile>
     <ClCompile Include="StructReflection.cpp">
       <Filter>SoftRender\Pipeline\Utilities</Filter>
     </ClCompile>
@@ -119,14 +116,26 @@
     <ClCompile Include="SimpleBrush.cpp">
       <Filter>SoftRender\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>SoftRender\Models</Filter>
-    </ClCompile>
     <ClCompile Include="Light.cpp">
       <Filter>SoftRender\Pipeline\Light</Filter>
     </ClCompile>
+    <ClCompile Include="LightingSkinnedShader.cpp">
+      <Filter>TestBed</Filter>
+    </ClCompile>
+    <ClCompile Include="Skelenton.cpp">
+      <Filter>Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
     <ClCompile Include="SkinnedMesh.cpp">
-      <Filter>SoftRender\Models</Filter>
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>SoftRender\Pipeline</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -169,17 +178,8 @@
     <ClInclude Include="VertexUtilities.h">
       <Filter>SoftRender\Pipeline\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>SoftRender\Models</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>SoftRender\Models</Filter>
-    </ClInclude>
     <ClInclude Include="ShaderStruct.h">
       <Filter>SoftRender\Pipeline\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="LightingShader.h">
-      <Filter>TestBed</Filter>
     </ClInclude>
     <ClInclude Include="TestVertex.h">
       <Filter>TestBed</Filter>
@@ -211,20 +211,8 @@
     <ClInclude Include="SimpleBrush.h">
       <Filter>SoftRender\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="VertexBuffer.h">
-      <Filter>SoftRender\Models</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>SoftRender\Models</Filter>
-    </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>SoftRender\Pipeline\Light</Filter>
-    </ClInclude>
-    <ClInclude Include="Skeleton.h">
-      <Filter>Animator</Filter>
-    </ClInclude>
-    <ClInclude Include="SkinnedMesh.h">
-      <Filter>SoftRender\Models</Filter>
     </ClInclude>
     <ClInclude Include="Animator.h">
       <Filter>Animator</Filter>
@@ -240,6 +228,30 @@
     </ClInclude>
     <ClInclude Include="VertexBone.h">
       <Filter>Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="LightingSkinnedShader.h">
+      <Filter>TestBed</Filter>
+    </ClInclude>
+    <ClInclude Include="LightingShader.h">
+      <Filter>TestBed</Filter>
+    </ClInclude>
+    <ClInclude Include="Skelenton.h">
+      <Filter>Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinnedMesh.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBuffer.h">
+      <Filter>SoftRender\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>SoftRender\Pipeline</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

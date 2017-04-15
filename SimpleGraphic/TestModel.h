@@ -5,6 +5,7 @@
 #include "TestMesh.h"
 #include "Light.h"
 #include "Material.h"
+#include "LightingShader.h"
 
 class TestModel : public Model
 {

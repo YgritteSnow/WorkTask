@@ -136,7 +136,7 @@ void ProcessVertex_calBiNormal(VertexStruct* src_vertex, VertexStruct* dst_verte
 * 顶点着色相关（现已挪到shader中去做）
 * *********************************************/
 template <typename VertexStruct>
-void ProcessVertex_noShader(VertexStruct* src_vertex, VertexStruct** p_dst_vertex, size_t vertex_count, DWORD* indice, size_t indice_count, JMath::Mat44 modelMat, StateMaskType renderState) {
+void ProcessVertex_noShader(VertexStruct* src_vertex, VertexStruct** p_dst_vertex, size_t vertex_count, DWORD* indice, size_t indice_count, Matrix44 modelMat, StateMaskType renderState) {
 	*p_dst_vertex = new VertexStruct[vertex_count];
 	memcpy(*p_dst_vertex, src_vertex, vertex_count * sizeof(VertexStruct));
 
@@ -152,7 +152,7 @@ void ProcessVertex_noShader(VertexStruct* src_vertex, VertexStruct** p_dst_verte
 
 // 转换顶点位置到世界空间
 template <typename VertexStruct>
-void ProcessVertex_pos(VertexStruct* src_vertex, VertexStruct* dst_vertex, WorldPos* worldPos, size_t vertex_count, JMath::Mat44 modelMat) {
+void ProcessVertex_pos(VertexStruct* src_vertex, VertexStruct* dst_vertex, WorldPos* worldPos, size_t vertex_count, Matrix44 modelMat) {
 	for (size_t idx = 0; idx != vertex_count; ++idx) {
 		HomoPos tmp = modelMat.PreMulVec((dst_vertex + idx)->pos.ToVec4Pos());
 		worldPos[idx] = tmp.ToVec3Homo();
@@ -165,7 +165,7 @@ void ProcessVertex_pos(VertexStruct* src_vertex, VertexStruct* dst_vertex, World
 
 // 转换顶点法向量
 template <typename VertexStruct>
-void ProcessVertex_transNormal(VertexStruct* src_vertex, VertexStruct* dst_vertex, size_t vertex_count, DWORD* indice, size_t indice_count, JMath::Mat44 modelMat) {
+void ProcessVertex_transNormal(VertexStruct* src_vertex, VertexStruct* dst_vertex, size_t vertex_count, DWORD* indice, size_t indice_count, Matrix44 modelMat) {
 	// 把normal转换到世界空间
 	for (size_t vertex_idx = 0; vertex_idx != vertex_count; ++vertex_idx) {
 		dst_vertex[vertex_idx].normal.Normalise();
@@ -176,7 +176,7 @@ void ProcessVertex_transNormal(VertexStruct* src_vertex, VertexStruct* dst_verte
 
 // 计算顶点颜色
 template <typename VertexStruct>
-void ProcessVertex_light(VertexStruct* src_vertex, VertexStruct* dst_vertex, WorldPos* worldPos, size_t vertex_count, JMath::Mat44 modelMat) {
+void ProcessVertex_light(VertexStruct* src_vertex, VertexStruct* dst_vertex, WorldPos* worldPos, size_t vertex_count, Matrix44 modelMat) {
 	for (size_t vertex_idx = 0; vertex_idx < vertex_count; ++vertex_idx) {
 		dst_vertex[vertex_idx].color = LightManager::GetInstance()->Process(
 			dst_vertex[vertex_idx].color,
