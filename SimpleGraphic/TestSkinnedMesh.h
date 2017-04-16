@@ -3,6 +3,36 @@
 #include "SkinnedMesh.h"
 #include "VertexUtilities.h"
 #include "TestSkinnedVertex.h"
+#include "Animator.h"
+
+class TestSkeletonMesh : public SkinnedMesh
+{
+public:
+	TestSkeletonMesh(int bone_count)
+		: m_bones_count(bone_count)
+	{}
+
+private:
+	virtual void OnLoad() override {
+		if (m_bones_count < 1)return;
+		m_vertexBuffer = new VertexBuffer(GetID(TestSkinnedVertex), m_bones_count);
+		m_indexBuffer = new IndexBuffer((m_bones_count-1) * 3);
+
+		for (int i = 0; i < m_bones_count; ++i) {
+			m_vertexBuffer->SetVertex(i, TestSkinnedVertex(0, i * 0.2f, 0, 0, 0, VertexBone(i, 1.0f)));
+			if (i < m_bones_count - 1) {
+				m_indexBuffer->m_vec_indice[i * 3] = i;
+				m_indexBuffer->m_vec_indice[i * 3 + 1] = i;
+				m_indexBuffer->m_vec_indice[i * 3 + 2] = i + 1;
+			}
+		}
+
+		m_animator = new Animator(0, 0);
+		m_animator->Start();
+	}
+private:
+	int m_bones_count;
+};
 
 class TestSnakeMesh : public SkinnedMesh
 {

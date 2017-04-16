@@ -28,6 +28,7 @@ DebugManager::DebugManager()
 	, m_triangleCount_valid(0)
 	, m_vertexCount(0)
 	, m_lightCount(0)
+	, m_time(0)
 {}
 
 void DebugManager::Render() {
@@ -59,6 +60,15 @@ void DebugManager::Render() {
 #endif
 	BitMap::DisplayText(tmp, ShortColor4(100, 100, 100, 100), ScreenPos(m_lineStart, height, 0));
 	height += m_lineHeight;
+
+#ifdef _UNICODE
+	sprintf_s(tmp_char, "Ani Play:  %.2f", m_time);
+	mbstowcs_s(nullptr, tmp, tmp_char, strlen(tmp_char));
+#else
+	sprintf_s(tmp, "Ani Play:  %.2f", m_time);
+#endif
+	BitMap::DisplayText(tmp, ShortColor4(100, 100, 100, 100), ScreenPos(m_lineStart, height, 0));
+	height += m_lineHeight;
 }
 
 void DebugManager::OnRenderBegin() {
@@ -80,4 +90,7 @@ void DebugManager::SetFPS(float c) {
 }
 void DebugManager::SetLightCount(unsigned int c) {
 	m_lightCount = c;
+}
+void DebugManager::SetAnimateTime(float t) {
+	m_time = t;
 }

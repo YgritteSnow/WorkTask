@@ -146,6 +146,8 @@
   <ItemGroup>
     <ClCompile Include="ABuffer.cpp" />
     <ClCompile Include="Animator.cpp" />
+    <ClCompile Include="AnimatorManager.cpp" />
+    <ClCompile Include="AniResManager.cpp" />
     <ClCompile Include="BitMap.cpp" />
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="DebugGUI.cpp" />
@@ -166,7 +168,7 @@
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="SimpleBrush.cpp" />
     <ClCompile Include="framework.cpp" />
-    <ClCompile Include="Skelenton.cpp" />
+    <ClCompile Include="Skeleton.cpp" />
     <ClCompile Include="SkinnedMesh.cpp" />
     <ClCompile Include="StructMeta.cpp" />
     <ClCompile Include="StructReflection.cpp" />
@@ -176,12 +178,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animator.h" />
+    <ClInclude Include="AnimatorManager.h" />
+    <ClInclude Include="AniResManager.h" />
     <ClInclude Include="CameraManager.h" />
     <ClInclude Include="DebugGUI.h" />
     <ClInclude Include="LightingSkinnedShader.h" />
     <ClInclude Include="LightingShader.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="PointCamera.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ShaderStruct.h" />
     <ClInclude Include="ABuffer.h" />
     <ClInclude Include="BitMap.h" />
@@ -198,8 +203,9 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="SimpleBrush.h" />
-    <ClInclude Include="Skelenton.h" />
+    <ClInclude Include="Skeleton.h" />
     <ClInclude Include="SkinnedMesh.h" />
+    <ClInclude Include="SkinnedModel.h" />
     <ClInclude Include="StructMeta.h" />
     <ClInclude Include="StructReflection.h" />
     <ClInclude Include="TestMesh.h" />

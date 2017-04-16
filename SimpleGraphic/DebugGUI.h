@@ -23,6 +23,8 @@ public:
 	void AddVertexCount(unsigned int c);
 	
 	void SetLightCount(unsigned int c);
+	
+	void SetAnimateTime(float t);
 
 	void OnRenderBegin();
 
@@ -39,4 +41,5 @@ private:
 	unsigned int m_vertexCount;
 	float m_fps;
 	unsigned int m_lightCount;
+	float m_time;
 };

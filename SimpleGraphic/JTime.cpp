@@ -2,11 +2,10 @@
 #include "DebugGUI.h"
 
 /* *********************************************
-* Time
+* Ticker
 * *********************************************/
-TimeManager* TimeManager::m_instance = nullptr;
 
-bool TimeManager::Tick() {
+bool Ticker::Tick() {
 	DWORD new_clockTime = GetTickCount();
 	TimeType new_slip = static_cast<TimeType>(new_clockTime - m_clockTime) / 1000;
 	m_clockTime = new_clockTime;
@@ -15,10 +14,31 @@ bool TimeManager::Tick() {
 	if (m_lastSlip > m_minFrameInterval) {
 		m_lastFrameInterval = m_lastSlip;
 		m_lastSlip = 0;
-		DebugManager::GetInstance()->SetFPS(1.0 / m_lastFrameInterval);
 		return true;
 	}
 	else {
 		return false;
 	}
+}
+
+/* *********************************************
+* Time
+* *********************************************/
+TimeManager* TimeManager::m_instance = nullptr;
+
+TimeManager::TimeManager()
+	: m_ani_ticker(nullptr)
+	, m_frame_ticker(nullptr)
+{
+	m_ani_ticker = new Ticker();
+	m_frame_ticker = new Ticker();
+}
+
+TimeManager::~TimeManager()
+{
+	delete m_ani_ticker;
+	m_ani_ticker = nullptr;
+
+	delete m_frame_ticker;
+	m_frame_ticker = nullptr;
 }

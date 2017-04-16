@@ -6,9 +6,10 @@
 #include "Light.h"
 #include "TexManager.h"
 #include "InputEvent.h"
+#include "AnimatorManager.h"
+#include "AniResManager.h"
 
 #include "StructMeta.h"
-
 #include "TestModel.h"
 #include "TestSkinnedModel.h"
 #include "LightingShader.h"
@@ -137,10 +138,15 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		//dummyModel_ground->DummyGround(2, 2, NormColor4(1, 1, 1, 1), WorldPos(0, -0.5, 3));
 		//dummyScene->AddModel(dummyModel_ground);
 
-		// 蒙皮模型（蛇）
-		TestSkinnedModel* dummyModel_snake = new TestSkinnedModel;
-		dummyModel_snake->DummySnake(0.2, 0.5, 2, 3, 9);
-		dummyScene->AddModel(dummyModel_snake);
+		// 蒙皮模型（骨骼）
+		TestSkinnedModel* dummyModel_bone = new TestSkinnedModel;
+		dummyModel_bone->DummyBones(3);
+		dummyScene->AddModel(dummyModel_bone);
+
+		//// 蒙皮模型（蛇）
+		//TestSkinnedModel* dummyModel_snake = new TestSkinnedModel;
+		//dummyModel_snake->DummySnake(0.2, 0.5, 2, 3, 9);
+		//dummyScene->AddModel(dummyModel_snake);
 		
 		//// 模型（一个四方面片）
 		//TestModel* dummyModel_quad = new TestModel;
@@ -167,7 +173,9 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 				DispatchMessage(&msg);
 			}
 			else{
-				if (TimeManager::GetInstance()->Tick()){
+				if (TimeManager::GetInstance()->FrameTick()) {
+					DebugManager::GetInstance()->SetFPS(1.0 / TimeManager::GetInstance()->GetFrameInterval());
+
 					CameraManager::GetInstance()->Update(TimeManager::GetInstance()->GetFrameInterval());
 					SceneManager::GetInstance()->Update(TimeManager::GetInstance()->GetFrameInterval());
 
@@ -179,6 +187,9 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 					RenderManager::GetInstance()->Present();
 
 					DebugManager::GetInstance()->Render();
+				}
+				if (TimeManager::GetInstance()->AnimateTick()) {
+					AnimatorManager::GetInstance()->Update(TimeManager::GetInstance()->GetAniInterval());
 				}
 			}
 		}
@@ -200,6 +211,8 @@ LRESULT InitManagers() {
 	if (!MaterialManager::Init()) {return E_FAIL;}
 	if (!ShaderManager::Init()) { return E_FAIL; }
 	if (!DebugManager::Init()) { return E_FAIL; }
+	if (!AnimatorManager::Init()) { return E_FAIL; }
+	if (!AniResManager::Init()) { return E_FAIL; }
 	return S_OK;
 }
 void UnInitManagers() {
@@ -213,4 +226,6 @@ void UnInitManagers() {
 	InputEventHandlerManager::UnInit();
 	ShaderManager::UnInit();
 	DebugManager::UnInit();
+	AnimatorManager::UnInit();
+	AniResManager::UnInit();
 }

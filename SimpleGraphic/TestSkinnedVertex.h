@@ -6,7 +6,7 @@
 struct TestSkinnedVertex {
 	TestSkinnedVertex() :pos(), color(), normal(0, 0, 1) {}
 	TestSkinnedVertex(float px, float py, float pz, float u, float v)
-		:pos(px, py, pz)
+		: pos(px, py, pz)
 		, uv(u, v)
 		, color(1, 1, 1, 1)
 		, biNormal(1, 0, 0)
@@ -14,7 +14,7 @@ struct TestSkinnedVertex {
 		, vertexBone()
 	{}
 	TestSkinnedVertex(float px, float py, float pz, float u, float v, const VertexBone& b)
-		:pos(px, py, pz)
+		: pos(px, py, pz)
 		, uv(u, v)
 		, color(1,1,1,1)
 		, biNormal(1, 0, 0)

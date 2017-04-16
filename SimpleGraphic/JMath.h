@@ -9,6 +9,11 @@ DataType saturate(DataType d){
 	return d < 0 ? 0 : d;
 }
 
+template <typename DataType>
+DataType lerp(DataType l, DataType r, float lerp_para) {
+	return l*(1-lerp_para) + r*lerp_para;
+}
+
 namespace JMath {
 	/* *********************************************
 	* common
@@ -75,6 +80,7 @@ namespace JMath {
 		friend _Vec3 Add(const _Vec3& v1, const _Vec3& v2) { return v1.Add(v2); }
 		friend _Vec3 Minus(const _Vec3& v1, const _Vec3& v2) { return v1.Minus(v2); }
 		friend _Vec3 Mul(const _Vec3& v1, const _Vec3& v2) { return v1.Mul(v2); }
+		friend _Vec3 Mul(const _Vec3& v1, DataType v2) { return v1.Mul(v2); }
 		friend _Vec3 Div(const _Vec3& v1, const _Vec3& v2) { return v1.Div(v2); }
 		friend DataType DotProduct(const _Vec3& v1, const _Vec3& v2) { return v1.DotProduct(v2); }
 		friend _Vec3 CrossProduct(const _Vec3& v1, const _Vec3& v2) { return v1.CrossProduct(v2); }
@@ -82,28 +88,29 @@ namespace JMath {
 		friend _Vec3 operator+(const _Vec3& v1, const _Vec3& v2) { return v1.Add(v2); }
 		friend _Vec3 operator-(const _Vec3& v1, const _Vec3& v2) { return v1.Minus(v2); }
 		friend _Vec3 operator*(const _Vec3& v1, const _Vec3& v2) { return v1.Mul(v2); }
+		friend _Vec3 operator*(const _Vec3& v1, DataType v2) { return v1.Mul(v2); }
 		friend _Vec3 operator/(const _Vec3& v1, const _Vec3& v2) { return v1.Div(v2); }
 		_Vec3 operator+=(const _Vec3& v) { *this = *this + v; return *this; }
 		_Vec3 operator-=(const _Vec3& v) { *this = *this - v; return *this; }
 
 		// 标量运算
-		_Vec3 Add(float f) const {
+		_Vec3 Add(DataType f) const {
 			return _Vec3(
 				this->_x + f,
 				this->_y + f,
 				this->_z + f);
 		}
-		_Vec3 Minus(float f) const {
+		_Vec3 Minus(DataType f) const {
 			return this->Add(-f);
 		}
-		_Vec3 Mul(float f) const {
+		_Vec3 Mul(DataType f) const {
 			return _Vec3(
 				this->_x * f,
 				this->_y * f,
 				this->_z * f);
 		}
-		_Vec3 Div(float f) const {
-			return Mul(1.f / f);
+		_Vec3 Div(DataType f) const {
+			return Mul(1 / f);
 		}
 		// 归一化
 		void Normalise(){
@@ -343,10 +350,12 @@ namespace JMath {
 		void SetByYPR(DataType y, DataType p, DataType r);
 
 		// 计算相关
-		DataType LengthSquare() { return _x*_x + _y*_y + _z*_z + _w*_w; }
-		DataType Length() { return std::sqrt(LengthSquare()); }
-		_Quaternion Conjugate() { return _Quaternion(-_x, -_y, -_z, _w); }
-		_Quaternion Inverse() { return Conjugate() / LengthSquare(); }
+		DataType LengthSquare() const { return _x*_x + _y*_y + _z*_z + _w*_w; }
+		DataType Length() const { return std::sqrt(LengthSquare()); }
+		_Quaternion Scale(float s) const { return _Quaternion(_x*s, _y*s, _z*s, _w*s); }
+		_Quaternion Conjugate() const { return _Quaternion(-_x, -_y, -_z, _w); }
+		_Quaternion Inverse() const { return Conjugate() / LengthSquare(); }
+		DataType DotProduct(const _Quaternion& other) const { return _x*other._x + _y*other._y + _z*other._z + _w*other._w; }
 
 		// 旋转所使用的格拉斯曼积
 		// Grassmann product:
@@ -363,23 +372,60 @@ namespace JMath {
 		//				-az+ bw + cx + sy
 		//				ay - bx + cw + sz
 		//				ax + by + cz + sw )
-		_Quaternion operator*(const _Quaternion& other) {
-			return _Quaternion(
-				_x * other._w + _y * other._z - _z * other._y + _w * other._x,
-				-_x* other._z + _y * other._w + _z * other._x + _w * other._y,
-				_x * other._y - _y * other._x + _z * other._w + _w * other._z,
-				_x * other._x + _y * other._y + _z * other._z + _w * other._w);
-		}
 		_Quaternion operator*(DataType other) {
 			return _Quaternion(_x * other, _y * other, _z * other, _w * other);
 		}
-		friend _Quaternion operator*(const _Quaternion& lhm, DataType rhm) { return lhm * rhm; }
-		friend _Quaternion operator*(DataType lhm, const _Quaternion& rhm) { return rhm * lhm; }
-		friend _Quaternion operator*(const _Quaternion& lhm, const _Quaternion& rhm) { return lhm * rhm; }
+		friend _Quaternion operator*(DataType lhm, const _Quaternion& rhm) { return rhm.operator*(lhm); }
+		friend _Quaternion operator*(const _Quaternion& lhm, const _Quaternion& rhm) {
+			return _Quaternion(
+				 lhm._x * rhm._w + lhm._y * rhm._z - lhm._z * rhm._y + lhm._w * rhm._x,
+				-lhm._x * rhm._z + lhm._y * rhm._w + lhm._z * rhm._x + lhm._w * rhm._y,
+				 lhm._x * rhm._y - lhm._y * rhm._x + lhm._z * rhm._w + lhm._w * rhm._z,
+				 lhm._x * rhm._x + lhm._y * rhm._y + lhm._z * rhm._z + lhm._w * rhm._w);
+		}
 
 		// 旋转方向
 		_Quaternion Rotate(const WorldPos& other) {
 			return this->Conjugate() * _Quaternion(other) * *this;
+		}
+
+		// 转换为矩阵
+		// R = (1-2yy-2zz,	2xy+2zw,	2xy-2yw,
+		//		2xy-2zw,	1-2xx-2zz,	2yz+2xw,
+		//		2xz+2yw,	2yz-2xw,	1-2xx-2yy)
+		_Mat44 toMatrix44(WorldPos trans, WorldPos scale) {
+			return _Mat44(	scale._x * (1 - 2*_y*_y - 2*_z*_z	),	scale._y * (2*_x*_y + 2*_z*_w		),	scale._z * (2*_x*_y - 2*_y*_w		),	trans._x,
+							scale._x * (2*_x*_y - 2*_z*_w		),	scale._y * (1 - 2*_x*_x - 2*_z*_z	),	scale._z * (2*_y*_z + 2*_x*_w		),	trans._y,
+							scale._x * (2*_x*_z + 2*_y*_w		),	scale._y * (2*_y*_z - 2*_x*_w		),	scale._z * (1 - 2*_x*_x - 2*_y*_y	),	trans._z,
+							0									,	0									,	0									,	1
+			);
+		}
+
+		// 插值
+		_Quaternion Slerp(const _Quaternion& other, float lerp_para) {
+			float cos_theta = this->DotProduct(other);
+			if (f_equal(cos_theta, 1.f)) {
+				return _Quaternion(
+					(1 - lerp_para) * _x + lerp_para * other._x,
+					(1 - lerp_para) * _y + lerp_para * other._y,
+					(1 - lerp_para) * _z + lerp_para * other._z,
+					(1 - lerp_para) * _w + lerp_para * other._w
+				);
+			}
+			if (f_equal(cos_theta, -1.f)) {
+				// todo 这种异常情况需要完善
+				return *this;
+			}
+
+			float theta = std::acos(cos_theta);
+			float sin_theta = std::sin(theta);
+			float sin_theta_r = std::sin(lerp_para * theta);
+			float sin_theta_l = std::sin((1 - lerp_para)*theta);
+			return this->Scale(sin_theta_l / sin_theta).Add(other.Scale(sin_theta_r / sin_theta));
+		}
+	private:
+		_Quaternion Add(const _Quaternion& other) {
+			return _Quaternion(_x + other._x, _y + other._y, _z + other._z, _w + other._w);
 		}
 	public:
 		DataType _x, _y, _z, _w;

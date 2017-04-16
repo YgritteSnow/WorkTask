@@ -122,9 +122,6 @@
     <ClCompile Include="LightingSkinnedShader.cpp">
       <Filter>TestBed</Filter>
     </ClCompile>
-    <ClCompile Include="Skelenton.cpp">
-      <Filter>Animator</Filter>
-    </ClCompile>
     <ClCompile Include="Animator.cpp">
       <Filter>Animator</Filter>
     </ClCompile>
@@ -136,6 +133,15 @@
     </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>SoftRender\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Skeleton.cpp">
+      <Filter>Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="AniResManager.cpp">
+      <Filter>Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatorManager.cpp">
+      <Filter>Animator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -235,9 +241,6 @@
     <ClInclude Include="LightingShader.h">
       <Filter>TestBed</Filter>
     </ClInclude>
-    <ClInclude Include="Skelenton.h">
-      <Filter>Animator</Filter>
-    </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Model</Filter>
     </ClInclude>
@@ -252,6 +255,21 @@
     </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>SoftRender\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Skeleton.h">
+      <Filter>Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinnedModel.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>SoftRender\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="AniResManager.h">
+      <Filter>Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatorManager.h">
+      <Filter>Animator</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

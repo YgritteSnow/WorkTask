@@ -142,11 +142,6 @@ void RenderManager::RenderVertexIndice(VertexBuffer* vb, IndexBuffer* ib, Matrix
 		const auto& v1 = vb_temp->GetVertex(indice_idx_1);
 		const auto& v2 = vb_temp->GetVertex(indice_idx_2);
 
-		const auto& a1 = vb_temp->GetVertex(0);
-		const auto& a2 = vb_temp->GetVertex(1);
-		const auto& a3 = vb_temp->GetVertex(2);
-		const auto& a4 = vb_temp->GetVertex(3);
-
 		if (CheckCurState(StateMask_DrawMode, StateMaskValue_Wareframe)) {
 			RenderTriangle_wireframe(vb_vid, v0, v1, v2);
 		}

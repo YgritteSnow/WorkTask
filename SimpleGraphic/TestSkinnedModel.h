@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Model.h"
+#include "SkinnedModel.h"
 #include "Light.h"
 #include "Material.h"
 #include "TestSkinnedVertex.h"
 #include "TestSkinnedMesh.h"
 #include "LightingSkinnedShader.h"
 
-class TestSkinnedModel : public Model
+class TestSkinnedModel : public SkinnedModel
 {
 public:
 	void DummySnake(float radius, float length, float slice_count, float step_count, float radius_count) {
@@ -28,9 +28,24 @@ public:
 			static_cast<TestSkinnedPSShader*>(m_psMain)->AddLight(LightManager::GetInstance()->GetLight(i));
 		}
 	}
+
+	void DummyBones(int bone_count) {
+		m_vsMain = new TestSkinnedVSShader();
+		m_psMain = new TestSkinnedPSShader();
+		m_worldMat.SetTranslate(0, 0, 5);
+		m_mesh = new TestSkeletonMesh(bone_count);
+		m_mesh->Load();
+
+		static_cast<TestSkinnedVSShader*>(m_vsMain)->SetModelMat(m_worldMat);
+		static_cast<TestSkinnedPSShader*>(m_psMain)->SetMaterial(MaterialManager::GetInstance()->CurMaterial());
+		int light_count = LightManager::GetInstance()->Count();
+		for (int i = 0; i < light_count; ++i) {
+			static_cast<TestSkinnedPSShader*>(m_psMain)->AddLight(LightManager::GetInstance()->GetLight(i));
+		}
+	}
 public:
 	void BeforeRender() {
-		Model::BeforeRender();
+		SkinnedModel::BeforeRender();
 		static_cast<TestSkinnedVSShader*>(m_vsMain)->SetModelMat(m_worldMat);
 	}
 private:
