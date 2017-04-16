@@ -143,6 +143,9 @@
     <ClCompile Include="AnimatorManager.cpp">
       <Filter>Animator</Filter>
     </ClCompile>
+    <ClCompile Include="InverseKinematic.cpp">
+      <Filter>Animator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="JMath.h">
@@ -269,6 +272,9 @@
       <Filter>Animator</Filter>
     </ClInclude>
     <ClInclude Include="AnimatorManager.h">
+      <Filter>Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="InverseKinematic.h">
       <Filter>Animator</Filter>
     </ClInclude>
   </ItemGroup>

@@ -151,6 +151,7 @@
     <ClCompile Include="BitMap.cpp" />
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="DebugGUI.cpp" />
+    <ClCompile Include="InverseKinematic.cpp" />
     <ClCompile Include="LightingShader.cpp" />
     <ClCompile Include="LightingSkinnedShader.cpp" />
     <ClCompile Include="PointCamera.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="AniResManager.h" />
     <ClInclude Include="CameraManager.h" />
     <ClInclude Include="DebugGUI.h" />
+    <ClInclude Include="InverseKinematic.h" />
     <ClInclude Include="LightingSkinnedShader.h" />
     <ClInclude Include="LightingShader.h" />
     <ClInclude Include="Mesh.h" />
