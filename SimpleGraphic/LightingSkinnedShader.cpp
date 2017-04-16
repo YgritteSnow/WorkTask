@@ -83,6 +83,7 @@ DECLARE_PIXELSHADER_START(TestSkinnedPSShader, TestSkinnedVertex_v2p, pVout, Tes
 		color_w = pixel._w;
 	}
 	pPout->color = ambient + diffuse + specular;
+	pPout->color *= pVout->color;
 	pPout->color._w = color_w;
 
 	// 更新深度缓存

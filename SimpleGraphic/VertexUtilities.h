@@ -31,17 +31,21 @@ typedef unsigned char StateMaskType;
 #define StateMaskValue_noCorrect	(0x0 << 3)
 #define StateMaskValue_withCorrect	(0x1 << 3)
 
-#define StateMask_BackCull			(0x1 << 4)
-#define StateMaskValue_BackCullR	(0x0 << 4)
-#define StateMaskValue_BackCull		(0x1 << 4)
+#define StateMask_Cull				(0x0 << 4)
+#define StateMaskValue_NoCull		(0x0 << 4)
+#define StateMaskValue_UseCull		(0x1 << 4)
 
-#define StateMask_DepthBuffer		(0x1 << 5)
-#define StateMaskValue_UseDepth		(0x0 << 5)
-#define StateMaskValue_NoDepth		(0x1 << 5)
+#define StateMask_BackCull			(0x1 << 5)
+#define StateMaskValue_BackCull		(0x0 << 5)
+#define StateMaskValue_BackCullR	(0x1 << 5)
 
-#define StateMask_Alpha				(0x1 << 6)
-#define StateMaskValue_NoAlpha		(0x0 << 6)
-#define StateMaskValue_UseAlpha		(0x1 << 6)
+#define StateMask_DepthBuffer		(0x1 << 6)
+#define StateMaskValue_UseDepth		(0x0 << 6)
+#define StateMaskValue_NoDepth		(0x1 << 6)
+
+#define StateMask_Alpha				(0x1 << 7)
+#define StateMaskValue_NoAlpha		(0x0 << 7)
+#define StateMaskValue_UseAlpha		(0x1 << 7)
 
 bool CheckState(StateMaskType curState, StateMaskType state, StateMaskType value);
 

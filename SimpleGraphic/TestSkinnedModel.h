@@ -10,13 +10,13 @@
 class TestSkinnedModel : public SkinnedModel
 {
 public:
-	void DummySnake(float radius, float length, float slice_count, float step_count, float radius_count) {
+	void DummySnake(float bone_count, float radius, float length, float step_count, float radius_count) {
 		m_vsMain = new TestSkinnedVSShader();
 		m_psMain = new TestSkinnedPSShader();
 		m_worldMat.SetTranslate(0, 0, 5);
-		m_mesh = new TestSnakeMesh(radius, length, slice_count, step_count, radius_count);
+		m_mesh = new TestSnakeMesh(bone_count, radius, length, step_count, radius_count);
 		m_mesh->Load();
-		m_cur_texture = TextureManager::GetInstance()->LoadTexture_norm("tex_alpha_color.tga");
+		//m_cur_texture = TextureManager::GetInstance()->LoadTexture_norm("tex_alpha_color.tga");
 		//m_cur_normalTexture = TextureManager::GetInstance()->LoadTexture_norm("tex_normal.tga");
 
 		static_cast<TestSkinnedVSShader*>(m_vsMain)->SetModelMat(m_worldMat);

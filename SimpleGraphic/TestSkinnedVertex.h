@@ -21,6 +21,14 @@ struct TestSkinnedVertex {
 		, normal(1, 0, 0)
 		, vertexBone(b)
 	{}
+	TestSkinnedVertex(float px, float py, float pz, float u, float v, const VertexBone& b, const NormColor4& c)
+		: pos(px, py, pz)
+		, uv(u, v)
+		, color(c)
+		, biNormal(1, 0, 0)
+		, normal(1, 0, 0)
+		, vertexBone(b)
+	{}
 	WorldPos pos;
 	NormColor4 color;
 	WorldPos normal;

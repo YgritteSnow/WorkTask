@@ -19,7 +19,11 @@ private:
 		m_indexBuffer = new IndexBuffer((m_bones_count-1) * 3);
 
 		for (int i = 0; i < m_bones_count; ++i) {
-			m_vertexBuffer->SetVertex(i, TestSkinnedVertex(0, i * 0.2f, 0, 0, 0, VertexBone(i, 1.0f)));
+			m_vertexBuffer->SetVertex(i, TestSkinnedVertex(0, i * 1.1f, 0
+				, 0, 0
+				, VertexBone(i, 1.0f)
+				, NormColor4((rand() % 100) / 100.f, (rand() % 100) / 100.f, (rand() % 100) / 100.f, (rand() % 100) / 100.f)
+			));
 			if (i < m_bones_count - 1) {
 				m_indexBuffer->m_vec_indice[i * 3] = i;
 				m_indexBuffer->m_vec_indice[i * 3 + 1] = i;
@@ -37,10 +41,10 @@ private:
 class TestSnakeMesh : public SkinnedMesh
 {
 public:
-	TestSnakeMesh(float radius, float length, float slice_count, float step_count, float radius_count)
+	TestSnakeMesh(int bone_count, float radius, float length, float step_count, float radius_count)
 		: m_radius(radius)
 		, m_length(length)
-		, m_sliceCount(slice_count)
+		, m_boneCount(bone_count)
 		, m_stepCount(step_count)
 		, m_radiusCount(radius_count)
 	{}
@@ -69,27 +73,44 @@ private:
 		float length_step = m_length / m_stepCount;
 		float cur_height = 0;
 		// 每一截
-		for (int slice_i = 0; slice_i < m_sliceCount; ++slice_i) {
+		for (int slice_i = 0; slice_i < m_boneCount; ++slice_i) {
 			float bottom_height = slice_i * m_length;
 			float top_height = bottom_height + m_length;
 			// 每一层高度
+			NormColor4 tmp = NormColor4((rand() % 100) / 100.f, (rand() % 100) / 100.f, (rand() % 100) / 100.f, (rand() % 100) / 100.f);
 			for (cur_height = bottom_height; cur_height < top_height - length_step/2; cur_height += length_step) {
+				// 在每一层内，对顶点所属骨骼进行平滑过渡
+				VertexBone t;
+				if (slice_i == m_boneCount - 1) {
+					// 最后一层只使用最后一截骨骼
+					t = VertexBone(slice_i, 1.0);
+				}
+				else {
+					// 否则使用两截相邻骨骼
+					float lerp_para = (cur_height - bottom_height) / (top_height - bottom_height);
+					t = VertexBone(slice_i, 1-lerp_para, slice_i + 1, lerp_para);
+				}
 				// 每一个角度
 				for (float radius_i = 0; radius_i < JMath::PI_M2 - radius_step/2; radius_i += radius_step) {
 					tmp_vertex.push_back(TestSkinnedVertex(m_radius * std::cos(radius_i), cur_height, m_radius * std::sin(radius_i)
-						, radius_i/JMath::PI_M2, cur_height / m_length / m_sliceCount));
+						, radius_i/JMath::PI_M2, cur_height / m_length / m_boneCount
+						, t
+						//, VertexBone(slice_i, 1.0)
+						, tmp
+					));
 				}
 			}
 		}
 		// 补上最后一层
 		for (float radius_i = 0; radius_i < JMath::PI_M2 - radius_step/2; radius_i += radius_step) {
 			tmp_vertex.push_back(TestSkinnedVertex(m_radius * std::cos(radius_i), cur_height, m_radius * std::sin(radius_i)
-				, radius_i / JMath::PI_M2, cur_height / m_length / m_sliceCount));
+				, radius_i / JMath::PI_M2, cur_height / m_length / m_boneCount
+				, VertexBone(max(m_boneCount - 1, 0), 1.0)));
 		}
 
 		// 计算索引
 		int row_count = m_radiusCount;
-		int height_count = m_sliceCount * m_stepCount;
+		int height_count = m_boneCount * m_stepCount;
 		int aaa = 0;
 		for(int height_i = 0; height_i < height_count; ++height_i){
 			int row_i = height_i * row_count;
@@ -126,11 +147,14 @@ private:
 			m_indexBuffer->m_vec_indice[i] = tmp_indice[i];
 		}
 
+
+		m_animator = new Animator(0, 0);
+		m_animator->Start();
 	}
 private:
 	float m_radius;		// 半径
 	float m_length;		// 每截长度
-	int m_sliceCount;		// 几截
+	int m_boneCount;		// 几截
 	int m_stepCount;	// 每一截分成几份
 	int m_radiusCount;	// 弧度分成几份
 };

@@ -102,21 +102,15 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 
 		// 设置材质
 		MaterialManager::GetInstance()->SetMaterial(Material(
-			NormColor4(1, 1, 1, 1) * 0.05,
+			NormColor4(1, 1, 1, 1) * 1,
 			NormColor4(1, 1, 1, 1) * 1,
 			NormColor4(0.7, 0.7, 0.7, 30),
 			NormColor4(1, 1, 1, 1) * 0
 		));
 
-		// 设置贴图
-		TextureManager::GetInstance()->SetTexture("tex_alpha_color.tga");
-
 		// 设置光照
-		//LightManager::GetInstance()->AddLight(new AmbientLight(NormColor4(1, 1, 1, 1)));
-		//for (int i = 0; i < 1000; ++i) {
-		//	LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 0.1, 0, 1), WorldPos(1, 0, 0)));
-		//}
-		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 1, 0, 1), WorldPos(1, 0, 0)));
+		LightManager::GetInstance()->AddLight(new AmbientLight(NormColor4(1, 1, 1, 1)));
+		//LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 1, 0, 1), WorldPos(1, 0, 0)));
 		//LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 0, 1, 1), WorldPos(-1, 0, 0)));
 		//LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 0, 0, 1), WorldPos(0, 1, 0)));
 
@@ -138,15 +132,15 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		//dummyModel_ground->DummyGround(2, 2, NormColor4(1, 1, 1, 1), WorldPos(0, -0.5, 3));
 		//dummyScene->AddModel(dummyModel_ground);
 
+		// 蒙皮模型（蛇）
+		TestSkinnedModel* dummyModel_snake = new TestSkinnedModel;
+		dummyModel_snake->DummySnake(3, 0.3, 1.1f, 10, 5);
+		dummyScene->AddModel(dummyModel_snake);
+
 		// 蒙皮模型（骨骼）
 		TestSkinnedModel* dummyModel_bone = new TestSkinnedModel;
 		dummyModel_bone->DummyBones(3);
 		dummyScene->AddModel(dummyModel_bone);
-
-		//// 蒙皮模型（蛇）
-		//TestSkinnedModel* dummyModel_snake = new TestSkinnedModel;
-		//dummyModel_snake->DummySnake(0.2, 0.5, 2, 3, 9);
-		//dummyScene->AddModel(dummyModel_snake);
 		
 		//// 模型（一个四方面片）
 		//TestModel* dummyModel_quad = new TestModel;
@@ -157,9 +151,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 
 		// 设置渲染状态
 		RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Wareframe);
+		RenderManager::GetInstance()->SetRenderState(StateMask_Cull, StateMaskValue_UseCull);
 		RenderManager::GetInstance()->SetRenderState(StateMask_BackCull, StateMaskValue_BackCull);
 		RenderManager::GetInstance()->SetRenderState(StateMask_DepthBuffer, StateMaskValue_UseDepth);
-		RenderManager::GetInstance()->SetRenderState(StateMask_Alpha, StateMaskValue_UseAlpha);
+		RenderManager::GetInstance()->SetRenderState(StateMask_Alpha, StateMaskValue_NoAlpha);
 
 		// 主循环
 		MSG msg;

@@ -10,7 +10,7 @@ NormColor4 AmbientLight::ProcessDummy(WorldPos normal, WorldPos pos){
 	return MaterialManager::GetInstance()->GetAmbient() * this->m_light_color;
 }
 NormColor4 AmbientLight::ProcessAmbient(const Material* material, WorldPos normal, WorldPos pos) {
-	return NormColor4();
+	return material->ambient * this->m_light_color;
 }
 NormColor4 AmbientLight::ProcessDiffuse(const Material* material, WorldPos normal, WorldPos pos) {
 	return NormColor4();

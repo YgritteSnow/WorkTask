@@ -17,7 +17,10 @@ const MaskType SCREEN_CULLED = 0xff ^ 0x02;
 * *********************************************/
 MaskType ProcessTriangle_backCull(const WorldPos& v0, const WorldPos& v1, const WorldPos& v2, MaskType curState) {
 	auto backpara = (v1 - v0).CrossProduct(v2 - v1).DotProduct(WorldPos(0, 0, -1));
-	if ((CheckState(curState, StateMask_BackCull, StateMaskValue_BackCull) && backpara < 0)
+	if (CheckState(curState, StateMask_Cull, StateMaskValue_NoCull)) {
+		return NO_CULLED;
+	}
+	else if ((CheckState(curState, StateMask_BackCull, StateMaskValue_BackCull) && backpara < 0)
 		|| (CheckState(curState, StateMask_BackCull, StateMaskValue_BackCullR) && backpara > 0)
 		) {
 		return BACK_CULLED;

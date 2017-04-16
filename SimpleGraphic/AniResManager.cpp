@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-const int DEBUG_BONE_COUNT = 4;
+const int DEBUG_BONE_COUNT = 3;
 
 AniResManager* AniResManager::m_instance = nullptr;
 
@@ -85,10 +85,18 @@ bool AniResManager::ReleaseSkeletonByPtr(SkeletonData* ani_ptr) {
 const SkeletonData* AniResManager::LoadSkeleton(AniSourceID src_id) {
 	SkeletonData* res = new SkeletonData(DEBUG_BONE_COUNT);
 	for (int i = 0; i < DEBUG_BONE_COUNT; ++i) {
-		res->m_joints_local[i] = JointData(0
-			, Quaternion(0, 0, std::cos(JMath::PI / 4), std::sin(JMath::PI / 4))
-			, WorldPos(0, 0.2f, 0)
-			, 1.f);
+		if (i == 0) {
+			res->m_joints_local[i] = JointData(0
+				, Quaternion(0, 0, 0, 1)
+				, WorldPos(0, 0, 0)
+				, 1.f);
+		}
+		else {
+			res->m_joints_local[i] = JointData(i - 1
+				, Quaternion(0, 0, 0, 1)
+				, WorldPos(0, 1.1f, 0)
+				, 1.f);
+		}
 	}
 	return res;
 }
@@ -140,20 +148,45 @@ const AnimateData* AniResManager::LoadAnimation(AniSourceID src_id) {
 	AnimateData* res = new AnimateData;
 	res->m_bones_count = DEBUG_BONE_COUNT;
 	res->m_frames_count = 2;
-	res->m_duation = 1.f;
+	res->m_duation = 10.f;
 	res->m_frames = new AnimateData::FrameInfo[res->m_frames_count];
 	AnimateData::FrameInfo* fr;
-	for (int i = 0; i < res->m_frames_count; ++i) {
-		fr = &res->m_frames[i];
-		fr->time = res->m_duation / (res->m_frames_count-1)*i;
+
+		fr = &res->m_frames[0];
+		fr->time = 0.f;
 		fr->joints = new JointData[res->m_bones_count];
 		for (int ib = 0; ib < DEBUG_BONE_COUNT; ++ib) {
-			fr->joints[ib] = JointData(0
-				, Quaternion(0, 0, std::cos(JMath::PI / 4 * ib), std::sin(JMath::PI / 4 * ib))
-				, WorldPos(0, 0.2f, 0)
-				, 1.f);
+			if (ib == 0) {
+				fr->joints[ib] = JointData(0
+					, Quaternion(0, 0, 0, 1)
+					, WorldPos(0, 0, 0)
+					, 1.f);
+			}
+			else {
+				fr->joints[ib] = JointData(ib - 1
+					, Quaternion(0, 0, 0, 1)
+					, WorldPos(0, 0, 0)
+					, 1.f);
+			}
 		}
-	}
+
+		fr = &res->m_frames[1];
+		fr->time = 1.f;
+		fr->joints = new JointData[res->m_bones_count];
+		for (int ib = 0; ib < DEBUG_BONE_COUNT; ++ib) {
+			if (ib == 0) {
+				fr->joints[ib] = JointData(0
+					, Quaternion(0, 0, std::cos(JMath::PI / 6), std::sin(JMath::PI / 6))
+					, WorldPos(0, 0, 0)
+					, 1.f);
+			}
+			else {
+				fr->joints[ib] = JointData(ib - 1
+					, Quaternion(0, 0, std::cos(JMath::PI / 6), std::sin(JMath::PI / 6))
+					, WorldPos(0, 0, 0)
+					, 1.f);
+			}
+		}
 
 	return res;
 }

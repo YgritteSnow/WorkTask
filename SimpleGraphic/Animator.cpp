@@ -70,7 +70,7 @@ void Animator::RefreshJoints() {
 	int frame_idx = FindFrameIndex(m_cur_time);
 	auto& frame_left = m_animate->m_frames[frame_idx];
 	auto& frame_right = m_animate->m_frames[(frame_idx + 1) % m_animate->m_frames_count];
-	float lerp_para = (m_cur_time - frame_left.time) / (frame_right.time - frame_left.time);
+	float lerp_para = (m_cur_time/ m_animate->m_duation - frame_left.time) / (frame_right.time - frame_left.time);
 	for (int i = 0; i < m_skeleton->m_bones_count; ++i) {
 		auto& cur = m_cur_joints[i];
 		auto& l = frame_left.joints[i];
@@ -86,7 +86,7 @@ void Animator::RefreshJoints() {
 int Animator::FindFrameIndex(float t) {
 	// todo 以后可以把这个优化下，可能可以用时间桶的方式来快速索引
 	for (int i = 0; i < m_animate->m_frames_count; ++i) {
-		if (m_animate->m_frames[i].time > t) {
+		if (m_animate->m_frames[i].time > t/ m_animate->m_duation) {
 			return i;
 		}
 	}

@@ -23,45 +23,55 @@ SkeletonData::~SkeletonData() {
 /* 包含计算所需的实时的信息
 /************************************************************************/
 SkeletonCalculator::SkeletonCalculator(const SkeletonData* s)
-	: m_skeletonData_origin(s)
-	, m_jointsMatInv_origin(nullptr)
-	, m_skeletonData_cur(nullptr)
-	, m_jointsMat_cur(nullptr)
+	: m_sqt_origin_local(s)
+	, m_sqt_curent_local(nullptr)
+	, m_mat_origin_model_inv(nullptr)
+	, m_sqt_curent_model(nullptr)
+	, m_mat_curent_model(nullptr)
 {
-	assert(m_skeletonData_origin->m_bones_count > 0);
-	m_skeletonData_cur = new SkeletonData(m_skeletonData_origin->m_bones_count);
-	m_jointsMatInv_origin = new Matrix44[m_skeletonData_origin->m_bones_count];
-	m_jointsMatInv_origin[0].SetIdentity();
-	m_jointsMat_cur = new Matrix44[m_skeletonData_origin->m_bones_count];
-	m_jointsMat_cur[0].SetIdentity();
+	assert(m_sqt_origin_local->m_bones_count > 0);
+	m_mat_origin_model_inv = new Matrix44[m_sqt_origin_local->m_bones_count];
+	m_sqt_curent_local = new SkeletonData(m_sqt_origin_local->m_bones_count);
+	m_sqt_curent_model = new SkeletonData(m_sqt_origin_local->m_bones_count);
+	m_mat_curent_model = new Matrix44[m_sqt_origin_local->m_bones_count];
 	InitSkeleton();
 }
 
 SkeletonCalculator::~SkeletonCalculator() {
-	delete[] m_jointsMatInv_origin;
-	m_jointsMatInv_origin = nullptr;
+	delete m_sqt_curent_local;
+	m_sqt_curent_local = nullptr;
 
-	delete m_skeletonData_cur;
-	m_skeletonData_cur = nullptr;
+	delete[] m_mat_origin_model_inv;
+	m_mat_origin_model_inv = nullptr;
 
-	delete[] m_jointsMat_cur;
-	m_jointsMat_cur = nullptr;
+	delete m_sqt_curent_model;
+	m_sqt_curent_model = nullptr;
+
+	delete[] m_mat_curent_model;
+	m_mat_curent_model = nullptr;
 }
 
 void SkeletonCalculator::InitSkeleton() {
-	_InnerCalMatInv(m_skeletonData_origin, m_jointsMatInv_origin);
+	_InnerTransSQTToModelSpace(m_sqt_origin_local, m_sqt_curent_model);
+	_InnerSQT2MatInv(m_sqt_curent_model, m_mat_origin_model_inv);
 }
 
+// 按照 father - child 的方式，把骨骼点的偏移添加上去
 void SkeletonCalculator::ChangeSkeleton(JointData* vec_trans){
-	for (int i = 0; i < m_skeletonData_origin->m_bones_count; ++i) {
-		const auto& src = m_skeletonData_origin->m_joints_local[i];
-		const auto& off = vec_trans[i];
-		auto& dst = m_skeletonData_cur->m_joints_local[i];
-		dst.quaternion = src.quaternion * off.quaternion;
-		dst.scale = src.scale * off.scale;
-		dst.translation = src.translation + off.translation;
+	for (int i = 0; i < m_sqt_origin_local->m_bones_count; ++i) {
+		const auto& father = m_sqt_origin_local->m_joints_local[i];
+		const auto& child = vec_trans[i];
+
+		auto& dst = m_sqt_curent_local->m_joints_local[i];
+		dst.parent_index = father.parent_index;
+		dst.quaternion = father.quaternion * child.quaternion;
+		dst.scale = father.scale * child.scale;
+		dst.translation = father.translation + father.quaternion.RotateVec(child.translation);
+
+		int ttt=2;
 	}
-	_InnerCalMat(m_skeletonData_cur, m_jointsMat_cur);
+	_InnerTransSQTToModelSpace(m_sqt_curent_local, m_sqt_curent_model);
+	_InnerSQT2Mat(m_sqt_curent_model, m_mat_curent_model);
 }
 
 /*
@@ -74,35 +84,44 @@ void SkeletonCalculator::ChangeSkeleton(JointData* vec_trans){
 		现试试~）
  */
 WorldPos SkeletonCalculator::CalculateVertexPos(int bone_idx, const WorldPos& old_pos) {
-	auto localpos = m_jointsMatInv_origin[bone_idx].PreMulVec(old_pos.ToVec4Pos());
-	return m_jointsMat_cur[bone_idx].PreMulVec(localpos).ToVec3();
+	auto localpos = m_mat_origin_model_inv[bone_idx].PreMulVec(old_pos.ToVec4Pos());
+	return m_mat_curent_model[bone_idx].PreMulVec(localpos).ToVec3();
 }
 
-// 将每个骨骼点变换到模型坐标系
-void SkeletonCalculator::_InnerCalMat(const SkeletonData* skeletonData, Matrix44* vec_mats) {
+// ModelSpace: SQT->MatrixInv
+void SkeletonCalculator::_InnerSQT2MatInv(const SkeletonData* skeletonData, Matrix44* vec_mats) {
+	for (int i = 0; i < skeletonData->m_bones_count; ++i) {
+		JointData tmp = skeletonData->m_joints_local[i];
+		tmp.quaternion = tmp.quaternion.Conjugate();
+		tmp.scale = 1 / tmp.scale;
+		tmp.translation = -tmp.translation;
+
+		vec_mats[i] = tmp.toMatrix44();
+	}
+}
+
+// SQT: BoneSpace->ModelSpace
+void SkeletonCalculator::_InnerTransSQTToModelSpace(const SkeletonData* skeletonData, SkeletonData* joints_new) {
 	for (int i = 0; i < skeletonData->m_bones_count; ++i) {
 		if (i == 0) {
-			vec_mats[i].SetIdentity();
+			joints_new->m_joints_local[i] = skeletonData->m_joints_local[i];
 		}
 		else {
-			Matrix44 cur_mat = skeletonData->m_joints_local[i].toMatrix44();
-			auto& parent_mat = vec_mats[skeletonData->m_joints_local[i].parent_index];
-			vec_mats[i] = parent_mat.PreMulMat(cur_mat);
+			auto& dst = joints_new->m_joints_local[i];
+			auto& child = skeletonData->m_joints_local[i];
+			auto& father = joints_new->m_joints_local[child.parent_index];
+
+			dst.parent_index = child.parent_index;
+			dst.quaternion = child.quaternion * father.quaternion;
+			dst.translation = father.quaternion.RotateVec(child.translation) + father.translation;
+			dst.scale = child.scale * father.scale;
 		}
 	}
 }
 
-// 将每个骨骼点变换到模型坐标系，并取逆
-void SkeletonCalculator::_InnerCalMatInv(const SkeletonData* skeletonData, Matrix44* vec_mats) {
+// ModelSpace: SQT->Matrix
+void SkeletonCalculator::_InnerSQT2Mat(const SkeletonData* skeletonData, Matrix44* vec_mats) {
 	for (int i = 0; i < skeletonData->m_bones_count; ++i) {
-		if (i == 0) {
-			vec_mats[i].SetIdentity();
-		}
-		else {
-			Matrix44 cur_mat = skeletonData->m_joints_local[i].toMatrix44();
-			auto& parent_mat = vec_mats[skeletonData->m_joints_local[i].parent_index];
-			vec_mats[i] = parent_mat.PreMulMat(cur_mat);
-			vec_mats[i] = vec_mats[i].Inverse();
-		}
+		vec_mats[i] = skeletonData->m_joints_local[i].toMatrix44();
 	}
 }

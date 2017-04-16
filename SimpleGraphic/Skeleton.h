@@ -70,12 +70,17 @@ public:
 	// 计算顶点位置
 	WorldPos CalculateVertexPos(int bone_idx, const WorldPos& old_pos);
 private:
-	void _InnerCalMat(const SkeletonData* vec_joints, Matrix44* vec_mats);
-	void _InnerCalMatInv(const SkeletonData* skeletonData, Matrix44* vec_mats);
+	// Local Space -> Model Space
+	void _InnerTransSQTToModelSpace(const SkeletonData* joints_old, SkeletonData* joints_new);
+	// SQT -> Mat
+	void _InnerSQT2Mat(const SkeletonData* vec_joints, Matrix44* vec_mats);
+	void _InnerSQT2MatInv(const SkeletonData* joints_old, Matrix44* vec_mats);
 private:
-	const SkeletonData* m_skeletonData_origin;	// 骨骼信息
-	Matrix44* m_jointsMatInv_origin;				// 初始化之后，预计算 T-pos 下的变换（世界空间）
+	const SkeletonData* m_sqt_origin_local;		// SQT格式 - 原始 - 骨骼空间 - 不取逆
 
-	SkeletonData* m_skeletonData_cur;	// 当前骨骼信息
-	Matrix44* m_jointsMat_cur;		// 当前的各骨骼点的变换
+	SkeletonData* m_sqt_curent_local;			// SQT格式 - 原始 - 骨骼空间 - 不取逆
+	Matrix44*	  m_mat_origin_model_inv;		// 矩阵格式 - 原始 - 模型空间 - 取逆
+
+	SkeletonData* m_sqt_curent_model;			// SQT格式 - 当前 - 模型空间 - 不取逆
+	Matrix44*	  m_mat_curent_model;			// 矩阵格式 - 当前 - 模型空间 - 不取逆
 };

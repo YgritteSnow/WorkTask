@@ -89,9 +89,13 @@ namespace JMath {
 		friend _Vec3 operator-(const _Vec3& v1, const _Vec3& v2) { return v1.Minus(v2); }
 		friend _Vec3 operator*(const _Vec3& v1, const _Vec3& v2) { return v1.Mul(v2); }
 		friend _Vec3 operator*(const _Vec3& v1, DataType v2) { return v1.Mul(v2); }
+		friend _Vec3 operator*(DataType v2, const _Vec3& v1) { return v1.Mul(v2); }
 		friend _Vec3 operator/(const _Vec3& v1, const _Vec3& v2) { return v1.Div(v2); }
+		friend _Vec3 operator/(DataType v2, const _Vec3& v1) { return v1.Div(v2); }
+		
 		_Vec3 operator+=(const _Vec3& v) { *this = *this + v; return *this; }
 		_Vec3 operator-=(const _Vec3& v) { *this = *this - v; return *this; }
+		_Vec3 operator-() { return _Vec3(-_x, -_y, -_z); }
 
 		// 标量运算
 		_Vec3 Add(DataType f) const {
@@ -347,7 +351,6 @@ namespace JMath {
 			_z = std::cos(ang) * z;
 			_w = std::sin(ang);
 		}
-		void SetByYPR(DataType y, DataType p, DataType r);
 
 		// 计算相关
 		DataType LengthSquare() const { return _x*_x + _y*_y + _z*_z + _w*_w; }
@@ -381,12 +384,13 @@ namespace JMath {
 				 lhm._x * rhm._w + lhm._y * rhm._z - lhm._z * rhm._y + lhm._w * rhm._x,
 				-lhm._x * rhm._z + lhm._y * rhm._w + lhm._z * rhm._x + lhm._w * rhm._y,
 				 lhm._x * rhm._y - lhm._y * rhm._x + lhm._z * rhm._w + lhm._w * rhm._z,
-				 lhm._x * rhm._x + lhm._y * rhm._y + lhm._z * rhm._z + lhm._w * rhm._w);
+				-lhm._x * rhm._x - lhm._y * rhm._y - lhm._z * rhm._z + lhm._w * rhm._w);
 		}
 
 		// 旋转方向
-		_Quaternion Rotate(const WorldPos& other) {
-			return this->Conjugate() * _Quaternion(other) * *this;
+		WorldPos RotateVec(const WorldPos& other) const {
+			auto tmp = this->Conjugate() * _Quaternion(other) * *this;
+			return WorldPos(tmp._x, tmp._y, tmp._z);
 		}
 
 		// 转换为矩阵
