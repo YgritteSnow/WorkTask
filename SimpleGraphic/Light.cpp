@@ -28,7 +28,7 @@ NormColor4 DirectLight::ProcessDummy(WorldPos normal, WorldPos pos){
 	return (diffuse + specular);
 }
 NormColor4 DirectLight::ProcessAmbient(const Material* material, WorldPos normal, WorldPos pos) {
-	return material->ambient * this->m_light_color;
+	return NormColor4();
 }
 NormColor4 DirectLight::ProcessDiffuse(const Material* material, WorldPos normal, WorldPos pos) {
 	auto ln = normal.DotProduct(m_direct);

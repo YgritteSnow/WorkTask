@@ -31,7 +31,7 @@ typedef unsigned char StateMaskType;
 #define StateMaskValue_noCorrect	(0x0 << 3)
 #define StateMaskValue_withCorrect	(0x1 << 3)
 
-#define StateMask_Cull				(0x0 << 4)
+#define StateMask_Cull				(0x1 << 4)
 #define StateMaskValue_NoCull		(0x0 << 4)
 #define StateMaskValue_UseCull		(0x1 << 4)
 

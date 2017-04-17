@@ -17,6 +17,7 @@ InverseKinematic::~InverseKinematic() {
 
 // 计算当前约束条件下，骨骼点对于给定移动值的最大可能的贡献
 float InverseKinematic::GetDeriv(int bone_idx, float delta) {
+	return 1.0f;
 }
 
 void InverseKinematic::RefreshJacobian() {

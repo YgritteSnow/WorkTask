@@ -258,9 +258,9 @@ public:
 
 		WorldPos center;
 		t_vertex.push_back(TestVertex(WorldPos(center._x - width, center._y, center._z - height), c, WorldPos(0, 1, 0), UVPos(0, 0)));
-		t_vertex.push_back(TestVertex(WorldPos(center._x + width, center._y, center._z - height), c, WorldPos(0, 1, 0), UVPos(1, 0)));
-		t_vertex.push_back(TestVertex(WorldPos(center._x + width, center._y, center._z + height), c, WorldPos(0, 1, 0), UVPos(1, 1)));
-		t_vertex.push_back(TestVertex(WorldPos(center._x - width, center._y, center._z + height), c, WorldPos(0, 1, 0), UVPos(0, 1)));
+		t_vertex.push_back(TestVertex(WorldPos(center._x + width, center._y, center._z - height), c, WorldPos(0, 1, 0), UVPos(3, 0)));
+		t_vertex.push_back(TestVertex(WorldPos(center._x + width, center._y, center._z + height), c, WorldPos(0, 1, 0), UVPos(3, 3)));
+		t_vertex.push_back(TestVertex(WorldPos(center._x - width, center._y, center._z + height), c, WorldPos(0, 1, 0), UVPos(0, 3)));
 
 		t_index.push_back(0);
 		t_index.push_back(2);

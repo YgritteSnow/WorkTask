@@ -52,8 +52,8 @@ public:
 		m_worldMat.SetTranslate(pos);
 		m_mesh = new TestBallMesh(radius, h_count, r_count, color);
 		m_mesh->Load();
-		m_cur_texture = TextureManager::GetInstance()->LoadTexture_norm("tex_alpha.tga");
-		m_cur_normalTexture = TextureManager::GetInstance()->LoadTexture_norm("tex_normal.tga");
+		m_cur_texture = TextureManager::GetInstance()->LoadTexture_norm("tex_brick1.tga");
+		m_cur_normalTexture = TextureManager::GetInstance()->LoadTexture_norm("tex_brick1_normal.tga");
 
 		static_cast<TestVSShader*>(m_vsMain)->SetModelMat(m_worldMat);
 		static_cast<TestPSShader*>(m_psMain)->SetDiffuseTexture(m_cur_texture);
@@ -70,8 +70,8 @@ public:
 		m_worldMat.SetTranslate(pos);
 		m_mesh = new TestGroundMesh(width, height, color);
 		m_mesh->Load();
-		m_cur_texture = TextureManager::GetInstance()->LoadTexture_norm("tex_alpha_color.tga");
-		m_cur_normalTexture = TextureManager::GetInstance()->LoadTexture_norm("tex_normal.tga");
+		m_cur_texture = TextureManager::GetInstance()->LoadTexture_norm("tex_sand.tga");
+		m_cur_normalTexture = TextureManager::GetInstance()->LoadTexture_norm("tex_stones_normal.tga");
 
 		static_cast<TestVSShader*>(m_vsMain)->SetModelMat(m_worldMat);
 		static_cast<TestPSShader*>(m_psMain)->SetDiffuseTexture(m_cur_texture);

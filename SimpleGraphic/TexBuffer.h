@@ -29,8 +29,8 @@ public:
 public:
 	PixelType GetPixel_normedPos(float x, float y){ return *(pPixelAt_normedPos(x, y)); }
 	PixelType GetPixel_coordPos(ScreenCoord x, ScreenCoord y) { return *(pPixelAt(x, y)); }
-	PixelType GetPixel_normedPos_smart(float x, float y) { return *(pPixelAt_normedPos(max(0,min(1,x)), max(0, min(1, y)))); }
-	PixelType GetPixel_coordPos_smart(ScreenCoord x, ScreenCoord y) { return *(pPixelAt(max(0, min(1, x)), max(0, min(1, y)))); }
+	PixelType GetPixel_normedPos_smart(float x, float y) { return *(pPixelAt_normedPos(x - (int)x, y - (int)y)); }
+	PixelType GetPixel_coordPos_smart(ScreenCoord x, ScreenCoord y) { return *(pPixelAt(x - (int)x, y - (int)y)); }
 
 	void clear() { memset(m_data, 0, sizeof(PixelType)* width * height); };
 	void clear(PixelType c) { for (int i = 0; i < width * height; ++i) { m_data[i] = c; }; }

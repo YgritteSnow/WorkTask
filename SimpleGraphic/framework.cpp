@@ -102,45 +102,45 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 
 		// 设置材质
 		MaterialManager::GetInstance()->SetMaterial(Material(
-			NormColor4(1, 1, 1, 1) * 1,
+			NormColor4(1, 1, 1, 1) * 0.1,
 			NormColor4(1, 1, 1, 1) * 1,
 			NormColor4(0.7, 0.7, 0.7, 30),
 			NormColor4(1, 1, 1, 1) * 0
 		));
 
 		// 设置光照
-		LightManager::GetInstance()->AddLight(new AmbientLight(NormColor4(1, 1, 1, 1)));
-		//LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 1, 0, 1), WorldPos(1, 0, 0)));
-		//LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 0, 1, 1), WorldPos(-1, 0, 0)));
-		//LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 0, 0, 1), WorldPos(0, 1, 0)));
+		//LightManager::GetInstance()->AddLight(new AmbientLight(NormColor4(0.1, 0.1, 0.1, 1)));
+		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 1, 1, 1), WorldPos(1, 0, 0)));
+		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(1, 0.5, 0, 1), WorldPos(-1, 0, 0)));
+		LightManager::GetInstance()->AddLight(new DirectLight(NormColor4(0, 0.5, 0.5, 1), WorldPos(0, 1, 0)));
 
 		// 设置场景，添加模型
 		Scene* dummyScene = new Scene;
 		
-		//// 模型（球（远））
-		//TestModel* dummyModel_far = new TestModel;
-		//dummyModel_far->DummyBall(0.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 0, 4));
-		//dummyScene->AddModel(dummyModel_far);
+		// 模型（球（远））
+		TestModel* dummyModel_far = new TestModel;
+		dummyModel_far->DummyBall(0.7, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0, 0, 3));
+		dummyScene->AddModel(dummyModel_far);
 		
-		//// 模型（球（近））
-		//TestModel* dummyModel_near = new TestModel;
-		//dummyModel_near->DummyBall(0.4, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0.4, 0, 2));
-		//dummyScene->AddModel(dummyModel_near);
+		// 模型（球（近））
+		TestModel* dummyModel_near = new TestModel;
+		dummyModel_near->DummyBall(0.4, 10, 20, NormColor4(1, 1, 1, 1), WorldPos(0.5, -0.2, 2));
+		dummyScene->AddModel(dummyModel_near);
 
-		//// 模型（水平地面）
-		//TestModel* dummyModel_ground = new TestModel;
-		//dummyModel_ground->DummyGround(2, 2, NormColor4(1, 1, 1, 1), WorldPos(0, -0.5, 3));
-		//dummyScene->AddModel(dummyModel_ground);
+		// 模型（水平地面）
+		TestModel* dummyModel_ground = new TestModel;
+		dummyModel_ground->DummyGround(1, 1, NormColor4(1, 1, 1, 1), WorldPos(0, -0.4, 2));
+		dummyScene->AddModel(dummyModel_ground);
 
-		// 蒙皮模型（蛇）
-		TestSkinnedModel* dummyModel_snake = new TestSkinnedModel;
-		dummyModel_snake->DummySnake(3, 0.3, 1.1f, 10, 5);
-		dummyScene->AddModel(dummyModel_snake);
-
-		// 蒙皮模型（骨骼）
-		TestSkinnedModel* dummyModel_bone = new TestSkinnedModel;
-		dummyModel_bone->DummyBones(3);
-		dummyScene->AddModel(dummyModel_bone);
+		//// 蒙皮模型（蛇）
+		//TestSkinnedModel* dummyModel_snake = new TestSkinnedModel;
+		//dummyModel_snake->DummySnake(3, 0.3, 1.1f, 10, 5);
+		//dummyScene->AddModel(dummyModel_snake);
+		//
+		//// 蒙皮模型（骨骼）
+		//TestSkinnedModel* dummyModel_bone = new TestSkinnedModel;
+		//dummyModel_bone->DummyBones(3);
+		//dummyScene->AddModel(dummyModel_bone);
 		
 		//// 模型（一个四方面片）
 		//TestModel* dummyModel_quad = new TestModel;
@@ -150,11 +150,11 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int nCmdLine){
 		SceneManager::GetInstance()->AddScene(dummyScene);
 
 		// 设置渲染状态
-		RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Wareframe);
+		RenderManager::GetInstance()->SetRenderState(StateMask_DrawMode, StateMaskValue_Fill);
 		RenderManager::GetInstance()->SetRenderState(StateMask_Cull, StateMaskValue_UseCull);
 		RenderManager::GetInstance()->SetRenderState(StateMask_BackCull, StateMaskValue_BackCull);
 		RenderManager::GetInstance()->SetRenderState(StateMask_DepthBuffer, StateMaskValue_UseDepth);
-		RenderManager::GetInstance()->SetRenderState(StateMask_Alpha, StateMaskValue_NoAlpha);
+		RenderManager::GetInstance()->SetRenderState(StateMask_Alpha, StateMaskValue_UseAlpha);
 
 		// 主循环
 		MSG msg;
